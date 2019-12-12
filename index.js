@@ -1,9 +1,19 @@
-const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
+import axios from 'axios';
+
 const Telegraf = require('telegraf')
+const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
+const url = 'www.diary.ru/api/';
 
 const bot = new Telegraf(token)
-bot.start((ctx) => ctx.reply('Welcome!'))
-bot.help((ctx) => ctx.reply('Send me a sticker'))
-bot.on('sticker', (ctx) => ctx.reply('👍'))
-bot.hears('hi', (ctx) => ctx.reply('Hey there'))
+bot.start((ctx) => ctx.reply('Привет :)'))
+bot.hears('hi', (ctx) => ctx.reply('HALLO!'));
+bot.hears('test', ctx => {
+    axios.get(url, {
+        method: 'user.auth',
+        username: 'aarizona',
+        password: 'Adinfinitum1'
+    }).then(result => {
+        ctx.reply(JSON.stringify(result));
+    })
+})
 bot.launch()
