@@ -29,19 +29,23 @@ bot.hears('beetle', ctx => {
                 '--single-process'
             ],
         })
-
-        const page = await browser.newPage()
-        await page.goto('https://911911.org/oper/login')
-        await page.type('#formoperlogin-login', 'a.pluta')
-        await page.type('#formoperlogin-password', '71284198')
-        page.click('button[type="submit"]')
-        await page.waitForNavigation()
-        await page.goto('https://911911.org/dashboard/main/requests-ltv', {waitUntil: 'domcontentloaded'});
-        const spoiler = '[data-spoiler-content-requests2]';
-        const res = await page.evaluate((spoiler) => {
-            return document.querySelector(spoiler).innerText.trim().slice(0, 400);
-        });
-        ctx.reply(res)
+        try {
+            const page = await browser.newPage()
+            await page.goto('https://911911.org/oper/login')
+            await page.type('#formoperlogin-login', 'a.pluta')
+            await page.type('#formoperlogin-password', '71284198')
+            page.click('button[type="submit"]')
+            await page.waitForNavigation()
+            await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
+            const spoiler = '[data-spoiler-content-requests2]';
+            const res = await page.evaluate(() => {
+                return document.querySelector('body').slice(0, 4096)
+                // return document.querySelector('[data-spoiler-content-requests2]').innerText.trim().slice(0, 400);
+            });
+            ctx.reply(res)
+        } catch (err) {
+            ctx.reply(JSON.stringify(err).slice(0, 4096))
+        }
         await browser.close();
     })(ctx)
 })
