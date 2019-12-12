@@ -39,20 +39,23 @@ bot.hears('beetle', ctx => {
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const res = await page.evaluate(() => {
                 // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
-                return [].forEach.call(document.querySelectorAll(
-                    '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
-                    function (node, i) {
-                        const item = {};
-                        const cells = node.querySelectorAll('td');
-                        return cells.toString();
-                        if (cells) {
-                            item.id = cells[0].querySelector('*:first-child').innerText;
-                            item.address = cells[1].querySelector('*:last-child').innerText;
+                try {
+                    return [].forEach.call(document.querySelectorAll(
+                        '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
+                        function (node, i) {
+                            const item = {};
+                            const cells = node.querySelectorAll('td');
+                            if (cells) {
+                                item.id = cells[0].querySelector('*:first-child').innerText;
+                                item.address = cells[1].querySelector('*:last-child').innerText;
+                            }
+                            console.log(item)
+                            return item;
                         }
-                        console.log(item)
-                        return item;
-                    }
-                );
+                    );
+                } catch (err) {
+                    return err;
+                }
             });
             ctx.reply(JSON.stringify(res).slice(0, 4096))
         } catch (err) {
