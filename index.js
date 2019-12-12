@@ -24,8 +24,8 @@ bot.hears('beetle', ctx=>{
   .post('https://911911.org/oper/login')
   .send({ 'FormOperLogin[login]': 'a.pluta', 'FormOperLogin[password]': '71284198' }) // sends a JSON post body
   .end((err, res) => {
-    ctx.reply(JSON.stringify(res));
-    ctx.reply(JSON.stringify(err));
+    ctx.reply(res);
+    //ctx.reply(JSON.stringify(err));
   });
 })
 bot.launch()
