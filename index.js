@@ -38,10 +38,11 @@ bot.hears('beetle', ctx => {
             await page.waitForNavigation()
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const res = await page.evaluate(() => {
-                return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
+                // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
                 return [].forEach.call(document.querySelectorAll('[data-spoiler-content-requests1] tr'), function (node) {
                     const item = {};
                     const cells = node.cells;
+                    console.log(cells)
                     if (cells[0].tagName === 'TD') {
                         item.id = cells[0].children[0].innerText;
                         item.address = cells[1].children[1].innerText;
