@@ -27,14 +27,21 @@ bot.hears('beetle', ctx => {
                 '--disable-setuid-sandbox',
             ],
         })
-        
+
         const page = await browser.newPage()
         await page.goto('https://911911.org/oper/login')
         await page.type('#formoperlogin-login', 'a.pluta')
         await page.type('#formoperlogin-password', '71284198')
         await page.click('button[type="submit"]')
         await page.waitForNavigation()
-        ctx.reply(page.url());
+        await page.goto('https://911911.org/dashboard/main/requests-ltv');
+        await page.waitForNavigation();
+        await page.click('data-content=[data-spoiler-content-requests2]');
+        await page.waitForSelector('.card-header');
+        await page.evaluate(() => {
+            ctx.reply(document.querySelector('.card-header').innerText)
+        });
+        await browser.close();
     }
     main();
 })
