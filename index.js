@@ -63,7 +63,7 @@ bot.hears('beetle', ctx => {
                 (el, i) => {
                     if (i < 5) {
                         ctx.reply(
-                           `<b>${el.name}</b>: ${el.type}<br/>${el.comment}`,
+                           `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
                            {parse_mode: 'HTML'}
                         )
                     }
