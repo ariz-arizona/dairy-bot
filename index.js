@@ -29,44 +29,36 @@ bot.hears('beetle', ctx => {
                 '--single-process'
             ],
         })
-        // try {
-        const page = await browser.newPage()
-        await page.goto('https://911911.org/oper/login')
-        await page.type('#formoperlogin-login', 'a.pluta')
-        await page.type('#formoperlogin-password', '71284198')
-        page.click('button[type="submit"]')
-        await page.waitForNavigation()
-        await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
-        const res = await page.evaluate(() => {
-            // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
-            // try {
-            const data = [];
-            const items = document.querySelectorAll('[data-spoiler-content-requests1] tr:nth-child(n+2)');
-            for (const td of items) {
-                data.push({ id: td.querySelector('*:first-child').innerText })
-            }
-            return data;
-            // return [].forEach.call(document.querySelectorAll(
-            // '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
-            // function (node, i) {
-            //     const item = {};
-            //     const cells = node.querySelectorAll('td');
-            //     if (cells) {
-            //         item.id = cells[0].querySelector('*:first-child').innerText;
-            //         item.address = cells[1].querySelector('*:last-child').innerText;
-            //     }
-            //     console.log(item)
-            //     return item;
-            // }
-            // );
-            // } catch (err) {
-            //     return err;
-            // }
-        });
-        ctx.reply(JSON.stringify(res || {}).slice(0, 4000))
-        // } catch (err) {
-        //     ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
-        // }
+        try {
+            const page = await browser.newPage()
+            await page.goto('https://911911.org/oper/login')
+            await page.type('#formoperlogin-login', 'a.pluta')
+            await page.type('#formoperlogin-password', '71284198')
+            page.click('button[type="submit"]')
+            await page.waitForNavigation()
+            await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
+            const res = await page.evaluate(() => {
+                try {
+                    const data = [];
+                    const items = document.querySelectorAll('[data-spoiler-content-requests1] tr:nth-child(n+2)');
+                    for (const tr of items) {
+                        data.push({ 
+                            id: tr.querySelector('td:nth-child(1) > a').innerText.trim(),
+                            date: tr.querySelector('td:nth-child(1) > div').innerText.trim(),
+                            name: tr.querySelector('td:nth-child(2) > div:nth-child(2)').innerText.trim(),
+                            type: tr.querySelector('td:nth-child(3) > div:nth-child(2)').innerText.trim(),
+                            comment: tr.querySelector('td:nth-child(4) > div').innerText.trim(),
+                         })
+                    }
+                    return data;
+                } catch (err) {
+                    return err;
+                }
+            });
+            ctx.reply(JSON.stringify(res || {}).slice(0, 4000))
+        } catch (err) {
+            ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
+        }
         await browser.close();
     })(ctx)
 })
