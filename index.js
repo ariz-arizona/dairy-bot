@@ -1,5 +1,8 @@
 const axios = require('axios');
 const puppeteer = require('puppeteer');
+const app = express();
+const port_number = process.env.PORT || 3000;
+app.listen(port_number);
 
 const Telegraf = require('telegraf')
 const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
@@ -42,20 +45,20 @@ bot.hears('beetle', ctx => {
                     const data = [];
                     const items = document.querySelectorAll('[data-spoiler-content-requests1] tr:nth-child(n+2)');
                     for (const tr of items) {
-                        data.push({ 
+                        data.push({
                             id: tr.querySelector('td:nth-child(1) > a').innerText.trim(),
                             date: tr.querySelector('td:nth-child(1) > div').innerText.trim(),
                             name: tr.querySelector('td:nth-child(2) > div:nth-child(2)').innerText.trim(),
                             type: tr.querySelector('td:nth-child(3) > div:nth-child(2)').innerText.trim(),
                             comment: tr.querySelector('td:nth-child(4) > div').innerText.trim(),
-                         })
+                        })
                     }
                     return data;
                 } catch (err) {
                     return err;
                 }
             });
-            ctx.reply(res.map((el,i)=>{if(i>2){return <div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div>}}))
+            ctx.reply(res.map((el, i) => { if (i < 2) { return <div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div> } }))
         } catch (err) {
             ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         }
