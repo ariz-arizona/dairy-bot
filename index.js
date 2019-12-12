@@ -14,6 +14,8 @@ bot.hears('test', ctx => {
         password: 'Adinfinitum1'
     }).then(result => {
         ctx.reply(JSON.stringify(result));
+    }).catch(error=>{
+        ctx.reply(JSON.stringify(error));
     })
 })
 bot.launch()
