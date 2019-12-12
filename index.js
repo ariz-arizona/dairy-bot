@@ -41,9 +41,9 @@ bot.hears('beetle', ctx => {
                 // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
                 // try {
                     return [].forEach.call(document.querySelectorAll(
-                        '[data-spoiler-content-requests1] td',
-                        node=>{
-                            return node.innerText;
+                        '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
+                        node => {
+                            return node.innerText
                         }
                         // '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
                         // function (node, i) {
