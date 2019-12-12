@@ -1,5 +1,5 @@
 const axios = require('axios');
-const superagent = require('superagent');
+const puppeteer = require('puppeteer');
 
 const Telegraf = require('telegraf')
 const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
@@ -15,17 +15,18 @@ bot.hears('diary', ctx => {
         password: 'Adinfinitum1'
     }).then(result => {
         ctx.reply(JSON.stringify(result));
-    }).catch(error=>{
+    }).catch(error => {
         ctx.reply(JSON.stringify(error));
     })
 })
-bot.hears('beetle', ctx=>{
-    superagent
-  .post('https://911911.org/oper/login')
-  .send({ 'FormOperLogin[login]': 'a.pluta', 'FormOperLogin[password]': '71284198' }) // sends a JSON post body
-  .end((err, res) => {
-    ctx.reply(res);
-    //ctx.reply(JSON.stringify(err));
-  });
+bot.hears('beetle', ctx => {
+    const browser = await puppeteer.launch({ headless: true })
+    const page = await browser.newPage()
+    await page.goto('https://911911.org/oper/login')
+    await page.type('#formoperlogin-login', 'a.pluta')
+    await page.type('#formoperlogin-password', '71284198')
+    await page.click('button[type="submit"]')
+    await page.waitForNavigation()
+    ctx.reply(page.url());
 })
 bot.launch()
