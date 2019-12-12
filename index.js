@@ -47,7 +47,7 @@ bot.hears('beetle', ctx => {
                             date: tr.querySelector('td:nth-child(1) > div').innerText.trim(),
                             name: tr.querySelector('td:nth-child(2) > div:nth-child(2)').innerText.trim(),
                             type: tr.querySelector('td:nth-child(3) > div:nth-child(2)').innerText.trim(),
-                            comment: tr.querySelector('td:nth-child(4) > div').innerText.replace(/\s/g, ''),
+                            comment: tr.querySelector('td:nth-child(4) > div').innerText.trim(),
                          })
                     }
                     return data;
@@ -55,7 +55,7 @@ bot.hears('beetle', ctx => {
                     return err;
                 }
             });
-            ctx.reply(JSON.stringify(res || {}).slice(0, 4000))
+            ctx.reply(res.map((el,i)=>{if(i>2){return <div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div>}}))
         } catch (err) {
             ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         }
