@@ -36,9 +36,8 @@ bot.hears('beetle', ctx => {
         await page.type('#formoperlogin-password', '71284198')
         page.click('button[type="submit"]')
         await page.waitForNavigation()
-        await page.goto('https://911911.org/dashboard/main/requests-ltv');
+        await page.goto('https://911911.org/dashboard/main/requests-ltv', {waitUntil: 'domcontentloaded'});
         const spoiler = '[data-spoiler-content-requests2]';
-        await page.waitForSelector(spoiler);
         const res = await page.evaluate((spoiler) => {
             return document.querySelector(spoiler).innerText.trim().slice(0, 400);
         });
