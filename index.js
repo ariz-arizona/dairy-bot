@@ -27,6 +27,7 @@ bot.hears('beetle', ctx => {
                 '--disable-setuid-sandbox',
             ],
         })
+        
         const page = await browser.newPage()
         await page.goto('https://911911.org/oper/login')
         await page.type('#formoperlogin-login', 'a.pluta')
