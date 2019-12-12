@@ -20,7 +20,7 @@ bot.hears('diary', ctx => {
     })
 })
 bot.hears('beetle', ctx => {
-    async function main() {
+    (async (ctx) => {
         const browser = await puppeteer.launch({
             headless: true, args: [
                 '--no-sandbox',
@@ -44,7 +44,6 @@ bot.hears('beetle', ctx => {
             ctx.reply(document.querySelector('.card-header').innerText)
         });
         await browser.close();
-    }
-    main();
+    })(ctx)
 })
 bot.launch()
