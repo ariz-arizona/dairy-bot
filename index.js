@@ -41,7 +41,7 @@ bot.hears('beetle', ctx => {
         await page.waitForSelector(spoiler);
         await page.click(spoiler);
         const res = await page.evaluate((spoiler) => {
-            return document.querySelector(spoiler).innerText;
+            return document.querySelector('.card-header').innerText;
         });
         ctx.reply(res)
         await browser.close();
