@@ -30,38 +30,40 @@ bot.hears('beetle', ctx => {
             ],
         })
         // try {
-            const page = await browser.newPage()
-            await page.goto('https://911911.org/oper/login')
-            await page.type('#formoperlogin-login', 'a.pluta')
-            await page.type('#formoperlogin-password', '71284198')
-            page.click('button[type="submit"]')
-            await page.waitForNavigation()
-            await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
-            const res = await page.evaluate(() => {
-                // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
-                // try {
-                    return [].forEach.call(document.querySelectorAll(
-                        '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
-                        node => {
-                            return node.innerText
-                        }
-                        // '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
-                        // function (node, i) {
-                        //     const item = {};
-                        //     const cells = node.querySelectorAll('td');
-                        //     if (cells) {
-                        //         item.id = cells[0].querySelector('*:first-child').innerText;
-                        //         item.address = cells[1].querySelector('*:last-child').innerText;
-                        //     }
-                        //     console.log(item)
-                        //     return item;
-                        // }
-                    );
-                // } catch (err) {
-                //     return err;
-                // }
-            });
-            ctx.reply(JSON.stringify(res).slice(0, 4096))
+        const page = await browser.newPage()
+        await page.goto('https://911911.org/oper/login')
+        await page.type('#formoperlogin-login', 'a.pluta')
+        await page.type('#formoperlogin-password', '71284198')
+        page.click('button[type="submit"]')
+        await page.waitForNavigation()
+        await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
+        const res = await page.evaluate(() => {
+            // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
+            // try {
+            const data = [];
+            const items = document.querySelectorAll('[data-spoiler-content-requests1] tr:nth-child(n+2)');
+            for (const td of items) {
+                data.push({ id: td.querySelector('*:first-child').innerText })
+            }
+            return data;
+            // return [].forEach.call(document.querySelectorAll(
+            // '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
+            // function (node, i) {
+            //     const item = {};
+            //     const cells = node.querySelectorAll('td');
+            //     if (cells) {
+            //         item.id = cells[0].querySelector('*:first-child').innerText;
+            //         item.address = cells[1].querySelector('*:last-child').innerText;
+            //     }
+            //     console.log(item)
+            //     return item;
+            // }
+            // );
+            // } catch (err) {
+            //     return err;
+            // }
+        });
+        ctx.reply(JSON.stringify(res))
         // } catch (err) {
         //     ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         // }
