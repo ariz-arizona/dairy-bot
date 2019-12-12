@@ -1,4 +1,4 @@
-import axios from 'axios';
+const axios = require('axios');
 
 const Telegraf = require('telegraf')
 const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
