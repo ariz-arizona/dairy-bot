@@ -36,13 +36,15 @@ bot.hears('beetle', ctx => {
         await page.type('#formoperlogin-password', '71284198')
         await page.click('button[type="submit"]')
         // await page.waitForNavigation()
-        // await page.goto('https://911911.org/dashboard/main/requests-ltv');
+        await page.goto('https://911911.org/dashboard/main/requests-ltv');
         // await page.waitForNavigation();
-        // await page.click('data-content=[data-spoiler-content-requests2]');
-        await page.waitForSelector('.card-header');
-        await page.evaluate(() => {
-            ctx.reply(document.querySelector('.card-header').innerText)
+        const spoiler = '[data-content="[data-spoiler-content-requests2]"]';
+        await page.waitForSelector(spoiler);
+        await page.click(spoiler);
+        const res = await page.evaluate((spoiler) => {
+            return document.querySelector(spoiler).innerText;
         });
+        ctx.reply(res)
         await browser.close();
     })(ctx)
 })
