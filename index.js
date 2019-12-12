@@ -37,11 +37,10 @@ bot.hears('beetle', ctx => {
         page.click('button[type="submit"]')
         await page.waitForNavigation()
         await page.goto('https://911911.org/dashboard/main/requests-ltv');
-        const spoiler = '[data-content="[data-spoiler-content-requests2]"]';
+        const spoiler = '[data-spoiler-content-requests2]';
         await page.waitForSelector(spoiler);
-        await page.click(spoiler);
         const res = await page.evaluate((spoiler) => {
-            return document.querySelector('.card-header').innerText;
+            return document.querySelector(spoiler).innerText.trim().slice(0, 400);
         });
         ctx.reply(res)
         await browser.close();
