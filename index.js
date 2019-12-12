@@ -61,9 +61,9 @@ bot.hears('beetle', ctx => {
             });
             res.map(
                 (el, i) => {
-                    if (i < 2) {
+                    if (i < 5) {
                         ctx.reply(
-                            "<div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div>"
+                           `${el.name}: ${el.type}`
                         )
                     }
                 }
