@@ -44,6 +44,7 @@ bot.hears('beetle', ctx => {
                     function (node, i) {
                         const item = {};
                         const cells = node.querySelectorAll('td');
+                        return cells.toString();
                         if (cells) {
                             item.id = cells[0].querySelector('*:first-child').innerText;
                             item.address = cells[1].querySelector('*:last-child').innerText;
