@@ -34,10 +34,9 @@ bot.hears('beetle', ctx => {
         await page.goto('https://911911.org/oper/login')
         await page.type('#formoperlogin-login', 'a.pluta')
         await page.type('#formoperlogin-password', '71284198')
-        await page.click('button[type="submit"]')
-        // await page.waitForNavigation()
+        page.click('button[type="submit"]')
+        await page.waitForNavigation()
         await page.goto('https://911911.org/dashboard/main/requests-ltv');
-        // await page.waitForNavigation();
         const spoiler = '[data-content="[data-spoiler-content-requests2]"]';
         await page.waitForSelector(spoiler);
         await page.click(spoiler);
