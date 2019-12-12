@@ -58,7 +58,15 @@ bot.hears('beetle', ctx => {
                     return err;
                 }
             });
-            ctx.reply(res.map((el, i) => { if (i < 2) { return <div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div> } }))
+            ctx.reply(
+                res.map(
+                    (el, i) => {
+                        if (i < 2) {
+                            return "<div><b>{el.name}</b><p>{el.type}</p><p>{el.comment}</p></div>"
+                        }
+                    }
+                )
+            )
         } catch (err) {
             ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         }
