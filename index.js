@@ -41,17 +41,21 @@ bot.hears('beetle', ctx => {
                 // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
                 // try {
                     return [].forEach.call(document.querySelectorAll(
-                        '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
-                        function (node, i) {
-                            const item = {};
-                            const cells = node.querySelectorAll('td');
-                            if (cells) {
-                                item.id = cells[0].querySelector('*:first-child').innerText;
-                                item.address = cells[1].querySelector('*:last-child').innerText;
-                            }
-                            console.log(item)
-                            return item;
+                        '[data-spoiler-content-requests1] td',
+                        node=>{
+                            return node.innerText;
                         }
+                        // '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
+                        // function (node, i) {
+                        //     const item = {};
+                        //     const cells = node.querySelectorAll('td');
+                        //     if (cells) {
+                        //         item.id = cells[0].querySelector('*:first-child').innerText;
+                        //         item.address = cells[1].querySelector('*:last-child').innerText;
+                        //     }
+                        //     console.log(item)
+                        //     return item;
+                        // }
                     );
                 // } catch (err) {
                 //     return err;
