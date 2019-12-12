@@ -37,11 +37,13 @@ bot.hears('beetle', ctx => {
             page.click('button[type="submit"]')
             await page.waitForNavigation()
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
-            const spoiler = '[data-spoiler-content-requests2]';
-            const res = await page.evaluate('.card-body', () => {
-                return document.querySelector('[data-spoiler-content-requests2]').innerText.trim().slice(0, 400);
+            const res = await page.evaluate(() => {
+                const spoiler = '[data-spoiler-content-requests2]';
+                return [document.querySelector('body').innerText.slice(0, 4096),
+                document.querySelector(spoiler).innerText.slice(0, 400)]
             });
-            ctx.reply(res)
+            ctx.reply(res[0])
+            ctx.reply(res[1])
         } catch (err) {
             ctx.reply(JSON.stringify(err).slice(0, 4096))
         }
