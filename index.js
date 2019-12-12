@@ -29,7 +29,7 @@ bot.hears('beetle', ctx => {
                 '--single-process'
             ],
         })
-        try {
+        // try {
             const page = await browser.newPage()
             await page.goto('https://911911.org/oper/login')
             await page.type('#formoperlogin-login', 'a.pluta')
@@ -39,7 +39,7 @@ bot.hears('beetle', ctx => {
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const res = await page.evaluate(() => {
                 // return document.querySelectorAll('[data-spoiler-content-requests1] tr')[0].innerText
-                try {
+                // try {
                     return [].forEach.call(document.querySelectorAll(
                         '[data-spoiler-content-requests1] tr:nth-child(n+2)'),
                         function (node, i) {
@@ -53,14 +53,14 @@ bot.hears('beetle', ctx => {
                             return item;
                         }
                     );
-                } catch (err) {
-                    return err;
-                }
+                // } catch (err) {
+                //     return err;
+                // }
             });
             ctx.reply(JSON.stringify(res).slice(0, 4096))
-        } catch (err) {
-            ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
-        }
+        // } catch (err) {
+        //     ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
+        // }
         await browser.close();
     })(ctx)
 })
