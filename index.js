@@ -38,12 +38,17 @@ bot.hears('beetle', ctx => {
             await page.waitForNavigation()
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const res = await page.evaluate(() => {
-                const spoiler = '[data-spoiler-content-requests2]';
-                return [document.querySelector('body').innerText.slice(0, 4096),
-                document.querySelector(spoiler).innerText.slice(0, 400)]
+                return [].forEach.call(document.querySelectorAll('[data-spoiler-content-requests1] td'), function (node) {
+                    const item = {};
+                    const cells = node.cells;
+                    if (cells[0].tagName === 'TD') {
+                        item.id = cells[0].children[0].innerText;
+                        item.address = cells[1].children[1].innerText;
+                    }
+                    return item;
+                });
             });
-            ctx.reply(res[0])
-            ctx.reply(res[1])
+            ctx.reply(JSON.stringify(res).slice(0, 4096))
         } catch (err) {
             ctx.reply(JSON.stringify(err).slice(0, 4096))
         }
