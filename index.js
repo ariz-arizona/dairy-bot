@@ -21,7 +21,12 @@ bot.hears('diary', ctx => {
 })
 bot.hears('beetle', ctx => {
     async function main() {
-        const browser = await puppeteer.launch({ headless: true })
+        const browser = await puppeteer.launch({
+            headless: true, args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+            ],
+        })
         const page = await browser.newPage()
         await page.goto('https://911911.org/oper/login')
         await page.type('#formoperlogin-login', 'a.pluta')
