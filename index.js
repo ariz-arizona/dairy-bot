@@ -38,9 +38,8 @@ bot.hears('beetle', ctx => {
             await page.waitForNavigation()
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const spoiler = '[data-spoiler-content-requests2]';
-            const res = await page.evaluate(() => {
-                return document.querySelector('body').innerText.slice(0, 4096)
-                // return document.querySelector('[data-spoiler-content-requests2]').innerText.trim().slice(0, 400);
+            const res = await page.evaluate('.card-body', () => {
+                return document.querySelector('[data-spoiler-content-requests2]').innerText.trim().slice(0, 400);
             });
             ctx.reply(res)
         } catch (err) {
