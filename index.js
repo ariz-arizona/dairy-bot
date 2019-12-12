@@ -63,7 +63,7 @@ bot.hears('beetle', ctx => {
             //     return err;
             // }
         });
-        ctx.reply(JSON.stringify(res))
+        ctx.reply(JSON.stringify(res || {}).slice(0, 4000))
         // } catch (err) {
         //     ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         // }
