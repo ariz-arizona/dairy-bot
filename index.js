@@ -44,8 +44,8 @@ bot.command('beetle', ctx => {
             page.click('button[type="submit"]');
             ctx.reply("WAIT LOGIN");
             await page.waitForNavigation()
-            await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             ctx.reply("WAIT DATA");
+            await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
             const res = await page.evaluate(() => {
                 try {
                     const data = [];
@@ -56,12 +56,12 @@ bot.command('beetle', ctx => {
                             date: tr.querySelector('td:nth-child(1) > div').innerText.trim(),
                             name: tr.querySelector('td:nth-child(2) > div:nth-child(2)').innerText.trim(),
                             type: tr.querySelector('td:nth-child(3) > div:nth-child(2)').innerText.trim(),
-                            comment: tr.querySelector('td:nth-child(4) > div').innerText.replace(/[ , \t]{2,}/g, " "),
+                            comment: tr.querySelector('td:nth-child(4) > div').innerText.replace(/[ , \t]{2,}/g, " ").replace(/\n{2,}/g, /\n/)
                         })
                     }
                     return data;
                 } catch (err) {
-                    return err;
+                    return [err];
                 }
             });
             res.map(
@@ -69,7 +69,12 @@ bot.command('beetle', ctx => {
                     if (i < 5) {
                         ctx.reply(
                             `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
-                            { parse_mode: 'HTML' }
+                            {
+                                parse_mode: 'HTML',
+                                reply_markup: Markup.inlineKeyboard([
+                                    Markup.callbackButton('text', 'my-callback-data')
+                                ])
+                            }
                         )
                     }
                 }
