@@ -74,9 +74,11 @@ bot.command('beetle', ctx => {
                 {
                     parse_mode: 'HTML',
                     reply_markup: {
-                        inline_keyboard: Markup.inlineKeyboard([
-                            Markup.callbackButton('text', 'my-callback-data')
-                        ])
+                        inline_keyboard: Markup.inlineKeyboard(
+                            types.map(el => {
+                                return Markup.callbackButton(el, 'my-callback-data')
+                            })
+                        )
                     }
                 }
             )
