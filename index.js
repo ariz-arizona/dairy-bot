@@ -70,16 +70,16 @@ bot.command('beetle', ctx => {
             ctx.state.data = res;
             ctx.state.types = types;
             ctx.reply(
-                `Найдено записей: <b>${res.length}</b>`,
+                `Найдено записей: <b>${res.length}</b>\n${JSON.stringify(types)}`,
                 {
                     parse_mode: 'HTML',
-                    reply_markup: {
-                        inline_keyboard: Markup.inlineKeyboard(
-                            [types.map(el => {
-                                return Markup.callbackButton(el, 'my-callback-data')
-                            })]
-                        )
-                    }
+                    // reply_markup: {
+                    //     inline_keyboard: Markup.inlineKeyboard(
+                    //         types.map(el => {
+                    //             return Markup.callbackButton(el, 'my-callback-data')
+                    //         })
+                    //     )
+                    // }
                 }
             )
 
