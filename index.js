@@ -87,8 +87,11 @@ bot.command('beetle', ctx => {
     })(ctx)
 });
 bot.action('show_items_by_type', (ctx, id) => {
+    ctx.reply(`test ${id}`);
     const type = ctx.state.types[id];
+    ctx.reply(`test type ${type}`);
     const res = ctx.state.data.filter(el => { el.type === type });
+    ctx.reply(`test res ${JSON.stringify(res)}`);
     res.map(el => {
         ctx.reply(el.name)
     })
