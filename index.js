@@ -1,11 +1,8 @@
 const axios = require('axios');
 const puppeteer = require('puppeteer');
-const express = require('express');
-const app = express();
-const port_number = process.env.PORT || 3000;
-app.listen(port_number);
+const Telegraf = require('telegraf');
+const Markup = require('telegraf/markup');
 
-const Telegraf = require('telegraf')
 const url = 'http://www.diary.ru/api/';
 
 const bot = new Telegraf(process.env.TOKEN)
