@@ -6,10 +6,9 @@ const port_number = process.env.PORT || 3000;
 app.listen(port_number);
 
 const Telegraf = require('telegraf')
-const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
 const url = 'http://www.diary.ru/api/';
 
-const bot = new Telegraf(token)
+const bot = new Telegraf(process.env.TOKEN)
 bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err)
 });
@@ -26,7 +25,7 @@ bot.hears('diary', ctx => {
         ctx.reply(JSON.stringify(error));
     })
 })
-bot.hears('beetle', ctx => {
+bot.command('beetle', ctx => {
     (async (ctx) => {
         const browser = await puppeteer.launch({
             headless: true, args: [
