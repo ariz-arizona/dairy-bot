@@ -84,12 +84,12 @@ bot.command('beetle', ctx => {
         await browser.close();
     })(ctx)
 });
-bot.action(/^show_items_by_type_(\d)/, (ctx) => {
-    const id = ctx.match[0];
+bot.inlineQuery(/^show_items_by_type_(\d)/, (ctx) => {
+    const id = ctx.match[0].replace('show_items_by_type_', '');
     ctx.reply(`test ctx ${JSON.stringify(ctx)}`);
-    const type = ctx.state.types[id];
+    const type = (ctx.state.types || [])[id];
     ctx.reply(`test type ${type}`);
-    const res = ctx.state.data.filter(el => { el.type === type });
+    const res = (ctx.state.data || []).filter(el => { el.type === type });
     ctx.reply(`test res ${JSON.stringify(res)}`);
     res.map(el => {
         ctx.reply(el.name)
