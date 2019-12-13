@@ -71,10 +71,14 @@ bot.command('beetle', ctx => {
                             `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
                             {
                                 parse_mode: 'HTML',
-                                reply_markup: Markup.inlineKeyboard([
-                                    Markup.callbackButton('text', 'my-callback-data')
-                                ])
-                            }
+                                reply_markup: {
+                                    inline_keyboard: [
+                                        [
+                                            { text: 'first button in first line', url: 'url' },
+                                            { text: 'second button in first line', url: 'url' }
+                                        ],
+                                    ]
+                                }
                         )
                     }
                 }
