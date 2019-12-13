@@ -74,7 +74,7 @@ bot.command('beetle', ctx => {
                 {
                     parse_mode: 'HTML',
                     reply_markup: Markup.inlineKeyboard(types.map((el, i) =>
-                        Markup.callbackButton(el, `show_items_by_type_${i}`)
+                        [Markup.callbackButton(el, `show_items_by_type_${i}`)]
                     ))
                 }
             )
@@ -84,7 +84,7 @@ bot.command('beetle', ctx => {
         await browser.close();
     })(ctx)
 });
-bot.inlineQuery(/^show_items_by_type_(\d)/, (ctx) => {
+bot.action(/^show_items_by_type_(\d)/, (ctx) => {
     const id = ctx.match[0].replace('show_items_by_type_', '');
     ctx.reply(`test ctx ${JSON.stringify(ctx)}`);
     const type = (ctx.state.types || [])[id];
