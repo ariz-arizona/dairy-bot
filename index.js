@@ -38,12 +38,15 @@ bot.hears('beetle', ctx => {
         })
         try {
             const page = await browser.newPage()
+            ctx.reply("OPEN BROWSER");
             await page.goto('https://911911.org/oper/login')
             await page.type('#formoperlogin-login', 'a.pluta')
             await page.type('#formoperlogin-password', '71284198')
-            page.click('button[type="submit"]')
+            page.click('button[type="submit"]');
+            ctx.reply("WAIT LOGIN");
             await page.waitForNavigation()
             await page.goto('https://911911.org/dashboard/main/requests-ltv', { waitUntil: 'domcontentloaded' });
+            ctx.reply("WAIT DATA");
             const res = await page.evaluate(() => {
                 try {
                     const data = [];
