@@ -10,9 +10,12 @@ const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
 const url = 'http://www.diary.ru/api/';
 
 const bot = new Telegraf(token)
-bot.start((ctx) => ctx.reply('Привет :)'))
-bot.hears('hi', (ctx) => ctx.reply('HALLO!'));
-bot.hears('diary', ctx => {
+bot.start((ctx) => ctx.reply('Привет :)'));
+bot.catch((err, ctx) => {
+    console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err)
+  })
+bot.on('hi', (ctx) => ctx.reply('HALLO!'));
+bot.on('diary', ctx => {
     axios.get(url, {
         method: 'user.auth',
         username: 'aarizona',
@@ -23,7 +26,7 @@ bot.hears('diary', ctx => {
         ctx.reply(JSON.stringify(error));
     })
 })
-bot.hears('beetle', ctx => {
+bot.on('beetle', ctx => {
     (async (ctx) => {
         const browser = await puppeteer.launch({
             headless: true, args: [
