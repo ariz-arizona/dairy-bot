@@ -73,11 +73,11 @@ bot.command('beetle', ctx => {
                 `Найдено записей: <b>${res.length}</b>\n${JSON.stringify(types)}`,
                 {
                     parse_mode: 'HTML',
-                    reply_markup: Markup.inlineKeyboard(
-                        types.map((el, i) => {
-                            return [Markup.callbackButton(el, 'show_items_by_type', i)]
-                        })
-                    )
+                    reply_markup: types.map((el, i) => {
+                        return Markup.inlineKeyboard(
+                            Markup.callbackButton(el, `show_items_by_type_${i}`)
+                        )
+                    })
                 }
             )
         } catch (err) {
@@ -86,8 +86,7 @@ bot.command('beetle', ctx => {
         await browser.close();
     })(ctx)
 });
-bot.action('show_items_by_type', (ctx, id) => {
-    ctx.reply(`test ${id()}`);
+bot.action(/^show_items_by_type_(\d)/, (ctx) => {
     ctx.reply(`test ctx ${JSON.stringify(ctx)}`);
     const type = ctx.state.types[id];
     ctx.reply(`test type ${type}`);
