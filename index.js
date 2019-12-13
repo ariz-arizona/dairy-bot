@@ -54,7 +54,7 @@ bot.hears('beetle', ctx => {
                             date: tr.querySelector('td:nth-child(1) > div').innerText.trim(),
                             name: tr.querySelector('td:nth-child(2) > div:nth-child(2)').innerText.trim(),
                             type: tr.querySelector('td:nth-child(3) > div:nth-child(2)').innerText.trim(),
-                            comment: tr.querySelector('td:nth-child(4) > div').innerText.trim(),
+                            comment: tr.querySelector('td:nth-child(4) > div').innerText.trim().replace(/\s{2,}/g, " "),
                         })
                     }
                     return data;
