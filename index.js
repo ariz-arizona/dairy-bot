@@ -22,6 +22,7 @@ bot.hears('diary', ctx => {
         ctx.reply(JSON.stringify(error));
     })
 })
+const state = {};
 bot.command('beetle', ctx => {
     (async (ctx) => {
         const browser = await puppeteer.launch({
@@ -67,8 +68,8 @@ bot.command('beetle', ctx => {
                     types.push(el.type);
                 }
             })
-            ctx.state.data = res;
-            ctx.state.types = types;
+            state.data = res;
+            state.types = types;
             ctx.reply(
                 `Найдено записей: <b>${res.length}</b>\n${JSON.stringify(types)}`,
                 {
@@ -87,9 +88,9 @@ bot.command('beetle', ctx => {
 bot.action(/^show_items_by_type_(\d)/, (ctx) => {
     const id = ctx.match[0].replace('show_items_by_type_', '');
     ctx.reply(`test ctx ${JSON.stringify(ctx.state).slice(0,4000)}`);
-    const type = (ctx.state.types || [])[id];
+    const type = (state.types || [])[id];
     ctx.reply(`test type ${type}`);
-    const res = (ctx.state.data || []).filter(el => { el.type === type });
+    const res = (state.data || []).filter(el => { el.type === type });
     ctx.reply(`test res ${JSON.stringify(res)}`);
     res.map(el => {
         ctx.reply(el.name)
