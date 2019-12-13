@@ -73,9 +73,9 @@ bot.command('beetle', ctx => {
                 `Найдено записей: <b>${res.length}</b>\n${JSON.stringify(types)}`,
                 {
                     parse_mode: 'HTML',
-                    reply_markup: Markup.keyboard(types.map((el, i) => {
+                    reply_markup: Markup.keyboard(types.map((el, i) =>
                         Markup.callbackButton(el, `show_items_by_type_${i}`)
-                    }))
+                    ))
                 }
             )
         } catch (err) {
