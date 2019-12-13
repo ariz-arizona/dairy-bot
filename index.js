@@ -63,7 +63,7 @@ bot.command('beetle', ctx => {
             });
             const types = [];
             res.map(el => {
-                if (types.indexOf(el.type)) {
+                if (types.indexOf(el.type) !== -1) {
                     types.push(el.type);
                 }
             })
@@ -74,17 +74,23 @@ bot.command('beetle', ctx => {
                 {
                     parse_mode: 'HTML',
                     reply_markup: Markup.inlineKeyboard(
-                        types.map(el => {
-                            return Markup.callbackButton(el, 'my-callback-data')
+                        types.map((el, i) => {
+                            return [Markup.callbackButton(el, 'show_items_by_type', i)]
                         })
                     )
                 }
             )
-
         } catch (err) {
             ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         }
         await browser.close();
     })(ctx)
-})
+});
+bot.action('show_items_by_type', (ctx, id) => {
+    const type = ctx.state.types[id];
+    const res = ctx.state.data.filter(el => { el.type === type });
+    res.map(el => {
+        ctx.reply(el.name)
+    })
+});
 bot.launch()
