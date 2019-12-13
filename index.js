@@ -63,7 +63,7 @@ bot.command('beetle', ctx => {
             });
             const types = [];
             res.map(el => {
-                if (types.indexOf(el.type) !== -1) {
+                if (types.indexOf(el.type) === -1) {
                     types.push(el.type);
                 }
             })
