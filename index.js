@@ -64,23 +64,26 @@ bot.command('beetle', ctx => {
                     return [err];
                 }
             });
-            res.map(
-                (el, i) => {
-                    if (i < 5) {
-                        ctx.reply(
-                            `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
-                            {
-                                parse_mode: 'HTML',
-                                reply_markup: {
-                                    inline_keyboard: Markup.inlineKeyboard([
-                                        Markup.callbackButton('text', 'my-callback-data')
-                                    ])
-                                }
-                            }
-                        )
+            const types = [];
+            res.map(el => {
+                if (types.indexOf(el.type)) {
+                    types.push(el.type);
+                }
+            })
+            ctx.state.data = res;
+            ctx.state.types = types;
+            ctx.reply(
+                `Найдено записей: <b>${res.length}</b>`,
+                {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: Markup.inlineKeyboard([
+                            Markup.callbackButton('text', 'my-callback-data')
+                        ])
                     }
                 }
             )
+
         } catch (err) {
             ctx.reply(`ERROR ${JSON.stringify(err).slice(0, 4000)}`)
         }
