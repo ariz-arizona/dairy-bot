@@ -10,6 +10,9 @@ const token = '1023369485:AAE0nFWhuBO-al13tMM8ULsYERw3RelGrHc';
 const url = 'http://www.diary.ru/api/';
 
 const bot = new Telegraf(token)
+bot.catch((err, ctx) => {
+    console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err)
+});
 bot.start((ctx) => ctx.reply('Привет :)'))
 bot.hears('hi', (ctx) => ctx.reply('HALLO!'));
 bot.hears('diary', ctx => {
@@ -63,8 +66,8 @@ bot.hears('beetle', ctx => {
                 (el, i) => {
                     if (i < 5) {
                         ctx.reply(
-                           `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
-                           {parse_mode: 'HTML'}
+                            `<b>${el.name}</b>: ${el.type} \n ${el.comment}`,
+                            { parse_mode: 'HTML' }
                         )
                     }
                 }
