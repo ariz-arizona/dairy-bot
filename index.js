@@ -2,6 +2,7 @@ const axios = require('axios');
 const puppeteer = require('puppeteer');
 const Telegraf = require('telegraf');
 const Markup = require('telegraf/markup');
+const Extra = require('telegraf/extra');
 
 const url = 'http://www.diary.ru/api/';
 
