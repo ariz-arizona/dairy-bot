@@ -25,10 +25,10 @@ bot.hears('diary', ctx => {
 const initialState = {};
 initialState.data = [];
 initialState.type = [];
-const state = {};
+let state = {};
 bot.command('beetle', ctx => {
     (async (ctx) => {
-        state = { ...initialState };
+        state = initialState;
         const browser = await puppeteer.launch({
             headless: true, args: [
                 '--no-sandbox',
