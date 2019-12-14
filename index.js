@@ -74,10 +74,9 @@ bot.command('beetle', ctx => {
             })
             state.data = res;
             state.types = types;
-            ctx.reply(
-                `Найдено записей: <b>${res.length}</b>\n${JSON.stringify(types)}`,
+            ctx.replyWithHTML(
+                `Найдено записей: <b>${res.length}</b>`,
                 {
-                    parse_mode: 'HTML',
                     reply_markup: Markup.inlineKeyboard(types.map((el, i) =>
                         [Markup.callbackButton(el, `show_items_by_type_${i}`)]
                     ))
@@ -94,16 +93,9 @@ bot.action(/^show_items_by_type_(\d)/, (ctx) => {
     const type = (state.types || [])[id];
     const res = (state.data || []).filter(el => el.type === type);
     res.map(el => {
-        ctx.reply(
-            `<b>Имя</b>: ${el.name}/n
-            <b>Дата</b>: ${el.id}/n
-            <b>Тип</b>: ${el.type}/n
-            <b>ID</b>: ${el.id}/n
-            <b>Комментарий</b>: ${el.comment}`
+        ctx.replyWithHTML(
+            `<b>Имя</b>: ${el.name}/n<b>Дата</b>: ${el.id}/n<b>Тип</b>: ${el.type}/n<b>ID</b>: ${el.id}/n<b>Комментарий</b>: ${el.comment}`
         ),
-        {
-            parse_mode: 'HTML',
-        }
     })
 });
 bot.launch()
