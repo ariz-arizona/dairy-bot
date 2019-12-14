@@ -22,7 +22,9 @@ bot.hears('diary', ctx => {
         ctx.reply(JSON.stringify(error));
     })
 })
-const initialState = { data =[], types=[] };
+const initialState = {};
+initialState.data = [];
+initialState.type = [];
 const state = {};
 bot.command('beetle', ctx => {
     (async (ctx) => {
