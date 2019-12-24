@@ -6,9 +6,9 @@ const Scene = require('telegraf/scenes/base')
 const puppeteer = require('puppeteer');
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
-
 const url = 'http://www.diary.ru/api/';
 
+const { leave } = Stage;
 const bot = new Telegraf(process.env.TOKEN)
 
 bot.catch((err, ctx) => {
