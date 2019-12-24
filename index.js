@@ -9,7 +9,7 @@ const Extra = require('telegraf/extra');
 
 const url = 'http://www.diary.ru/api/';
 
-const bot = new Telegraf(process.env.TOKEN)
+// const bot = new Telegraf(process.env.TOKEN)
 
 bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err);
