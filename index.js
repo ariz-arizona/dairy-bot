@@ -48,7 +48,7 @@ const wtfScene = new WizardScene(
 
             const result = await page.evaluate(() => {
                 const commands = [];
-                const textTag = '';
+                let textTag = '';
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
