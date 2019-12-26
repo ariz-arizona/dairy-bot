@@ -46,18 +46,19 @@ const wtfScene = new WizardScene(
             await page.waitForNavigation()
             ctx.reply("WAIT DATA");
 
-            const result = await page.evaluate(() => {
-                const tags = [];
+            const tags = await page.evaluate(() => {
+                const result = [];
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
                     const id = link.href.replace('?tag=', '');
                     if (name.indexOf('WTF') !== -1) {
-                        tags.push({ id, name })
+                        result.push({ id, name })
                     }
                 }
+                return result;
             })
-            ctx.reply(`FIND ${result.length}`);
+            ctx.reply(`FIND ${tags.length}`);
             return ctx.wizard.next();
         })(ctx);
     },
