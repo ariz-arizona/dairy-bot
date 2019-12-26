@@ -43,7 +43,7 @@ const wtfScene = new WizardScene(
             await page.goto(urls.wtf2019)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
-            page.click('input[type="submit"]');
+            page.click('button[type="submit"]');
             ctx.reply("WAIT LOGIN");
             await page.waitForNavigation()
             ctx.reply("WAIT DATA");
