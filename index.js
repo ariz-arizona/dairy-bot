@@ -46,19 +46,31 @@ const wtfScene = new WizardScene(
             await page.waitForNavigation()
             ctx.reply("WAIT DATA");
 
-            const tags = await page.evaluate(() => {
-                const result = [];
+            const result = await page.evaluate(() => {
+                const commands = [];
+                const textTag = '';
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
                     const id = link.href.replace('?tag=', '');
                     if (name.indexOf('WTF') !== -1) {
-                        result.push({ id, name })
+                        commands.push({ id, name })
+                    }
+                    if (name === 'тексты') {
+                        textTag = id;
                     }
                 }
-                return result;
+                return {commands, textTag};
             })
-            ctx.reply(`FIND ${tags.length}`);
+            ctx.reply(`FIND ${result.commands.length}`);
+            ctx.replyWithHTML(
+                `${result.commands.slice(0, 20).map((el, i)=>`<b>${i}</b> -- ${el}\n`)}`,
+                {
+                  reply_markup: Markup.inlineKeyboard(
+                    [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+                  )
+                }
+              )
             return ctx.wizard.next();
         })(ctx);
     },
