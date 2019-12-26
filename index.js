@@ -14,6 +14,14 @@ const password = '319992738';
 const urls = {
     wtf2019: 'https://wtf-2019.diary.ru/'
 }
+const browserArgs = {
+    headless: true, args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--single-process'
+    ],
+  };
 
 const bot = new Telegraf(process.env.TOKEN)
 
