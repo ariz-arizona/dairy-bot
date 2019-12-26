@@ -2,10 +2,11 @@ const axios = require('axios');
 const Telegraf = require('telegraf');
 const session = require('telegraf/session')
 const Stage = require('telegraf/stage')
+const WizardScene = require('telegraf/scenes/wizard'); 
 const Scene = require('telegraf/scenes/base')
-const puppeteer = require('puppeteer');
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
+const puppeteer = require('puppeteer');
 
 const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
@@ -14,7 +15,6 @@ const urls = {
     wtf2019: 'https://wtf-2019.diary.ru/'
 }
 
-const { leave } = Stage;
 const bot = new Telegraf(process.env.TOKEN)
 
 bot.catch((err, ctx) => {
@@ -22,49 +22,40 @@ bot.catch((err, ctx) => {
     ctx.reply("ERROR! LOOK LOGS PLS")
 });
 
-// Greeter scene
-const wtfScene = new Scene('wtfScene')
-let browser;
-wtfScene.enter((ctx) => {
-    ctx.reply('WTF Hi');
-    (async () => {
-        browser = await puppeteer.launch({
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-            ],
-        });
+const wtfScene = new WizardScene(
+    "wtfScene", // Имя сцены
+    (ctx) => {
+      ctx.reply('Этап 1: выбор типа матча.');
+      return ctx.wizard.next(); // Переходим к следующему обработчику.
+    },
+    (ctx) => {
+      ctx.reply('Этап 2: выбор времени проведения матча.');
+      return ctx.wizard.next(); // Переходим к следующему обработчику.
+    },
+    (ctx) => {
+      if (ctx.message.text === "Назад") {
+        ctx.wizard.back(); // Вернуться к предыдущиму обработчику
+      }
+      ctx.reply('Этап 3: выбор места проведения матча.');
+      return ctx.wizard.next(); // Переходим к следующему обработчику.
+    },
+    
+    // ...
+  
+    (ctx) => {
+      ctx.reply('Финальный этап: создание матча.');
+      return ctx.scene.leave();
+    }
+  );
+  
+  // Создаем менеджера сцен
+  const stage = new Stage();
+  
+  // Регистрируем сцену создания матча
+  stage.register(wtfScene);
+  
+  bot.use(session());
+  bot.use(stage.middleware());
+  bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
 
-        const page = await browser.newPage();
-        ctx.reply('test')
-        await page.goto(urls.wtf2019)
-        await page.type('#user_login', login)
-        await page.type('#user_pass', password)
-        page.click('.btn[type="submit"]');
-        await page.waitForNavigation();
-        const result = await page.evaluate(() => {
-            return document.body.toString.split(0, 400);
-        })
-        ctx.reply(result);
-    })();
-})
-wtfScene.leave((ctx) => {
-    ctx.reply('WTF Bye')
-        (async () => {
-            await browser.close()
-        })()
-})
-wtfScene.hears(/hi/gi, leave())
-wtfScene.on('message', (ctx) => ctx.reply('Send `hi`'))
-
-// Create scene manager
-const stage = new Stage()
-stage.command('cancel', ctx=> leave(ctx))
-
-// Scene registration
-stage.register(wtfScene)
-
-bot.use(session())
-bot.use(stage.middleware())
-bot.command('wtf2019', (ctx) => ctx.scene.enter('wtfScene'))
-bot.startPolling()
+  bot.launch();
