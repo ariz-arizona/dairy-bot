@@ -36,7 +36,7 @@ wtfScene.enter((ctx) => {
         });
 
         const page = await browser.newPage();
-console.log('test')
+        ctx.reply('test')
         await page.goto(urls.wtf2019)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
