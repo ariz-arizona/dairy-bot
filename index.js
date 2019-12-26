@@ -64,7 +64,7 @@ const wtfScene = new WizardScene(
             })
             ctx.reply(`FIND ${result.commands.length}`);
             ctx.replyWithHTML(
-                `${result.commands.slice(0, 20).map((el, i)=>`<b>${i}</b> -- ${el}\n`)}`,
+                `${result.commands.slice(0, 20).map((el, i)=>`<b>${i}</b> -- ${el.name}`.join(`\n`))}`,
                 {
                   reply_markup: Markup.inlineKeyboard(
                     [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
