@@ -22,6 +22,7 @@ const browserArgs = {
         '--single-process'
     ],
 };
+const pageSize = 20;
 
 const bot = new Telegraf(process.env.TOKEN)
 
@@ -62,22 +63,53 @@ const wtfScene = new WizardScene(
                 }
                 return { commands, textTag };
             });
-            const pageSize = 20;
             ctx.session.commands = result.commands;
             ctx.session.textTag = result.textTag;
             ctx.session.curPage = 1;
             ctx.session.pages = Math.ceil(result.commands.length / pageSize);
             const { curPage } = ctx.session;
             ctx.reply(`FIND ${result.commands.length}`);
-            ctx.replyWithHTML(
-                `${result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`)}`,
+            ctx.reply(
+                result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
                 {
+                    parse_mode: 'HTML',
                     reply_markup: Markup.inlineKeyboard(
                         [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
                     )
                 }
-            )
-            return ctx.wizard.next();
+            );
+            bot.action('back', ctx => {
+                const { curPage: oldCurPage, commands } = ctx.session;
+                ctx.session.curPage = oldCurPage - 1;
+                const { curPage } = ctx.session;
+                ctx.editMessageText(
+                    commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+                    {
+                        parse_mode: 'HTML',
+                        reply_markup: Markup.inlineKeyboard(
+                            [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+                        )
+                    }
+                )
+            })
+            bot.action('next', ctx => {
+                const { curPage: oldCurPage, commands } = ctx.session;
+                ctx.session.curPage = oldCurPage + 1;
+                const { curPage } = ctx.session;
+                ctx.editMessageText(
+                    commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+                    {
+                        parse_mode: 'HTML',
+                        reply_markup: Markup.inlineKeyboard(
+                            [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+                        )
+                    }
+                )
+            })
+            bot.hears(/\d{1,}/gi, ctx => {
+                ctx.reply(ctx.match[0])
+                return ctx.wizard.next(ctx.match[0]);
+            })
         })(ctx);
     },
 
