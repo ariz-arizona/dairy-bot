@@ -37,13 +37,13 @@ wtfScene.enter((ctx) => {
 
         const page = await browser.newPage();
 
-        await page.goto(urls.login)
+        await page.goto(urls.wtf2019)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
         page.click('.btn[type="submit"]');
         await page.waitForNavigation();
         const result = await page.evaluate(() => {
-            return document.body.toString, split(0, 400);
+            return document.body.toString.split(0, 400);
         })
         ctx.reply(result);
     })();
