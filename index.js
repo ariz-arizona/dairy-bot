@@ -31,97 +31,91 @@ bot.catch((err, ctx) => {
     ctx.reply("ERROR! LOOK LOGS PLS")
 });
 
-const wtfScene = new WizardScene(
-    "wtfScene", // Имя сцены
-    (ctx) => {
-        (async (ctx) => {
-            const browser = await puppeteer.launch(browserArgs);
-            const page = await browser.newPage();
-            ctx.reply("OPEN BROWSER");
+const wtfScene = new Scene('wtfScene');
+wtfScene.enter((ctx) => {
+    (async (ctx) => {
+        const browser = await puppeteer.launch(browserArgs);
+        const page = await browser.newPage();
+        ctx.reply("OPEN BROWSER");
 
-            await page.goto(`${urls.wtf2019}?tags=`)
-            await page.type('#user_login', login)
-            await page.type('#user_pass', password)
-            page.click('#inform_box button');
-            ctx.reply("WAIT LOGIN");
-            await page.waitForNavigation()
-            ctx.reply("WAIT DATA");
+        await page.goto(`${urls.wtf2019}?tags=`)
+        await page.type('#user_login', login)
+        await page.type('#user_pass', password)
+        page.click('#inform_box button');
+        ctx.reply("WAIT LOGIN");
+        await page.waitForNavigation()
+        ctx.reply("WAIT DATA");
 
-            const result = await page.evaluate(() => {
-                const commands = [];
-                let textTag = '';
-                const links = document.querySelectorAll('a[id*=tag]');
-                for (const link of links) {
-                    const name = link.innerText;
-                    const id = link.href.replace('?tag=', '');
-                    if (name.indexOf('WTF') !== -1) {
-                        commands.push({ id, name })
-                    }
-                    if (name === 'тексты') {
-                        textTag = id;
-                    }
+        const result = await page.evaluate(() => {
+            const commands = [];
+            let textTag = '';
+            const links = document.querySelectorAll('a[id*=tag]');
+            for (const link of links) {
+                const name = link.innerText;
+                const id = link.href.replace('?tag=', '');
+                if (name.indexOf('WTF') !== -1) {
+                    commands.push({ id, name })
                 }
-                return { commands, textTag };
-            });
-            ctx.session.commands = result.commands;
-            ctx.session.textTag = result.textTag;
-            ctx.session.curPage = 1;
-            ctx.session.pages = Math.ceil(result.commands.length / pageSize);
-            const { curPage } = ctx.session;
-            ctx.reply(`FIND ${result.commands.length}`);
-            ctx.reply(
-                result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
-                {
-                    parse_mode: 'HTML',
-                    reply_markup: Markup.inlineKeyboard(
-                        [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
-                    )
+                if (name === 'тексты') {
+                    textTag = id;
                 }
-            );
-            bot.action('back', ctx => {
-                const { curPage: oldCurPage, commands } = ctx.session;
-                ctx.session.curPage = oldCurPage - 1;
-                const { curPage } = ctx.session;
-                ctx.editMessageText(
-                    commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
-                    {
-                        parse_mode: 'HTML',
-                        reply_markup: Markup.inlineKeyboard(
-                            [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
-                        )
-                    }
+            }
+            return { commands, textTag };
+        });
+        ctx.scene.state.commands = result.commands;
+        ctx.scene.state.textTag = result.textTag;
+        ctx.scene.state.curPage = 1;
+        ctx.scene.state.pages = Math.ceil(result.commands.length / pageSize);
+        const { curPage } = ctx.scene.state;
+        ctx.reply(`FIND ${result.commands.length}`);
+        ctx.reply(
+            result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+            {
+                parse_mode: 'HTML',
+                reply_markup: Markup.inlineKeyboard(
+                    [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
                 )
-            })
-            bot.action('next', ctx => {
-                const { curPage: oldCurPage, commands } = ctx.session;
-                ctx.session.curPage = oldCurPage + 1;
-                const { curPage } = ctx.session;
-                ctx.editMessageText(
-                    commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
-                    {
-                        parse_mode: 'HTML',
-                        reply_markup: Markup.inlineKeyboard(
-                            [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
-                        )
-                    }
-                )
-            })
-            bot.hears(/\d{1,}/gi, ctx => {
-                ctx.reply(ctx.match[0])
-                return ctx.wizard.next(ctx.match[0]);
-            })
-        })(ctx);
-    },
+            }
+        );
+    })
+})
+wtfScene.leave((ctx) => {
+    (async (ctx) => {
+        await browser.close();
+        ctx.reply("CLOSE BROWSER");
+    })(ctx);
+});
 
-    (ctx) => {
-        (async (ctx) => {
-            await browser.close();
-            ctx.reply("CLOSE BROWSER");
-        })(ctx);
-        ctx.reply('Финальный этап: создание матча.');
-        return ctx.scene.leave();
-    }
-);
+
+wtfScene.action('back', ctx => {
+    const { curPage: oldCurPage, commands } = ctx.scene.state;
+    ctx.scene.state.curPage = oldCurPage - 1;
+    const { curPage } = ctx.scene.state;
+    ctx.editMessageText(
+        commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+        {
+            parse_mode: 'HTML',
+            reply_markup: Markup.inlineKeyboard(
+                [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+            )
+        }
+    )
+})
+
+wtfScene.action('next', ctx => {
+    const { curPage: oldCurPage, commands } = ctx.scene.state;
+    ctx.scene.state.curPage = oldCurPage + 1;
+    const { curPage } = ctx.scene.state;
+    ctx.editMessageText(
+        commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+        {
+            parse_mode: 'HTML',
+            reply_markup: Markup.inlineKeyboard(
+                [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+            )
+        }
+    )
+})
 
 // Создаем менеджера сцен
 const stage = new Stage();
