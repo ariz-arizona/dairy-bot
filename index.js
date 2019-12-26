@@ -30,11 +30,11 @@ bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err);
     ctx.reply("ERROR! LOOK LOGS PLS")
 });
-
+let browser;
 const wtfScene = new Scene('wtfScene');
 wtfScene.enter((ctx) => {
     (async (ctx) => {
-        const browser = await puppeteer.launch(browserArgs);
+        browser = await puppeteer.launch(browserArgs);
         const page = await browser.newPage();
         ctx.reply("OPEN BROWSER");
 
