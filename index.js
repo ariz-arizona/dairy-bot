@@ -11,7 +11,7 @@ const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
 const password = '319992738';
 const urls = {
-wtf2019:'https://wtf-2019.diary.ru/'
+    wtf2019: 'https://wtf-2019.diary.ru/'
 }
 
 const { leave } = Stage;
@@ -35,24 +35,24 @@ wtfScene.enter((ctx) => {
             ],
         });
 
-            const page = await browser.newPage();
+        const page = await browser.newPage();
 
-    await page.goto(urls.login)
-    await page.type('#user_login', login)
-    await page.type('#user_pass', password)
-    page.click('.btn[type="submit"]');
-    await page.waitForNavigation();
-     const result = await page.evaluate(() => {
-         return document.body.toString,split(0,400);
-     })
+        await page.goto(urls.login)
+        await page.type('#user_login', login)
+        await page.type('#user_pass', password)
+        page.click('.btn[type="submit"]');
+        await page.waitForNavigation();
+        const result = await page.evaluate(() => {
+            return document.body.toString, split(0, 400);
+        })
+        ctx.reply(result);
     })();
-    ctx.reply(result);
 })
 wtfScene.leave((ctx) => {
     ctx.reply('WTF Bye')
-    (async()=>{
-        await browser.close()
-    })()
+        (async () => {
+            await browser.close()
+        })()
 })
 wtfScene.hears(/hi/gi, leave())
 wtfScene.on('message', (ctx) => ctx.reply('Send `hi`'))
