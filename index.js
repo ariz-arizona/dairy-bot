@@ -48,13 +48,13 @@ const wtfScene = new WizardScene(
             await page.waitForNavigation()
             ctx.reply("WAIT DATA");
             return ctx.wizard.next();
-        })();
+        })(ctx);
     },
 
     (ctx) => {
         (async (ctx) => {
             await browser.close();
-        })();
+        })(ctx);
         ctx.reply('Финальный этап: создание матча.');
         return ctx.scene.leave();
     }
