@@ -16,12 +16,12 @@ const urls = {
 }
 const browserArgs = {
     headless: true, args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--single-process'
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--single-process'
     ],
-  };
+};
 
 const bot = new Telegraf(process.env.TOKEN)
 
@@ -33,20 +33,31 @@ bot.catch((err, ctx) => {
 const wtfScene = new WizardScene(
     "wtfScene", // Имя сцены
     (ctx) => {
-        ctx.reply("BEFORE ASYNC");
         (async (ctx) => {
-            ctx.reply("START ASYNC");
             const browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             ctx.reply("OPEN BROWSER");
 
-            await page.goto(urls.wtf2019)
+            await page.goto(`${urls.wtf2019}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
             page.click('#inform_box button');
             ctx.reply("WAIT LOGIN");
             await page.waitForNavigation()
             ctx.reply("WAIT DATA");
+
+            const result = await page.evaluate(() => {
+                const tags = [];
+                const links = document.querySelectorAll('a[id*=tag]');
+                for (const link of links) {
+                    const name = link.innerText;
+                    const id = link.href.replace('?tag=', '');
+                    if (text.indexOf('WTF') !== -1) {
+                        tags.push({ id, name })
+                    }
+                }
+            })
+            ctx.reply(`FIND ${result.length}`);
             return ctx.wizard.next();
         })(ctx);
     },
