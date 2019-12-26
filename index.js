@@ -60,17 +60,23 @@ const wtfScene = new WizardScene(
                         textTag = id;
                     }
                 }
-                return {commands, textTag};
-            })
+                return { commands, textTag };
+            });
+            const pageSize = 20;
+            ctx.session.commands = result.commands;
+            ctx.session.textTag = result.textTag;
+            ctx.session.curPage = 1;
+            ctx.session.pages = Math.ceil(result.commands.length / pageSize);
+            const { curPage } = ctx.session;
             ctx.reply(`FIND ${result.commands.length}`);
             ctx.replyWithHTML(
-                `${result.commands.slice(0, 20).map((el, i)=>`<b>${i}</b> -- ${el.name}`).join(`\n`)}`,
+                `${result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`)}`,
                 {
-                  reply_markup: Markup.inlineKeyboard(
-                    [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
-                  )
+                    reply_markup: Markup.inlineKeyboard(
+                        [Markup.callbackButton('Назад', `back`), Markup.callbackButton('Вперед', `next`)]
+                    )
                 }
-              )
+            )
             return ctx.wizard.next();
         })(ctx);
     },
@@ -78,6 +84,7 @@ const wtfScene = new WizardScene(
     (ctx) => {
         (async (ctx) => {
             await browser.close();
+            ctx.reply("CLOSE BROWSER");
         })(ctx);
         ctx.reply('Финальный этап: создание матча.');
         return ctx.scene.leave();
