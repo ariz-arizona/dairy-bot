@@ -52,7 +52,7 @@ const wtfScene = new WizardScene(
                 for (const link of links) {
                     const name = link.innerText;
                     const id = link.href.replace('?tag=', '');
-                    if (text.indexOf('WTF') !== -1) {
+                    if (name.indexOf('WTF') !== -1) {
                         tags.push({ id, name })
                     }
                 }
