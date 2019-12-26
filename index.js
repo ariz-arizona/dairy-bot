@@ -36,7 +36,7 @@ wtfScene.enter((ctx) => {
         });
 
         const page = await browser.newPage();
-
+console.log('test')
         await page.goto(urls.wtf2019)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
@@ -59,7 +59,7 @@ wtfScene.on('message', (ctx) => ctx.reply('Send `hi`'))
 
 // Create scene manager
 const stage = new Stage()
-stage.command('cancel', leave())
+stage.command('cancel', ctx=> leave(ctx))
 
 // Scene registration
 stage.register(wtfScene)
