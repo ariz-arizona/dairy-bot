@@ -2,6 +2,7 @@ const axios = require('axios');
 const Telegraf = require('telegraf');
 const session = require('telegraf/session')
 const Stage = require('telegraf/stage')
+const { leave } = Stage
 const WizardScene = require('telegraf/scenes/wizard');
 const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
@@ -77,13 +78,10 @@ wtfScene.enter((ctx) => {
                 )
             }
         );
+        await browser.close();
     })
 })
 wtfScene.leave((ctx) => {
-    (async (ctx) => {
-        await browser.close();
-        ctx.reply("CLOSE BROWSER");
-    })(ctx);
 });
 
 
@@ -122,9 +120,9 @@ const stage = new Stage();
 
 // Регистрируем сцену создания матча
 stage.register(wtfScene);
+stage.command('cancel', leave())
 
 bot.use(session());
 bot.use(stage.middleware());
 bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
-
 bot.launch();
