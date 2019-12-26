@@ -2,7 +2,7 @@ const axios = require('axios');
 const Telegraf = require('telegraf');
 const session = require('telegraf/session')
 const Stage = require('telegraf/stage')
-const WizardScene = require('telegraf/scenes/wizard'); 
+const WizardScene = require('telegraf/scenes/wizard');
 const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
@@ -25,37 +25,39 @@ bot.catch((err, ctx) => {
 const wtfScene = new WizardScene(
     "wtfScene", // Имя сцены
     (ctx) => {
-      ctx.reply('Этап 1: выбор типа матча.');
-      return ctx.wizard.next(); // Переходим к следующему обработчику.
-    },
-    (ctx) => {
-      ctx.reply('Этап 2: выбор времени проведения матча.');
-      return ctx.wizard.next(); // Переходим к следующему обработчику.
-    },
-    (ctx) => {
-      if (ctx.message.text === "Назад") {
-        ctx.wizard.back(); // Вернуться к предыдущиму обработчику
-      }
-      ctx.reply('Этап 3: выбор места проведения матча.');
-      return ctx.wizard.next(); // Переходим к следующему обработчику.
-    },
-    
-    // ...
-  
-    (ctx) => {
-      ctx.reply('Финальный этап: создание матча.');
-      return ctx.scene.leave();
-    }
-  );
-  
-  // Создаем менеджера сцен
-  const stage = new Stage();
-  
-  // Регистрируем сцену создания матча
-  stage.register(wtfScene);
-  
-  bot.use(session());
-  bot.use(stage.middleware());
-  bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
+        (async (ctx) => {
+            const browser = await puppeteer.launch(browserArgs);
+            const page = await browser.newPage();
+            ctx.reply("OPEN BROWSER");
 
-  bot.launch();
+            await page.goto(urls.wtf2019)
+            await page.type('#user_login', login)
+            await page.type('#user_pass', password)
+            page.click('input[type="submit"]');
+            ctx.reply("WAIT LOGIN");
+            await page.waitForNavigation()
+            ctx.reply("WAIT DATA");
+            return ctx.wizard.next();
+        });
+    },
+
+    (ctx) => {
+        (async (ctx) => {
+            await browser.close();
+        })()
+        ctx.reply('Финальный этап: создание матча.');
+        return ctx.scene.leave();
+    }
+);
+
+// Создаем менеджера сцен
+const stage = new Stage();
+
+// Регистрируем сцену создания матча
+stage.register(wtfScene);
+
+bot.use(session());
+bot.use(stage.middleware());
+bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
+
+bot.launch();
