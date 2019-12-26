@@ -33,7 +33,9 @@ bot.catch((err, ctx) => {
 const wtfScene = new WizardScene(
     "wtfScene", // Имя сцены
     (ctx) => {
+        ctx.reply("BEFORE ASYNC");
         (async (ctx) => {
+            ctx.reply("START ASYNC");
             const browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             ctx.reply("OPEN BROWSER");
