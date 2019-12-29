@@ -26,6 +26,7 @@ const browserArgs = {
 const pageSize = 20;
 
 const bot = new Telegraf(process.env.TOKEN)
+const stage = new Stage();
 
 bot.use(session());
 bot.use(stage.middleware());
@@ -94,6 +95,7 @@ wtfScene.action('back', ctx => {
     const { curPage: oldCurPage, commands } = ctx.session;
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
+    ctx.reply(JSON.stringify({oldCurPage, curPage, commands}))
     ctx.editMessageText(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
@@ -109,6 +111,7 @@ wtfScene.action('next', ctx => {
     const { curPage: oldCurPage, commands } = ctx.session;
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
+    ctx.reply(JSON.stringify({oldCurPage, curPage, commands}))
     ctx.editMessageText(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
@@ -119,9 +122,6 @@ wtfScene.action('next', ctx => {
         }
     )
 })
-
-// Создаем менеджера сцен
-const stage = new Stage();
 
 // Регистрируем сцену создания матча
 stage.register(wtfScene);
