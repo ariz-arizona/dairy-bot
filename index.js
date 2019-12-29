@@ -78,10 +78,12 @@ wtfScene.enter((ctx) => {
                 )
             }
         );
-        await browser.close();
-    })
+    })(ctx)
 })
 wtfScene.leave((ctx) => {
+    (async (ctx) => {
+        await browser.close();
+    })(ctx);
 });
 
 
