@@ -118,7 +118,6 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('c', '');
         const { items, textTag } = ctx.session.commands;
-        ctx.reply(JSON.stringify(items[value]).slice(0,400))
         if (!items[value]) {
             ctx.reply('Нет такой команды')
         } else {
@@ -141,12 +140,11 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
                     const name = post.querySelector('.postTitle h2').innerText;
-                    const id = post.id;
+                    const id = post.id.replace('post', '');
                     res.push({ id, name });
                 }
                 return res;
             });
-            ctx.reply(JSON.stringify(newItems))
             ctx.session.posts = {};
             ctx.session.posts.items = newItems;
             ctx.session.posts.curPage = 1;
@@ -158,6 +156,33 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
     })(ctx);
 });
 
+wtfScene.hears(/^p\d{1,}/gi, ctx => {
+    (async (ctx) => {
+        const value = ctx.match[0].replace('p', '');
+        const { items } = ctx.session.posts;
+        if (!items[value]) {
+            ctx.reply('Нет такого поста')
+        } else {
+            const item = ctx.session.posts.items[value];
+            const page = (await browser.pages())[0];
+            await page.setRequestInterception(true);
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                }
+                else {
+                    req.continue();
+                }
+            });
+            page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
+            await page.waitForNavigation();
+            const result = await page.evaluate(() => {
+                return document.body.innerText.slice(0, 400);
+            });
+            ctx.reply(result)
+        }
+    })(ctx);
+});
 
 wtfScene.action('c_back', ctx => {
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
