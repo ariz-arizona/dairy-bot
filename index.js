@@ -120,9 +120,10 @@ wtfScene.action('next', ctx => {
     const response = renderList(commands, curPage, pages);
     ctx.editMessageText(response[0], response[1]);
 })
-wtfScene.hears(/\d{1,}/, ctx => {
+
+wtfScene.hears(/\d{1,}/gi, ctx => {
     (async (ctx) => {
-        await browser.close();
+        ctx.reply(ctx.match);
     })(ctx);
 })
 
