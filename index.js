@@ -114,7 +114,7 @@ wtfScene.leave((ctx) => {
     })(ctx);
 });
 
-wtfScene.hears(/\d{1,}/gi, ctx => {
+wtfScene.hears(/^c\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0];
         const { commands, textTag } = ctx.session;
@@ -150,7 +150,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.session.posts.curPage = 1;
             ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
             const { items, curPage, pages } = ctx.session.posts;
-            const result = renderList(newItems, curPage, pages, 'p');
+            const result = renderList(items, curPage, pages, 'p');
             ctx.reply(result[0], result[1]);
         }
     })(ctx);
@@ -162,8 +162,8 @@ wtfScene.action('c_back', ctx => {
     if (!items.length) {
         ctx.reply('No commands');
     }
-    ctx.session.curPage = oldCurPage - 1;
-    const { curPage } = ctx.session;
+    ctx.session.commands.curPage = oldCurPage - 1;
+    const { curPage } = ctx.session.commands;
     const response = renderList(items, curPage, pages, 'c');
     ctx.editMessageText(response[0], response[1]);
 })
@@ -173,8 +173,8 @@ wtfScene.action('c_next', ctx => {
     if (!items.length) {
         ctx.reply('No commands');
     }
-    ctx.session.curPage = oldCurPage + 1;
-    const { curPage } = ctx.session;
+    ctx.session.commands.curPage = oldCurPage + 1;
+    const { curPage } = ctx.session.commands;
     const response = renderList(items, curPage, pages, 'c');
     ctx.editMessageText(response[0], response[1]);
 })
@@ -184,8 +184,8 @@ wtfScene.action('p_back', ctx => {
     if (!items.length) {
         ctx.reply('No posts');
     }
-    ctx.session.curPage = oldCurPage - 1;
-    const { curPage } = ctx.session;
+    ctx.session.posts.curPage = oldCurPage - 1;
+    const { curPage } = ctx.session.posts;
     const response = renderList(items, curPage, pages, 'p');
     ctx.editMessageText(response[0], response[1]);
 })
@@ -195,8 +195,8 @@ wtfScene.action('p_next', ctx => {
     if (!items.length) {
         ctx.reply('No posts');
     }
-    ctx.session.curPage = oldCurPage + 1;
-    const { curPage } = ctx.session;
+    ctx.session.posts.curPage = oldCurPage + 1;
+    const { curPage } = ctx.session.posts;
     const response = renderList(items, curPage, pages, 'p');
     ctx.editMessageText(response[0], response[1]);
 })
