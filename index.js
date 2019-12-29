@@ -78,7 +78,7 @@ wtfScene.enter((ctx) => {
             const links = document.querySelectorAll('a[id*=tag]');
             for (const link of links) {
                 const name = link.innerText;
-                const id = link.href.replace('?tag=', '');
+                const id = link.id.replace('tag', '')
                 if (name.indexOf('WTF') !== -1) {
                     commands.push({ id, name })
                 }
