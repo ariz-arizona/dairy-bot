@@ -70,7 +70,9 @@ wtfScene.enter((ctx) => {
         await page.type('#user_pass', password)
         page.click('#inform_box button');
         ctx.reply("WAIT LOGIN");
-        await page.waitForNavigation()
+        await page.waitForNavigation();
+        const cookies = await page.cookies();
+        ctx.session.cookies = cookies;
         ctx.reply("WAIT DATA");
 
         const result = await page.evaluate(() => {
@@ -130,6 +132,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.reply('Нет такой команды')
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
+            await page.setCookie(...ctx.session.cookies);
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
