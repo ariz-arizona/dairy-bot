@@ -124,11 +124,18 @@ wtfScene.action('next', ctx => {
 wtfScene.hears(/\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0];
-        const { commands } = ctx.session;
+        const { commands, textTag } = ctx.session;
         if (!commands[value]) {
             ctx.reply('Нет такой команды')
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
+            const page = await browser.newPage();
+            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commnds[value].name}`);
+            await page.waitForNavigation();
+            const result = await page.evaluate(() => {
+                return JSON.stringify(document.body).slice(0, 4000);
+            });
+            ctx.reply(result);
         }
     })(ctx);
 })
