@@ -119,6 +119,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
         const value = ctx.match[0].replace('c', '');
         const { items, textTag } = ctx.session.commands;
         ctx.reply(JSON.stringify(items).slice(0,400))
+        ctx.reply(JSON.stringify(items[value]).slice(0,400))
         if (!items[value]) {
             ctx.reply('Нет такой команды')
         } else {
