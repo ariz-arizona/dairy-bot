@@ -37,7 +37,6 @@ bot.catch((err, ctx) => {
 });
 
 let browser;
-let page;
 const wtfScene = new Scene('wtfScene');
 
 function renderList(commands, curPage, pages) {
@@ -62,7 +61,7 @@ function renderList(commands, curPage, pages) {
 wtfScene.enter((ctx) => {
     (async (ctx) => {
         browser = await puppeteer.launch(browserArgs);
-        page = await browser.newPage();
+        const page = await browser.newPage();
         ctx.reply("OPEN BROWSER");
 
         await page.goto(`${urls.wtf2019}?tags=`)
@@ -71,8 +70,6 @@ wtfScene.enter((ctx) => {
         page.click('#inform_box button');
         ctx.reply("WAIT LOGIN");
         await page.waitForNavigation();
-        const cookies = await page.cookies();
-        ctx.session.cookies = cookies;
         ctx.reply("WAIT DATA");
 
         const result = await page.evaluate(() => {
@@ -133,8 +130,13 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
             const page = (await browser.pages())[0];
-            // await page.setCookie(...ctx.session.cookies);
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
+            await page.type('#user_login', login)
+            await page.type('#user_pass', password)
+            page.click('#inform_box button');
+            ctx.reply("WAIT LOGIN");
+            await page.waitForNavigation();
+            ctx.reply("WAIT DATA");
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
                 return document.title
