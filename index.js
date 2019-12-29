@@ -122,7 +122,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
         if (!items[value]) {
             ctx.reply('Нет такой команды')
         } else {
-            const item = items[value];
+            const item = ctx.session.commands.items[value];
             ctx.reply(`Вы выбрали команду ${item.name}`);
             const page = (await browser.pages())[0];
             await page.setRequestInterception(true);
