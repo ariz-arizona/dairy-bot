@@ -81,8 +81,8 @@ wtfScene.enter((ctx) => {
                 parse_mode: 'HTML',
                 reply_markup: Markup.inlineKeyboard(
                     [
-                        curPage > 0 && Markup.callbackButton('Назад', `back`),
-                        curPage <= pages && Markup.callbackButton('Вперед', `next`)
+                        curPage > 1 && Markup.callbackButton('Назад', `back`),
+                        (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
                     ]
                 )
             }
@@ -108,8 +108,8 @@ wtfScene.action('back', ctx => {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(
                 [
-                    curPage > 0 && Markup.callbackButton('Назад', `back`),
-                    curPage <= pages && Markup.callbackButton('Вперед', `next`)
+                    curPage > 1 && Markup.callbackButton('Назад', `back`),
+                    (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
                 ]
             )
         }
@@ -128,8 +128,8 @@ wtfScene.action('next', ctx => {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(
                 [
-                    curPage > 0 && Markup.callbackButton('Назад', `back`),
-                    curPage <= pages && Markup.callbackButton('Вперед', `next`)
+                    curPage > 1 && Markup.callbackButton('Назад', `back`),
+                    (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
                 ]
             )
         }
