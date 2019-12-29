@@ -117,13 +117,11 @@ wtfScene.leave((ctx) => {
 wtfScene.hears(/^c\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('c', '');
-        ctx.reply(ctx.match);
-        ctx.reply(value)
-        const { commands, textTag } = ctx.session;
-        if (!commands[value]) {
+        const { items, textTag } = ctx.session.commands;
+        if (!items[value]) {
             ctx.reply('Нет такой команды')
         } else {
-            ctx.reply(`Вы выбрали команду ${commands[value].name}`);
+            ctx.reply(`Вы выбрали команду ${items[value].name}`);
             const page = (await browser.pages())[0];
             await page.setRequestInterception(true);
             page.on('request', (req) => {
@@ -134,7 +132,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
                     req.continue();
                 }
             });
-            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`);
+            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${items[value].id}`);
             await page.waitForNavigation();
             const newItems = await page.evaluate(() => {
                 const res = [];
