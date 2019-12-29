@@ -132,13 +132,15 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.reply('Нет такой команды')
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
-            await page.setCookie(...ctx.session.cookies);
-            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
-            await page.waitForNavigation();
-            const result = await page.evaluate(() => {
-                return document.title
-            });
-            ctx.reply(result);
+            var page = await browser.targets()[browser.targets().length-1].page();
+ctx.reply(page.url());
+            // await page.setCookie(...ctx.session.cookies);
+            // page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
+            // await page.waitForNavigation();
+            // const result = await page.evaluate(() => {
+            //     return document.title
+            // });
+            // ctx.reply(result);
         }
     })(ctx);
 })
