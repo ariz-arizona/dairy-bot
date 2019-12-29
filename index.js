@@ -44,10 +44,10 @@ function renderList(commands, curPage, pages, addSymbol = '') {
     const end = curPage * pageSize;
     const btns = [];
     if (curPage > 1) {
-        btns.push(Markup.callbackButton('Назад', `back`))
+        btns.push(Markup.callbackButton('Назад', `${addSymbol}_back`))
     }
     if (curPage <= pages - 1) {
-        btns.push(Markup.callbackButton('Вперед', `next`))
+        btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
     }
     return [
         commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`),
@@ -97,12 +97,13 @@ wtfScene.enter((ctx) => {
             }
             return { commands, textTag };
         });
-        ctx.session.commands = result.commands;
         ctx.session.textTag = result.textTag;
-        ctx.session.curPage = 1;
-        ctx.session.pages = Math.ceil(result.commands.length / pageSize);
-        const { curPage, pages, commands } = ctx.session;
-        const response = renderList(commands, curPage, pages);
+        ctx.session.commands = {};
+        ctx.session.commands.items = result.items;
+        ctx.session.commands.curPage = 1;
+        ctx.session.commands.pages = Math.ceil(result.commands.length / pageSize);
+        const { curPage, pages, items } = ctx.session.commands;
+        const response = renderList(items, curPage, pages, 'c');
         ctx.reply(response[0], response[1]);
     })(ctx)
 })
@@ -112,23 +113,6 @@ wtfScene.leave((ctx) => {
         ctx.reply("CLOSE BROWSER");
     })(ctx);
 });
-
-
-wtfScene.action('back', ctx => {
-    const { curPage: oldCurPage, commands, pages } = ctx.session;
-    ctx.session.curPage = oldCurPage - 1;
-    const { curPage } = ctx.session;
-    const response = renderList(commands, curPage, pages);
-    ctx.editMessageText(response[0], response[1]);
-})
-
-wtfScene.action('next', ctx => {
-    const { curPage: oldCurPage, commands, pages } = ctx.session;
-    ctx.session.curPage = oldCurPage + 1;
-    const { curPage } = ctx.session;
-    const response = renderList(commands, curPage, pages);
-    ctx.editMessageText(response[0], response[1]);
-})
 
 wtfScene.hears(/\d{1,}/gi, ctx => {
     (async (ctx) => {
@@ -170,6 +154,51 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.reply(result[0], result[1]);
         }
     })(ctx);
+});
+
+
+wtfScene.action('c_back', ctx => {
+    const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
+    if (!items.length) {
+        ctx.reply('No commands');
+    }
+    ctx.session.curPage = oldCurPage - 1;
+    const { curPage } = ctx.session;
+    const response = renderList(items, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
+})
+
+wtfScene.action('c_next', ctx => {
+    const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
+    if (!items.length) {
+        ctx.reply('No commands');
+    }
+    ctx.session.curPage = oldCurPage + 1;
+    const { curPage } = ctx.session;
+    const response = renderList(items, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
+})
+
+wtfScene.action('p_back', ctx => {
+    const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
+    if (!items.length) {
+        ctx.reply('No posts');
+    }
+    ctx.session.curPage = oldCurPage - 1;
+    const { curPage } = ctx.session;
+    const response = renderList(items, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
+})
+
+wtfScene.action('p_next', ctx => {
+    const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
+    if (!items.length) {
+        ctx.reply('No posts');
+    }
+    ctx.session.curPage = oldCurPage + 1;
+    const { curPage } = ctx.session;
+    const response = renderList(items, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
 })
 
 // Регистрируем сцену создания матча
