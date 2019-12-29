@@ -112,8 +112,8 @@ wtfScene.action('next', ctx => {
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
     ctx.reply(ctx.session.curPage)
-    ctx.reply(oldCurPage)
-    ctx.reply(curPage)
+    ctx.reply(pageSize)
+    ctx.reply(commands)
     ctx.reply(JSON.stringify({oldCurPage, curPage, commands}))
     ctx.editMessageText(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
