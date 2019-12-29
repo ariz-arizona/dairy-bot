@@ -188,14 +188,11 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     }
                 ]
             });
-            ebook.publish().then(() =>
-                ctx.replyWithDocument({
-                    source: ebook.download(),
-                    filename: item.id
-                })
-            ).catch(err=>{
-                ctx.reply(err)
-            })
+            await ebook.publish()
+            ctx.replyWithDocument({
+                source: ebook.download(),
+                filename: item.id
+            });
             // ctx.reply(result)
         }
     })(ctx);
