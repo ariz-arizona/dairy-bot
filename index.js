@@ -160,12 +160,13 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
                 }
                 return res;
             });
+            ctx.reply(JSON.stringify(newItems))
             ctx.session.posts = {};
             ctx.session.posts.items = newItems;
             ctx.session.posts.curPage = 1;
-            ctx.session.posts.pages = Math.ceil(newItems.length / pageSize);
+            ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
             const { items, curPage, pages } = ctx.session.posts;
-            const result = renderList(newItems, curPage, pages, 'p')
+            const result = renderList(newItems, curPage, pages, 'p');
             ctx.reply(result[0], result[1]);
         }
     })(ctx);
