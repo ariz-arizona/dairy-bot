@@ -93,7 +93,7 @@ wtfScene.enter((ctx) => {
         ctx.session.curPage = 1;
         ctx.session.pages = Math.ceil(result.commands.length / pageSize);
         const { curPage, pages, commands } = ctx.session;
-        const response = renderList(commands,curPage,  pages);
+        const response = renderList(commands, curPage, pages);
         ctx.reply(response[0], response[1]);
     })(ctx)
 })
@@ -123,7 +123,13 @@ wtfScene.action('next', ctx => {
 
 wtfScene.hears(/\d{1,}/gi, ctx => {
     (async (ctx) => {
-        ctx.reply(ctx.match);
+        const value = ctx.match[0];
+        const { commands } = ctx.session;
+        if (!commands[value]) {
+            ctx.reply('Нет такой команды')
+        } else {
+            ctx.reply(`Вы выбрали команду ${commands[value].name}`);
+        }
     })(ctx);
 })
 
