@@ -137,10 +137,10 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             // ctx.reply("WAIT LOGIN");
             // await page.waitForNavigation();
             // ctx.reply("WAIT DATA");
-            // await page.waitForNavigation();
+            await page.waitForNavigation();
             const result = await page.evaluate(() => {
                 // return document.title
-                return JSON.stringify(document.querySelector('body')).slice(0, 4000)
+                return JSON.stringify(document.querySelector('body')).slice(0,4000)
             });
             ctx.reply(result);
         }
