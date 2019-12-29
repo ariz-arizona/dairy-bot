@@ -164,7 +164,7 @@ wtfScene.action('c_back', ctx => {
     }
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
-    const response = renderList(items, curPage, pages);
+    const response = renderList(items, curPage, pages, 'c');
     ctx.editMessageText(response[0], response[1]);
 })
 
@@ -175,7 +175,7 @@ wtfScene.action('c_next', ctx => {
     }
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
-    const response = renderList(items, curPage, pages);
+    const response = renderList(items, curPage, pages, 'c');
     ctx.editMessageText(response[0], response[1]);
 })
 
@@ -186,7 +186,7 @@ wtfScene.action('p_back', ctx => {
     }
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
-    const response = renderList(items, curPage, pages);
+    const response = renderList(items, curPage, pages, 'p');
     ctx.editMessageText(response[0], response[1]);
 })
 
@@ -197,7 +197,7 @@ wtfScene.action('p_next', ctx => {
     }
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
-    const response = renderList(items, curPage, pages);
+    const response = renderList(items, curPage, pages, 'p');
     ctx.editMessageText(response[0], response[1]);
 })
 
