@@ -160,6 +160,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
                 }
                 return res;
             });
+            ctx.session.posts = {};
             ctx.session.posts.items = newItems;
             ctx.session.posts.curPage = 1;
             ctx.session.posts.pages = Math.ceil(result.length / pageSize);
