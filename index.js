@@ -17,7 +17,7 @@ const urls = {
 }
 const browserArgs = {
     headless: true, args: [
-        '--no-sandbox',
+        // '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--single-process'
