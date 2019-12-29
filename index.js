@@ -91,7 +91,7 @@ wtfScene.action('back', ctx => {
     const { curPage: oldCurPage, commands } = ctx.scene.state;
     ctx.scene.state.curPage = oldCurPage - 1;
     const { curPage } = ctx.scene.state;
-    ctx.editMessageText(
+    ctx.reply(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
@@ -106,7 +106,7 @@ wtfScene.action('next', ctx => {
     const { curPage: oldCurPage, commands } = ctx.scene.state;
     ctx.scene.state.curPage = oldCurPage + 1;
     const { curPage } = ctx.scene.state;
-    ctx.editMessageText(
+    ctx.reply(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
