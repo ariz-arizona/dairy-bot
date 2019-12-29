@@ -130,12 +130,12 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
             const page = (await browser.pages())[0];
-            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
+            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
                 return document.querySelector('body').innerText.slice(0,4000)
             });
-            ctx.reply(`tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
+            ctx.reply(result);
         }
     })(ctx);
 })
