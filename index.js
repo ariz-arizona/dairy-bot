@@ -75,16 +75,18 @@ wtfScene.enter((ctx) => {
 
         const start = (curPage - 1) * pageSize;
         const end = curPage * pageSize;
+        const btns = [];
+        if (curPage > 1) {
+            btns.push(Markup.callbackButton('Назад', `back`))
+        }
+        if (curPage <= pages - 1) {
+            btns.push(Markup.callbackButton('Вперед', `next`))
+        }
         ctx.reply(
             result.commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
             {
                 parse_mode: 'HTML',
-                reply_markup: Markup.inlineKeyboard(
-                    [
-                        curPage > 1 && Markup.callbackButton('Назад', `back`),
-                        (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
-                    ]
-                )
+                reply_markup: Markup.inlineKeyboard(btns)
             }
         );
     })(ctx)
@@ -102,16 +104,18 @@ wtfScene.action('back', ctx => {
     const { curPage } = ctx.session;
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
+    const btns = [];
+    if (curPage > 1) {
+        btns.push(Markup.callbackButton('Назад', `back`))
+    }
+    if (curPage <= pages - 1) {
+        btns.push(Markup.callbackButton('Вперед', `next`))
+    }
     ctx.editMessageText(
         commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
-            reply_markup: Markup.inlineKeyboard(
-                [
-                    curPage > 1 && Markup.callbackButton('Назад', `back`),
-                    (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
-                ]
-            )
+            reply_markup: Markup.inlineKeyboard(btns)
         }
     )
 })
@@ -122,16 +126,18 @@ wtfScene.action('next', ctx => {
     const { curPage } = ctx.session;
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
+    const btns = [];
+    if (curPage > 1) {
+        btns.push(Markup.callbackButton('Назад', `back`))
+    }
+    if (curPage <= pages - 1) {
+        btns.push(Markup.callbackButton('Вперед', `next`))
+    }
     ctx.editMessageText(
         commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
-            reply_markup: Markup.inlineKeyboard(
-                [
-                    curPage > 1 && Markup.callbackButton('Назад', `back`),
-                    (curPage <= pages - 1) && Markup.callbackButton('Вперед', `next`)
-                ]
-            )
+            reply_markup: Markup.inlineKeyboard(btns)
         }
     )
 })
