@@ -35,8 +35,29 @@ bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err);
     ctx.reply("ERROR! LOOK LOGS PLS")
 });
+
 let browser;
 const wtfScene = new Scene('wtfScene');
+
+function renderList(commands, curPage, pages) {
+    const start = (curPage - 1) * pageSize;
+    const end = curPage * pageSize;
+    const btns = [];
+    if (curPage > 1) {
+        btns.push(Markup.callbackButton('Назад', `back`))
+    }
+    if (curPage <= pages - 1) {
+        btns.push(Markup.callbackButton('Вперед', `next`))
+    }
+    return [
+        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
+        {
+            parse_mode: 'HTML',
+            reply_markup: Markup.inlineKeyboard(btns)
+        }
+    ]
+}
+
 wtfScene.enter((ctx) => {
     (async (ctx) => {
         browser = await puppeteer.launch(browserArgs);
@@ -72,28 +93,14 @@ wtfScene.enter((ctx) => {
         ctx.session.curPage = 1;
         ctx.session.pages = Math.ceil(result.commands.length / pageSize);
         const { curPage, pages } = ctx.session;
-
-        const start = (curPage - 1) * pageSize;
-        const end = curPage * pageSize;
-        const btns = [];
-        if (curPage > 1) {
-            btns.push(Markup.callbackButton('Назад', `back`))
-        }
-        if (curPage <= pages - 1) {
-            btns.push(Markup.callbackButton('Вперед', `next`))
-        }
-        ctx.reply(
-            result.commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
-            {
-                parse_mode: 'HTML',
-                reply_markup: Markup.inlineKeyboard(btns)
-            }
-        );
+        const response = renderList(commands, curPage, pages);
+        ctx.reply(response[0], response[1]);
     })(ctx)
 })
 wtfScene.leave((ctx) => {
     (async (ctx) => {
         await browser.close();
+        ctx.reply("CLOSE BROWSER");
     })(ctx);
 });
 
@@ -102,44 +109,21 @@ wtfScene.action('back', ctx => {
     const { curPage: oldCurPage, commands, pages } = ctx.session;
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
-    const start = (curPage - 1) * pageSize;
-    const end = curPage * pageSize;
-    const btns = [];
-    if (curPage > 1) {
-        btns.push(Markup.callbackButton('Назад', `back`))
-    }
-    if (curPage <= pages - 1) {
-        btns.push(Markup.callbackButton('Вперед', `next`))
-    }
-    ctx.editMessageText(
-        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
-        {
-            parse_mode: 'HTML',
-            reply_markup: Markup.inlineKeyboard(btns)
-        }
-    )
+    const response = renderList(commands, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
 })
 
 wtfScene.action('next', ctx => {
     const { curPage: oldCurPage, commands, pages } = ctx.session;
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
-    const start = (curPage - 1) * pageSize;
-    const end = curPage * pageSize;
-    const btns = [];
-    if (curPage > 1) {
-        btns.push(Markup.callbackButton('Назад', `back`))
-    }
-    if (curPage <= pages - 1) {
-        btns.push(Markup.callbackButton('Вперед', `next`))
-    }
-    ctx.editMessageText(
-        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
-        {
-            parse_mode: 'HTML',
-            reply_markup: Markup.inlineKeyboard(btns)
-        }
-    )
+    const response = renderList(commands, curPage, pages);
+    ctx.editMessageText(response[0], response[1]);
+})
+wtfScene.hears(/\d{1,}/, ctx => {
+    (async (ctx) => {
+        await browser.close();
+    })(ctx);
 })
 
 // Регистрируем сцену создания матча
