@@ -106,7 +106,7 @@ wtfScene.action('next', ctx => {
     const { curPage: oldCurPage, commands } = ctx.scene.state;
     ctx.scene.state.curPage = oldCurPage + 1;
     const { curPage } = ctx.scene.state;
-    ctx.reply(JSON.stringify(ctx.scene))
+    ctx.reply(JSON.stringify(ctx.scene.state))
     ctx.reply(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
