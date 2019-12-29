@@ -62,6 +62,15 @@ wtfScene.enter((ctx) => {
     (async (ctx) => {
         browser = await puppeteer.launch(browserArgs);
         const page = await browser.newPage();
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+            if (req.resourceType() === 'image') {
+                req.abort();
+            }
+            else {
+                req.continue();
+            }
+        });
         ctx.reply("OPEN BROWSER");
 
         await page.goto(`${urls.wtf2019}?tags=`)
@@ -130,10 +139,24 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
             const page = (await browser.pages())[0];
+            await page.setRequestInterception(true);
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                }
+                else {
+                    req.continue();
+                }
+            });
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return document.querySelector('body').innerText.slice(0,4000)
+                const res = [];
+                const titles = document.querySelectorAll('.singlePost .postTitle h2');
+                for (const title of titles) {
+                    res.push(title.innerText);
+                }
+                return res.join('\n')
             });
             ctx.reply(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`)
             ctx.reply(result);
