@@ -39,7 +39,7 @@ bot.catch((err, ctx) => {
 let browser;
 const wtfScene = new Scene('wtfScene');
 
-function renderList(commands, curPage, pages) {
+function renderList(commands, curPage, pages, addSymbol = '') {
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
     const btns = [];
@@ -50,7 +50,7 @@ function renderList(commands, curPage, pages) {
         btns.push(Markup.callbackButton('Вперед', `next`))
     }
     return [
-        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
+        commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(btns)
@@ -150,16 +150,22 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             });
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`);
             await page.waitForNavigation();
-            const result = await page.evaluate(() => {
+            const items = await page.evaluate(() => {
                 const res = [];
-                const titles = document.querySelectorAll('.singlePost .postTitle h2');
-                for (const title of titles) {
-                    res.push(title.innerText);
+                const items = document.querySelectorAll('.singlePost');
+                for (const post of items) {
+                    const name = post.querySelector('.postTitle h2');
+                    const id = post.id;
+                    res.push({ id, name });
                 }
-                return res.join('\n')
+                return res;
             });
-            ctx.reply(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`)
-            ctx.reply(result);
+            ctx.session.posts.items = items;
+            ctx.session.posts.curPage = 1;
+            ctx.session.posts.pages = Math.ceil(result.length / pageSize);
+            const { items, curPage, pages } = ctx.session.posts;
+            const result = renderList(items, curPage, pages, 'p')
+            ctx.reply(result[0], result[1]);
         }
     })(ctx);
 })
