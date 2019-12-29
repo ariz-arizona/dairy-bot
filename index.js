@@ -133,7 +133,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return JSON.stringify(document.body).slice(0, 4000);
+                return document.title
             });
             ctx.reply(result);
         }
