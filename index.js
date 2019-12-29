@@ -193,7 +193,9 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     source: ebook.download(),
                     filename: item.id
                 })
-            )
+            ).catch(err=>{
+                ctx.reply(err)
+            })
             // ctx.reply(result)
         }
     })(ctx);
