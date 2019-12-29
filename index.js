@@ -92,8 +92,8 @@ wtfScene.enter((ctx) => {
         ctx.session.textTag = result.textTag;
         ctx.session.curPage = 1;
         ctx.session.pages = Math.ceil(result.commands.length / pageSize);
-        const { curPage, pages } = ctx.session;
-        const response = renderList(commands, curPage, pages);
+        const { curPage, pages, commands } = ctx.session;
+        const response = renderList(curPage, commands, pages);
         ctx.reply(response[0], response[1]);
     })(ctx)
 })
