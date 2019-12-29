@@ -140,7 +140,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
                 // return document.title
-                return JSON.stringify(document.querySelector('body')).slice(0,4000)
+                return document.querySelector('body').innerText.slice(0,4000)
             });
             ctx.reply(result);
         }
