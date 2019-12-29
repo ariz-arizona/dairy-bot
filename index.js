@@ -116,7 +116,7 @@ wtfScene.leave((ctx) => {
 
 wtfScene.hears(/^c\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0];
+        const value = ctx.match[0].replace('c', '');
         const { commands, textTag } = ctx.session;
         if (!commands[value]) {
             ctx.reply('Нет такой команды')
