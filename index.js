@@ -135,6 +135,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             const result = await page.evaluate(() => {
                 return document.querySelector('body').innerText.slice(0,4000)
             });
+            ctx.reply(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`)
             ctx.reply(result);
         }
     })(ctx);
