@@ -131,15 +131,16 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
             const page = (await browser.pages())[0];
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
-            await page.type('#user_login', login)
-            await page.type('#user_pass', password)
-            page.click('#inform_box button');
-            ctx.reply("WAIT LOGIN");
-            await page.waitForNavigation();
-            ctx.reply("WAIT DATA");
-            await page.waitForNavigation();
+            // await page.type('#user_login', login)
+            // await page.type('#user_pass', password)
+            // page.click('#inform_box button');
+            // ctx.reply("WAIT LOGIN");
+            // await page.waitForNavigation();
+            // ctx.reply("WAIT DATA");
+            // await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return document.title
+                // return document.title
+                return JSON.stringify(document.querySelector('body')).slice(0, 4000)
             });
             ctx.reply(result);
         }
