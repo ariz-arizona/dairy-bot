@@ -130,7 +130,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
         } else {
             ctx.reply(`Вы выбрали команду ${commands[value].name}`);
             const page = await browser.newPage();
-            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commnds[value].name}`);
+            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].name}`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
                 return JSON.stringify(document.body).slice(0, 4000);
