@@ -150,7 +150,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             });
             page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${commands[value].id}`);
             await page.waitForNavigation();
-            const items = await page.evaluate(() => {
+            const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
@@ -164,7 +164,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
             ctx.session.posts.curPage = 1;
             ctx.session.posts.pages = Math.ceil(result.length / pageSize);
             const { items, curPage, pages } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 'p')
+            const result = renderList(newItems, curPage, pages, 'p')
             ctx.reply(result[0], result[1]);
         }
     })(ctx);
