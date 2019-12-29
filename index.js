@@ -82,26 +82,26 @@ wtfScene.enter((ctx) => {
         ctx.reply("WAIT DATA");
 
         const result = await page.evaluate(() => {
-            const commands = [];
+            const items = [];
             let textTag = '';
             const links = document.querySelectorAll('a[id*=tag]');
             for (const link of links) {
                 const name = link.innerText;
                 const id = link.id.replace('tag', '')
                 if (name.indexOf('WTF') !== -1) {
-                    commands.push({ id, name })
+                    items.push({ id, name })
                 }
                 if (name === 'тексты') {
                     textTag = id;
                 }
             }
-            return { commands, textTag };
+            return { items, textTag };
         });
         ctx.session.textTag = result.textTag;
         ctx.session.commands = {};
         ctx.session.commands.items = result.items;
         ctx.session.commands.curPage = 1;
-        ctx.session.commands.pages = Math.ceil(result.commands.length / pageSize);
+        ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
         const { curPage, pages, items } = ctx.session.commands;
         const response = renderList(items, curPage, pages, 'c');
         ctx.reply(response[0], response[1]);
