@@ -71,7 +71,7 @@ wtfScene.enter((ctx) => {
         ctx.session.textTag = result.textTag;
         ctx.session.curPage = 1;
         ctx.session.pages = Math.ceil(result.commands.length / pageSize);
-        const { curPage } = ctx.session;
+        const { curPage, pages } = ctx.session;
 
         const start = (curPage - 1) * pageSize;
         const end = curPage * pageSize;
@@ -97,7 +97,7 @@ wtfScene.leave((ctx) => {
 
 
 wtfScene.action('back', ctx => {
-    const { curPage: oldCurPage, commands } = ctx.session;
+    const { curPage: oldCurPage, commands, pages } = ctx.session;
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
     const start = (curPage - 1) * pageSize;
@@ -117,7 +117,7 @@ wtfScene.action('back', ctx => {
 })
 
 wtfScene.action('next', ctx => {
-    const { curPage: oldCurPage, commands } = ctx.session;
+    const { curPage: oldCurPage, commands, pages } = ctx.session;
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
     const start = (curPage - 1) * pageSize;
