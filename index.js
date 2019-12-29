@@ -154,7 +154,7 @@ wtfScene.hears(/\d{1,}/gi, ctx => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
-                    const name = post.querySelector('.postTitle h2');
+                    const name = post.querySelector('.postTitle h2').innerText;
                     const id = post.id;
                     res.push({ id, name });
                 }
