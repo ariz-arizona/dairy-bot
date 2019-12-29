@@ -8,6 +8,7 @@ const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
 const puppeteer = require('puppeteer');
+const EpubPress = require('epub-press-js');
 
 const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
@@ -177,9 +178,23 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return document.body.innerText.slice(0, 400);
+                return document.querySelector('#page-t').innerHTML;
             });
-            ctx.reply(result)
+            const ebook = new EpubPress({
+                title: item.name,
+                sections: [
+                    {
+                        html: result,
+                    }
+                ]
+            });
+            ebook.publish().then(() =>
+                ctx.replyWithDocument({
+                    source: ebook.download(),
+                    filename: item.id
+                })
+            )
+            // ctx.reply(result)
         }
     })(ctx);
 });
