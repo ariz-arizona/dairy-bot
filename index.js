@@ -27,6 +27,9 @@ const pageSize = 20;
 
 const bot = new Telegraf(process.env.TOKEN)
 
+bot.use(session());
+bot.use(stage.middleware());
+
 bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err);
     ctx.reply("ERROR! LOOK LOGS PLS")
@@ -91,7 +94,7 @@ wtfScene.action('back', ctx => {
     const { curPage: oldCurPage, commands } = ctx.session;
     ctx.session.curPage = oldCurPage - 1;
     const { curPage } = ctx.session;
-    ctx.reply(
+    ctx.editMessageText(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
@@ -106,8 +109,7 @@ wtfScene.action('next', ctx => {
     const { curPage: oldCurPage, commands } = ctx.session;
     ctx.session.curPage = oldCurPage + 1;
     const { curPage } = ctx.session;
-    ctx.reply(JSON.stringify(ctx.session))
-    ctx.reply(
+    ctx.editMessageText(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
@@ -125,7 +127,5 @@ const stage = new Stage();
 stage.register(wtfScene);
 stage.command('cancel', leave())
 
-bot.use(session());
-bot.use(stage.middleware());
 bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
 bot.launch();
