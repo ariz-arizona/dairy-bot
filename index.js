@@ -63,11 +63,11 @@ wtfScene.enter((ctx) => {
             }
             return { commands, textTag };
         });
-        ctx.scene.state.commands = result.commands;
-        ctx.scene.state.textTag = result.textTag;
-        ctx.scene.state.curPage = 1;
-        ctx.scene.state.pages = Math.ceil(result.commands.length / pageSize);
-        const { curPage } = ctx.scene.state;
+        ctx.session.commands = result.commands;
+        ctx.session.textTag = result.textTag;
+        ctx.session.curPage = 1;
+        ctx.session.pages = Math.ceil(result.commands.length / pageSize);
+        const { curPage } = ctx.session;
         ctx.reply(`FIND ${result.commands.length}`);
         ctx.reply(
             result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
@@ -88,9 +88,9 @@ wtfScene.leave((ctx) => {
 
 
 wtfScene.action('back', ctx => {
-    const { curPage: oldCurPage, commands } = ctx.scene.state;
-    ctx.scene.state.curPage = oldCurPage - 1;
-    const { curPage } = ctx.scene.state;
+    const { curPage: oldCurPage, commands } = ctx.session;
+    ctx.session.curPage = oldCurPage - 1;
+    const { curPage } = ctx.session;
     ctx.reply(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
@@ -103,10 +103,10 @@ wtfScene.action('back', ctx => {
 })
 
 wtfScene.action('next', ctx => {
-    const { curPage: oldCurPage, commands } = ctx.scene.state;
-    ctx.scene.state.curPage = oldCurPage + 1;
-    const { curPage } = ctx.scene.state;
-    ctx.reply(JSON.stringify(ctx.scene.state))
+    const { curPage: oldCurPage, commands } = ctx.session;
+    ctx.session.curPage = oldCurPage + 1;
+    const { curPage } = ctx.session;
+    ctx.reply(JSON.stringify(ctx.session))
     ctx.reply(
         commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
         {
