@@ -72,9 +72,11 @@ wtfScene.enter((ctx) => {
         ctx.session.curPage = 1;
         ctx.session.pages = Math.ceil(result.commands.length / pageSize);
         const { curPage } = ctx.session;
-        ctx.reply(`FIND ${result.commands.length}`);
+
+        const start = (curPage - 1) * pageSize;
+        const end = curPage * pageSize;
         ctx.reply(
-            result.commands.slice((curPage - 1) * pageSize, pageSize).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+            result.commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
             {
                 parse_mode: 'HTML',
                 reply_markup: Markup.inlineKeyboard(
@@ -98,7 +100,7 @@ wtfScene.action('back', ctx => {
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
     ctx.editMessageText(
-        commands.slice(start, end).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(
@@ -115,7 +117,7 @@ wtfScene.action('next', ctx => {
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
     ctx.editMessageText(
-        commands.slice(start, end).map((el, i) => `<b>${i}</b> -- ${el.name}`).join(`\n`),
+        commands.slice(start, end).map((el, i) => `<b>${start + i}</b> -- ${el.name}`).join(`\n`),
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(
