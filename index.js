@@ -1,15 +1,12 @@
-const axios = require('axios');
 const Telegraf = require('telegraf');
 const session = require('telegraf/session')
 const Stage = require('telegraf/stage')
 const { leave } = Stage
-const WizardScene = require('telegraf/scenes/wizard');
 const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
 const puppeteer = require('puppeteer');
 const EpubPress = require('epub-press-js');
-const Epub = require("epub-gen")
 
 const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
@@ -196,14 +193,15 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 await ebook.publish()
                     .then(() => {
                         ebook.email('ar.ariz.arizona@gmail.com')
-
                     })
                     .catch((error) => ctx.reply({ error }));
                 await ebook.checkStatus().then((status) => {
                     ctx.reply({ status });
                     if(status.progress === 100){
+                        ctx.reply(status.progress);
+                        const book = await ebook.download();
                         ctx.replyWithDocument({
-                            source: ebook.download(),
+                            source: book,
                             filename: item.id
                         });
                     }
