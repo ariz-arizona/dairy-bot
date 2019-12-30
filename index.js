@@ -135,7 +135,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
             });
             const link = `${urls.wtf2019}?tag[]=${textTag}&tag[]=${item.id}`;
             page.goto(link);
-            ctx.reply(`go to ${link}`)
+            ctx.reply(`GO TO ${link}`)
             await page.waitForNavigation();
             const newItems = await page.evaluate(() => {
                 const res = [];
@@ -180,33 +180,33 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 });
                 const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
                 page.goto(link);
-                ctx.reply(`go to ${link}`)
+                ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
                 const result = await page.evaluate(() => {
                     return document.querySelector('#page-t').innerText;
                 });
                 ctx.reply(result.slice(300, 600));
+                const string = `<?xml version="1.0" encoding="UTF-8"?>
+                <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <description>
+                  <title-info>
+                  <book-title>${item.name}</book-title>
+                  <lang>ru</lang>
+                  <src-lang>ru</src-lang>
+                  </title-info>  
+                  <src-url>${link}</src-url>
+                  <id>${item.id}</id>
+                  <version>2.0</version>
+                </description>
+                <body>
+                <title>${item.name}</title>
+                  <p>
+                ${result}
+                  </p>
+                </body>
+                </FictionBook>`;
                 ctx.replyWithDocument({
-                    source: `<?xml version="1.0" encoding="UTF-8"?>
-                    <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <description>
-                      <title-info>
-                      <book-title>${item.name}</book-title>
-                      <lang>ru</lang>
-                      <src-lang>ru</src-lang>
-                      </title-info>  
-                      <src-url>${link}</src-url>
-                      <id>${item.id}</id>
-                      <version>2.0</version>
-                    </description>
-                    <body>
-                    <title>${item.name}</title>
-                      <p>
-                    ${result}
-                      </p>
-                    </body>
-                    </FictionBook>
-                    `,
+                    source: stringToArrayBuffer(string),
                     filename: `${item.id}.fb2`
                 })
             }
@@ -267,3 +267,22 @@ stage.command('cancel', leave())
 
 bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
 bot.launch();
+
+function stringToArrayBuffer(str) {
+    if (/[\u0080-\uffff]/.test(str)) {
+        throw new Error("this needs encoding, like UTF-8");
+    }
+    var arr = new Uint8Array(str.length);
+    for (var i = str.length; i--;)
+        arr[i] = str.charCodeAt(i);
+    return arr.buffer;
+}
+
+function arrayBufferToString(buffer) {
+    var arr = new Uint8Array(buffer);
+    var str = String.fromCharCode.apply(String, arr);
+    if (/[\u0080-\uffff]/.test(str)) {
+        throw new Error("this string seems to contain (still encoded) multibytes");
+    }
+    return str;
+}
