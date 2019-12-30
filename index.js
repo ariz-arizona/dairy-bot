@@ -203,11 +203,14 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         //     source: book,
                         //     filename: item.id
                         // });
-                        const b = await ebook.download();
-                        ctx.telegram.sendDocument(ctx.from.id, {
-                            source: b,
-                            filename: 'somefilename.txt'
-                         }).catch(function(error){ ctx.reply({error}); })
+                        ctx.reply(ebook.getDownloadUrl());
+                        await ebook.download().then(res=>{
+
+                            ctx.telegram.sendDocument(ctx.from.id, {
+                                source: res,
+                                filename: 'somefilename.txt'
+                            }).catch(function(error){ ctx.reply({error}); })
+                        })
                     }
                 }).catch((error) => ctx.reply({ error }));
                 // ctx.reply(result.slice(400, 600))
