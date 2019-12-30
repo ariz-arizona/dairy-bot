@@ -132,7 +132,9 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
                     req.continue();
                 }
             });
-            page.goto(`${urls.wtf2019}?tag%5B%5D=${textTag}&tag%5B%5D=${item.id}`);
+            const link = `${urls.wtf2019}?tag[]=${textTag}&tag[]=${item.id}`;
+            page.goto(link);
+            ctx.reply(`go to ${link}`)
             await page.waitForNavigation();
             const newItems = await page.evaluate(() => {
                 const res = [];
@@ -175,45 +177,17 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         req.continue();
                     }
                 });
+                const link = link;
                 page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
                 await page.waitForNavigation();
                 const result = await page.evaluate(() => {
                     return document.querySelector('#page-t').innerText;
                 });
-                const ebook = new EpubPress({
-                    title: item.name,
-                    description: item.name,
-                    sections: [
-                        {
-                            url: page.url(),
-                            html: `${result}`,
-                        }
-                    ]
-                });
-                await ebook.publish()
-                    .then(() => {
-                        ebook.email('ar.ariz.arizona@gmail.com')
-                    })
-                    .catch((error) => ctx.reply({ error }));
-                await ebook.checkStatus().then((status) => {
-                    ctx.reply({ status });
-                    if (status.progress === 100) {
-                        // const book = ebook.download();
-                        // ctx.replyWithDocument({
-                        //     source: book,
-                        //     filename: item.id
-                        // });
-                        ctx.reply(ebook.getDownloadUrl());
-                    }
-                }).catch((error) => ctx.reply({ error }));
-                await ebook.download().then(res => {
-
-                    ctx.telegram.sendDocument(ctx.from.id, {
-                        source: res,
-                        filename: 'somefilename.txt'
-                    }).catch(function (error) { ctx.reply({ error }); })
+                ctx.reply(resul.slice(300, 600));
+                ctx.replyWithDocument({
+                    source: ``,
+                    filename: `${item.id}.fb2`
                 })
-                // ctx.reply(result.slice(400, 600))
             }
         })(ctx);
 
