@@ -191,6 +191,9 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             ebook.on('statusUpdate', (arg)=>{
                 ctx.reply(arg)
             });
+            ebook.checkStatus().then((status) => {
+                ctx.reply(status)
+            }).catch((error) => {});
             await ebook.publish()
             // ctx.replyWithDocument({
             //     source: ebook.download(),
