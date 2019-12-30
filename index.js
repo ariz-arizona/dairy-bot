@@ -181,25 +181,25 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             const result = await page.evaluate(() => {
                 return document.querySelector('#page-t').innerText;
             });
-            new Epub({content:[{data: result}]}).promise.then(function(success){
-                ctx.reply({success})
-                ctx.reply("Ebook Generated Successfully!")
-               }, function(err){
-                ctx.reply(err);
-                ctx.reply("Failed to generate Ebook because of ", err)
-            })
-            // const ebook = new EpubPress({
-            //     title: item.name,
-            //     sections: [
-            //         {
-            //             html: `<div>${result.slice(400, 600)}</div>`,
-            //         }
-            //     ]
-            // });
-            // ebook.publish()
-            // await ebook.checkStatus().then((status) => {
-            //     ctx.reply({status})
-            // }).catch((error) => ctx.reply({error}));
+            // new Epub({content:[{data: result}]}).promise.then(function(success){
+            //     ctx.reply({success})
+            //     ctx.reply("Ebook Generated Successfully!")
+            //    }, function(err){
+            //     ctx.reply(err);
+            //     ctx.reply("Failed to generate Ebook because of ", err)
+            // })
+            const ebook = new EpubPress({
+                title: item.name,
+                sections: [
+                    {
+                        html: `<html><body><p>${result.slice(400, 600)}</p></body></html>`,
+                    }
+                ]
+            });
+            ebook.publish()
+            await ebook.checkStatus().then((status) => {
+                ctx.reply({status})
+            }).catch((error) => ctx.reply({error}));
             // ctx.replyWithDocument({
             //     source: ebook.download(),
             //     filename: item.id
