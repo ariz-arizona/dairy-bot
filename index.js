@@ -200,7 +200,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         }
                     ]
                 });
-                ebook.publish()
+                await ebook.publish().catch((error) => ctx.reply({ error }));
                 await ebook.checkStatus().then((status) => {
                     ctx.reply({ status })
                 }).catch((error) => ctx.reply({ error }));
