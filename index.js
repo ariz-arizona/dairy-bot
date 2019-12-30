@@ -178,8 +178,9 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         req.continue();
                     }
                 });
-                const link = link;
-                page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
+                const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
+                page.goto(link);
+                ctx.reply(`go to ${link}`)
                 await page.waitForNavigation();
                 const result = await page.evaluate(() => {
                     return document.querySelector('#page-t').innerText;
