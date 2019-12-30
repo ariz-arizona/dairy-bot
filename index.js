@@ -204,7 +204,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         //     filename: item.id
                         // });
                         ctx.telegram.sendDocument(ctx.from.id, {
-                            source: book,
+                            source: ebook,
                             filename: 'somefilename.txt'
                          }).catch(function(error){ ctx.reply({error}); })
                     }
