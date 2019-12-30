@@ -178,13 +178,13 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return document.querySelector('#page-t').innerHTML;
+                return document.querySelector('#page-t').innerText;
             });
             const ebook = new EpubPress({
                 title: item.name,
                 sections: [
                     {
-                        html: result,
+                        html: result.slice(400, 600),
                     }
                 ]
             });
