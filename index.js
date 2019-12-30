@@ -184,16 +184,13 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 title: item.name,
                 sections: [
                     {
-                        html: result.slice(400, 600),
+                        html: `<div>${result.slice(400, 600)}</div>`,
                     }
                 ]
             });
-            ebook.on('statusUpdate', (arg)=>{
-                ctx.reply(arg)
-            });
             ebook.checkStatus().then((status) => {
-                ctx.reply(status)
-            }).catch((error) => {});
+                ctx.reply({status})
+            }).catch((error) => ctx.reply({error}));
             await ebook.publish()
             // ctx.replyWithDocument({
             //     source: ebook.download(),
