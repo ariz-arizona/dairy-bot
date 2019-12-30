@@ -209,6 +209,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     source: stringToArrayBuffer(string),
                     filename: `${item.id}.fb2`
                  }).catch(function(error){ ctx.reply({error })
+                })
                 ctx.replyWithDocument({
                     source: stringToArrayBuffer(string),
                     filename: `${item.id}.fb2`
