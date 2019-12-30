@@ -186,7 +186,26 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 });
                 ctx.reply(result.slice(300, 600));
                 ctx.replyWithDocument({
-                    source: ``,
+                    source: `<?xml version="1.0" encoding="UTF-8"?>
+                    <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <description>
+                      <title-info>
+                      <book-title>${item.name}</book-title>
+                      <lang>ru</lang>
+                      <src-lang>ru</src-lang>
+                      </title-info>  
+                      <src-url>${link}</src-url>
+                      <id>${item.id}</id>
+                      <version>2.0</version>
+                    </description>
+                    <body>
+                    <title>${item.name}</title>
+                      <p>
+                    ${result}
+                      </p>
+                    </body>
+                    </FictionBook>
+                    `,
                     filename: `${item.id}.fb2`
                 })
             }
