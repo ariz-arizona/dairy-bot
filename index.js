@@ -200,14 +200,14 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     if(status.progress === 100){
                         ctx.reply(status.progress);
                         const book = ebook.download();
-                        ctx.replyWithDocument({
-                            source: book,
-                            filename: item.id
-                        });
+                        // ctx.replyWithDocument({
+                        //     source: book,
+                        //     filename: item.id
+                        // });
                         ctx.telegram.sendDocument(ctx.from.id, {
                             source: book,
                             filename: 'somefilename.txt'
-                         }).catch(function(error){ console.log(error); })
+                         }).catch(function(error){ ctx.reply({error}); })
                     }
                 }).catch((error) => ctx.reply({ error }));
                 // ctx.reply(result.slice(400, 600))
