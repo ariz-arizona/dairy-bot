@@ -116,7 +116,8 @@ wtfScene.leave((ctx) => {
 wtfScene.hears(/^c\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('c', '');
-        const { items, textTag } = ctx.session.commands;
+        const { textTag } = ctx.session;
+        const { items } = ctx.session.commands;
         if (!items[value]) {
             ctx.reply('Нет такой команды')
         } else {
@@ -183,7 +184,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 const result = await page.evaluate(() => {
                     return document.querySelector('#page-t').innerText;
                 });
-                ctx.reply(resul.slice(300, 600));
+                ctx.reply(result.slice(300, 600));
                 ctx.replyWithDocument({
                     source: ``,
                     filename: `${item.id}.fb2`
