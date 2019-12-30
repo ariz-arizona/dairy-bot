@@ -197,22 +197,22 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     .catch((error) => ctx.reply({ error }));
                 await ebook.checkStatus().then((status) => {
                     ctx.reply({ status });
-                    if(status.progress === 100){
+                    if (status.progress === 100) {
                         // const book = ebook.download();
                         // ctx.replyWithDocument({
                         //     source: book,
                         //     filename: item.id
                         // });
                         ctx.reply(ebook.getDownloadUrl());
-                        await ebook.download().then(res=>{
-
-                            ctx.telegram.sendDocument(ctx.from.id, {
-                                source: res,
-                                filename: 'somefilename.txt'
-                            }).catch(function(error){ ctx.reply({error}); })
-                        })
                     }
                 }).catch((error) => ctx.reply({ error }));
+                await ebook.download().then(res => {
+
+                    ctx.telegram.sendDocument(ctx.from.id, {
+                        source: res,
+                        filename: 'somefilename.txt'
+                    }).catch(function (error) { ctx.reply({ error }); })
+                })
                 // ctx.reply(result.slice(400, 600))
             }
         })(ctx);
