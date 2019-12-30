@@ -198,8 +198,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 await ebook.checkStatus().then((status) => {
                     ctx.reply({ status });
                     if(status.progress === 100){
-                        ctx.reply(status.progress);
-                        const book = ebook.download();
+                        // const book = ebook.download();
                         // ctx.replyWithDocument({
                         //     source: book,
                         //     filename: item.id
