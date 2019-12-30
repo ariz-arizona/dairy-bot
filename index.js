@@ -196,14 +196,17 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 await ebook.publish()
                     .then(() => {
                         ebook.email('ar.ariz.arizona@gmail.com')
+
+                    })
+                    .catch((error) => ctx.reply({ error }));
+                await ebook.checkStatus().then((status) => {
+                    ctx.reply({ status });
+                    if(status.progress === 100){
                         ctx.replyWithDocument({
                             source: ebook.download(),
                             filename: item.id
                         });
-                    })
-                    .catch((error) => ctx.reply({ error }));
-                await ebook.checkStatus().then((status) => {
-                    ctx.reply({ status })
+                    }
                 }).catch((error) => ctx.reply({ error }));
                 // ctx.reply(result.slice(400, 600))
             }
