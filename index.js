@@ -193,15 +193,19 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                         }
                     ]
                 });
-                await ebook.publish().catch((error) => ctx.reply({ error }));
+                await ebook.publish()
+                    .then(() => {
+                        ebook.email('ar.ariz.arizona@gmail.com')
+                        ctx.replyWithDocument({
+                            source: ebook.download(),
+                            filename: item.id
+                        });
+                    })
+                    .catch((error) => ctx.reply({ error }));
                 await ebook.checkStatus().then((status) => {
                     ctx.reply({ status })
                 }).catch((error) => ctx.reply({ error }));
-                ctx.replyWithDocument({
-                    source: ebook.download(),
-                    filename: item.id
-                });
-                ctx.reply(result.slice(400, 600))
+                // ctx.reply(result.slice(400, 600))
             }
         })(ctx);
 
