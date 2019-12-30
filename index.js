@@ -199,11 +199,15 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     ctx.reply({ status });
                     if(status.progress === 100){
                         ctx.reply(status.progress);
-                        const book = await ebook.download();
+                        const book = ebook.download();
                         ctx.replyWithDocument({
                             source: book,
                             filename: item.id
                         });
+                        ctx.telegram.sendDocument(ctx.from.id, {
+                            source: book,
+                            filename: 'somefilename.txt'
+                         }).catch(function(error){ console.log(error); })
                     }
                 }).catch((error) => ctx.reply({ error }));
                 // ctx.reply(result.slice(400, 600))
