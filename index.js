@@ -161,57 +161,59 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
 wtfScene.hears(/^p\d{1,}/gi, ctx => {
     try {
 
-    (async (ctx) => {
-        const value = ctx.match[0].replace('p', '');
-        const { items } = ctx.session.posts;
-        if (!items[value]) {
-            ctx.reply('Нет такого поста')
-        } else {
-            const item = ctx.session.posts.items[value];
-            const page = (await browser.pages())[0];
-            await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
-            });
-            page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
-            await page.waitForNavigation();
-            const result = await page.evaluate(() => {
-                return document.querySelector('#page-t').innerText;
-            });
-            // new Epub({content:[{data: result}]}).promise.then(function(success){
-            //     ctx.reply({success})
-            //     ctx.reply("Ebook Generated Successfully!")
-            //    }, function(err){
-            //     ctx.reply(err);
-            //     ctx.reply("Failed to generate Ebook because of ", err)
-            // })
-            const ebook = new EpubPress({
-                title: item.name,
-                sections: [
-                    {
-                        html: `<html><body><p>${result.slice(400, 600)}</p></body></html>`,
+        (async (ctx) => {
+            const value = ctx.match[0].replace('p', '');
+            const { items } = ctx.session.posts;
+            if (!items[value]) {
+                ctx.reply('Нет такого поста')
+            } else {
+                const item = ctx.session.posts.items[value];
+                const page = (await browser.pages())[0];
+                await page.setRequestInterception(true);
+                page.on('request', (req) => {
+                    if (req.resourceType() === 'image') {
+                        req.abort();
                     }
-                ]
-            });
-            ebook.publish()
-            await ebook.checkStatus().then((status) => {
-                ctx.reply({status})
-            }).catch((error) => ctx.reply({error}));
-            // ctx.replyWithDocument({
-            //     source: ebook.download(),
-            //     filename: item.id
-            // });
-            ctx.reply(result.slice(400, 600))
-        }
-    })(ctx);
-    
-    }catch (err){
-        ctx.reply(err)
+                    else {
+                        req.continue();
+                    }
+                });
+                page.goto(`${urls.wtf2019}p${item.id}.html?oam=1`);
+                await page.waitForNavigation();
+                const result = await page.evaluate(() => {
+                    return document.querySelector('#page-t').innerText;
+                });
+                // new Epub({content:[{data: result}]}).promise.then(function(success){
+                //     ctx.reply({success})
+                //     ctx.reply("Ebook Generated Successfully!")
+                //    }, function(err){
+                //     ctx.reply(err);
+                //     ctx.reply("Failed to generate Ebook because of ", err)
+                // })
+                const ebook = new EpubPress({
+                    title: 'titlt',
+                    description: 'ddd',
+                    sections: [
+                        {
+                            url: page.url(),
+                            html: `<html><body><p>${result.slice(400, 600)}</p></body></html>`,
+                        }
+                    ]
+                });
+                ebook.publish()
+                await ebook.checkStatus().then((status) => {
+                    ctx.reply({ status })
+                }).catch((error) => ctx.reply({ error }));
+                // ctx.replyWithDocument({
+                //     source: ebook.download(),
+                //     filename: item.id
+                // });
+                ctx.reply(result.slice(400, 600))
+            }
+        })(ctx);
+
+    } catch (err) {
+        ctx.reply({ err })
     }
 });
 
