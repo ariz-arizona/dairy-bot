@@ -169,7 +169,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 await page.setRequestInterception(true);
                 page.on('request', (req) => {
                     if (req.resourceType() === 'image') {
-                        req.abort();
+                        // req.abort();
                     }
                     else {
                         req.continue();
