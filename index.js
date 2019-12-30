@@ -159,6 +159,8 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
 });
 
 wtfScene.hears(/^p\d{1,}/gi, ctx => {
+    try {
+
     (async (ctx) => {
         const value = ctx.match[0].replace('p', '');
         const { items } = ctx.session.posts;
@@ -207,6 +209,10 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             ctx.reply(result.slice(400, 600))
         }
     })(ctx);
+    
+    }catch (err){
+        ctx.reply(err)
+    }
 });
 
 wtfScene.action('c_back', ctx => {
