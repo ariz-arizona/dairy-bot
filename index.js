@@ -7,7 +7,7 @@ const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
 const puppeteer = require('puppeteer');
 const EpubPress = require('epub-press-js');
-const FormData = require('form-data');
+const Blob = require('node-blob');
 
 const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
