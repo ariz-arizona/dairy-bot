@@ -178,7 +178,12 @@ wtfScene.hears(/^[pP]\d{1,}/gi, ctx => {
                 const comments = document.querySelectorAll('#commentsArea .singleComment');
                 const content = [];
                 for (const comment of comments) {
-                    if (comment.querySelector('.sign').innerText === command.name) {
+                    const text = comment.querySelector('[id^=morec]');
+                    if (comment.querySelector('.sign').innerText !== command.name) {
+                        continue;
+                    }
+                    if (text) {
+                        text.style.display = 'block';
                         content.push(comment.querySelector('[id^=morec]').innerText.replace(pRegExp, pRegReplace));
                     }
                 }
