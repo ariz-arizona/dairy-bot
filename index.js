@@ -213,10 +213,11 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 // })
                 const f = new File([new Blob([`<?xml version="1.0" encoding="UTF-8"?><FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><description><title-info><book-title>{item.name}</book-title><lang>ru</lang></title-info><id>{item.id}</id><version>2.0</version></description><body><title>{item.name}</title><p> {result} </p></body></FictionBook>`])], 'ff.fb2', {type: 'text/plain'})
                 ctx.replyWithDocument(
-                    {
-                    source: f,
-                    filename: `${item.id}.fb2`
-                }
+                    f
+                //     {
+                //     source: f,
+                //     filename: `${item.id}.fb2`
+                // }
                 // 'http://www.lehtml.com/download/js_doc.pdf'
                 )
             }
