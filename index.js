@@ -6,8 +6,6 @@ const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
 const Extra = require('telegraf/extra');
 const puppeteer = require('puppeteer');
-const EpubPress = require('epub-press-js');
-const Blob = require('node-blob');
 
 const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
@@ -160,80 +158,51 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
 });
 
 wtfScene.hears(/^p\d{1,}/gi, ctx => {
-    try {
-
-        (async (ctx) => {
-            const value = ctx.match[0].replace('p', '');
-            const { items } = ctx.session.posts;
-            if (!items[value]) {
-                ctx.reply('Нет такого поста')
-            } else {
-                const item = ctx.session.posts.items[value];
-                const page = (await browser.pages())[0];
-                // await page.setRequestInterception(true);
-                // page.on('request', (req) => {
-                //     if (req.resourceType() === 'image') {
-                //         // req.abort();
-                //     }
-                //     else {
-                //         req.continue();
-                //     }
-                // });
-                const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
-                page.goto(link);
-                ctx.reply(`GO TO ${link}`)
-                await page.waitForNavigation();
-                const result = await page.evaluate(() => {
-                    return document.querySelector('#page-t').innerText;
-                });
-                const string = `<?xml version="1.0" encoding="UTF-8"?>
+    (async (ctx) => {
+        const value = ctx.match[0].replace('p', '');
+        const { items } = ctx.session.posts;
+        if (!items[value]) {
+            ctx.reply('Нет такого поста')
+        } else {
+            const item = ctx.session.posts.items[value];
+            const page = (await browser.pages())[0];
+            // await page.setRequestInterception(true);
+            // page.on('request', (req) => {
+            //     if (req.resourceType() === 'image') {
+            //         // req.abort();
+            //     }
+            //     else {
+            //         req.continue();
+            //     }
+            // });
+            const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
+            page.goto(link);
+            ctx.reply(`GO TO ${link}`)
+            await page.waitForNavigation();
+            const result = await page.evaluate(() => {
+                return document.querySelector('#page-t').innerText;
+            });
+            const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <description>
-                <title-info>
-                <book-title>${item.name}</book-title>
-                  <lang>ru</lang>
-                  <src-lang>ru</src-lang>
-                  </title-info>  
-                  <src-url>${link}</src-url>
-                  <id>${item.id}</id>
-                  <version>2.0</version>
-                  </description>
-                  <body>
-                  <title>${item.name}</title>
-                  <p>
-                  ${result}
-                  </p>
-                  </body>
-                  </FictionBook>`;
-                ctx.reply(string.slice(300, 600));
-                // try {
-                // const file = new File([new Blob([`<?xml version="1.0" encoding="UTF-8"?><FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><description><title-info><book-title>{item.name}</book-title><lang>ru</lang></title-info><id>{item.id}</id><version>2.0</version></description><body><title>{item.name}</title><p> {result} </p></body></FictionBook>`])], 'ff.fb2', { type: 'text/plain' })
-                // var formData = new FormData();
-                // formData.append('chat_id', ctx.from.id);
-                // formData.append('document', file);
-                // ctx.telegram.sendDocument(formData)
-                // ctx.telegram.sendDocument(ctx.from.id, formData)
-                ctx.telegram.sendDocument(ctx.from.id, {
-                    source: stringToArrayBuffer(string),
+                <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
+                <body><title>${item.name}</title><p>${result}</p></body>
+                </FictionBook>`;
+            ctx.reply(string.slice(300, 600));
+            ctx.telegram.sendDocument(ctx.from.id, {
+                source: Buffer.from(string, 'utf8'),
+                filename: `${item.id}.fb2`
+            }
+            ).catch(function (error) {
+                ctx.reply({ error })
+            })
+            ctx.replyWithDocument(
+                {
+                    source: Buffer.from(string, 'utf8'),
                     filename: `${item.id}.fb2`
                 }
-                ).catch(function (error) {
-                    ctx.reply({ error })
-                })
-                ctx.replyWithDocument(
-                    {
-                        source: stringToArrayBuffer(string),
-                        filename: `${item.id}.fb2`
-                    }
-                )
-                // } catch (error) {
-                //     ctx.reply({ error })
-                // }
-            }
-        })(ctx);
-    } catch (err) {
-        ctx.reply({ err })
-    }
+            )
+        }
+    })(ctx);
 });
 
 wtfScene.action('c_back', ctx => {
