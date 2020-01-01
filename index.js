@@ -211,9 +211,10 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 // }).catch(function (error) {
                 //     ctx.reply({ error })
                 // })
+                const f = new File([string], "filename.txt", {type: "text/plain"})
                 ctx.replyWithDocument(
                     {
-                    source: stringToArrayBuffer(string),
+                    source: f,
                     filename: `${item.id}.fb2`
                 }
                 // 'http://www.lehtml.com/download/js_doc.pdf'
