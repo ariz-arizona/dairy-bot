@@ -207,12 +207,12 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                   </FictionBook>`;
                 ctx.reply(string.slice(300, 600));
                 // try {
-                const file = new File([new Blob([`<?xml version="1.0" encoding="UTF-8"?><FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><description><title-info><book-title>{item.name}</book-title><lang>ru</lang></title-info><id>{item.id}</id><version>2.0</version></description><body><title>{item.name}</title><p> {result} </p></body></FictionBook>`])], 'ff.fb2', { type: 'text/plain' })
-                var formData = new FormData();
-                formData.append('chat_id', ctx.from.id);
-                formData.append('document', file);
-                ctx.telegram.sendDocument(formData)
-                ctx.telegram.sendDocument(ctx.from.id, formData)
+                // const file = new File([new Blob([`<?xml version="1.0" encoding="UTF-8"?><FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><description><title-info><book-title>{item.name}</book-title><lang>ru</lang></title-info><id>{item.id}</id><version>2.0</version></description><body><title>{item.name}</title><p> {result} </p></body></FictionBook>`])], 'ff.fb2', { type: 'text/plain' })
+                // var formData = new FormData();
+                // formData.append('chat_id', ctx.from.id);
+                // formData.append('document', file);
+                // ctx.telegram.sendDocument(formData)
+                // ctx.telegram.sendDocument(ctx.from.id, formData)
                 ctx.telegram.sendDocument(ctx.from.id, {
                     source: new Blob([string]),
                     filename: `${item.id}.fb2`
@@ -221,12 +221,10 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     ctx.reply({ error })
                 })
                 ctx.replyWithDocument(
-                    file
-                    //     //     {
-                    //     //     source: f,
-                    //     //     filename: `${item.id}.fb2`
-                    //     // }
-                    //     // 'http://www.lehtml.com/download/js_doc.pdf'
+                    {
+                        source: new Blob([string]),
+                        filename: `${item.id}.fb2`
+                    }
                 )
                 // } catch (error) {
                 //     ctx.reply({ error })
