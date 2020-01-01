@@ -146,6 +146,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
                 return res;
             });
             ctx.session.posts = {};
+            ctx.session.posts.command = item;
             ctx.session.posts.items = newItems;
             ctx.session.posts.curPage = 1;
             ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
@@ -159,7 +160,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
 wtfScene.hears(/^p\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('p', '');
-        const { items } = ctx.session.posts;
+        const { items, command } = ctx.session.posts;
         if (!items[value]) {
             ctx.reply('Нет такого поста')
         } else {
@@ -170,17 +171,17 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
-            const result = await page.evaluate((item) => {
+            const result = await page.evaluate((command) => {
                 const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                 const comments = document.querySelectorAll('#commentsArea .singleComment');
                 const content = [];
                 for (const comment of comments) {
-                    if (comment.querySelector('.sign').innerText === item.name) {
+                    if (comment.querySelector('.sign').innerText === command.name) {
                         content.push(comment.querySelector('[id^=morec]').innerText);
                     }
                 }
                 return `<p>${post}</p><p>${content.join('</p><p>')}</p>`;
-            }, item);
+            }, command);
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
