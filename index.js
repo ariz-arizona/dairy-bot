@@ -205,12 +205,12 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                   </body>
                   </FictionBook>`;
                   ctx.reply(string.slice(300, 600));
-                  ctx.telegram.sendDocument(ctx.from.id, {
-                    source: stringToArrayBuffer(string),
-                    filename: `${item.id}.fb2`
-                }).catch(function (error) {
-                    ctx.reply({ error })
-                })
+                //   ctx.telegram.sendDocument(ctx.from.id, {
+                //     source: stringToArrayBuffer(string),
+                //     filename: `${item.id}.fb2`
+                // }).catch(function (error) {
+                //     ctx.reply({ error })
+                // })
                 ctx.replyWithDocument(
                     // {
                     // source: stringToArrayBuffer(string),
