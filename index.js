@@ -242,7 +242,6 @@ wtfScene.action('p_next', ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-// Регистрируем сцену создания матча
 stage.register(wtfScene);
 stage.command('cancel', leave())
 
