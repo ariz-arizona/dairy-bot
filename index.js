@@ -212,11 +212,11 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 //     ctx.reply({ error })
                 // })
                 ctx.replyWithDocument(
-                    // {
-                    // source: stringToArrayBuffer(string),
-                    // filename: `${item.id}.fb2`
-                // }
-                'http://www.lehtml.com/download/js_doc.pdf'
+                    {
+                    source: stringToArrayBuffer(string),
+                    filename: `${item.id}.fb2`
+                }
+                // 'http://www.lehtml.com/download/js_doc.pdf'
                 )
             }
         })(ctx);
