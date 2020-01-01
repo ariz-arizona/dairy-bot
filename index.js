@@ -211,6 +211,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     var formData = new FormData();
                     formData.append('chat_id', ctx.from.id);
                     formData.append('document', file);
+                    ctx.telegram.sendDocument(formData)
                     ctx.telegram.sendDocument(ctx.from.id, formData)
                     ctx.telegram.sendDocument(ctx.from.id, {
                         source: new Blob([string]),
