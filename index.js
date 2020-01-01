@@ -205,16 +205,13 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                   </p>
                 </body>
                 </FictionBook>`;
-                ctx.telegram.sendDocument(ctx.from.id, {
-                    source: stringToArrayBuffer(string),
-                    filename: `${item.id}.fb2`
-                }).catch(function (error) {
+                var formData = new FormData();
+                formData.append('chat_id', ctx.from.id);
+                formData.append('document', stringToArrayBuffer(string));
+                ctx.telegram.sendDocument(formData).catch(function (error) {
                     ctx.reply({ error })
                 })
-                ctx.replyWithDocument({
-                    source: stringToArrayBuffer(string),
-                    filename: `${item.id}.fb2`
-                })
+                ctx.replyWithDocument(formData)
             }
         })(ctx);
 
