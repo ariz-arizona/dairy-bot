@@ -208,7 +208,8 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 ctx.telegram.sendDocument(ctx.from.id, {
                     source: stringToArrayBuffer(string),
                     filename: `${item.id}.fb2`
-                 }).catch(function(error){ ctx.reply({error })
+                }).catch(function (error) {
+                    ctx.reply({ error })
                 })
                 ctx.replyWithDocument({
                     source: stringToArrayBuffer(string),
@@ -280,7 +281,7 @@ function stringToArrayBuffer(str) {
     var arr = new Uint8Array(str.length);
     for (var i = str.length; i--;)
         arr[i] = str.charCodeAt(i);
-    return arr.buffer;
+    return new Blob(arr.buffer, { type: "" });
 }
 
 function arrayBufferToString(buffer) {
