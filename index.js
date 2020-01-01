@@ -205,13 +205,14 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                   </body>
                   </FictionBook>`;
                   ctx.reply(string.slice(300, 600));
-                //   ctx.telegram.sendDocument(ctx.from.id, {
-                //     source: stringToArrayBuffer(string),
-                //     filename: `${item.id}.fb2`
-                // }).catch(function (error) {
-                //     ctx.reply({ error })
-                // })
                 const f = new File([new Blob([`<?xml version="1.0" encoding="UTF-8"?><FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><description><title-info><book-title>{item.name}</book-title><lang>ru</lang></title-info><id>{item.id}</id><version>2.0</version></description><body><title>{item.name}</title><p> {result} </p></body></FictionBook>`])], 'ff.fb2', {type: 'text/plain'})
+                  ctx.telegram.sendDocument(ctx.from.id, {
+                    source: new Blob([string]),
+                    filename: `${item.id}.fb2`
+                }
+                ).catch(function (error) {
+                    ctx.reply({ error })
+                })
                 ctx.replyWithDocument(
                     f
                 //     {
