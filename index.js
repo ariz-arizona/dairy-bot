@@ -46,7 +46,7 @@ function renderList(commands, curPage, pages, addSymbol = '') {
         btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
     }
     return [
-        commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`),
+        `Введите идентификатор одного из элементов:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`,
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(btns)
