@@ -6,6 +6,7 @@
   "dependencies": {
     "epub-press-js": "^0.5.3",
     "form-data": "^3.0.0",
+    "node-blob": "0.0.2",
     "puppeteer": "^1.6.2",
     "telegraf": "^3.34.1"
   },

@@ -214,7 +214,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 // ctx.telegram.sendDocument(formData)
                 // ctx.telegram.sendDocument(ctx.from.id, formData)
                 ctx.telegram.sendDocument(ctx.from.id, {
-                    source: new Blob([string]),
+                    source: stringToArrayBuffer(string),
                     filename: `${item.id}.fb2`
                 }
                 ).catch(function (error) {
@@ -222,7 +222,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 })
                 ctx.replyWithDocument(
                     {
-                        source: new Blob([string]),
+                        source: stringToArrayBuffer(string),
                         filename: `${item.id}.fb2`
                     }
                 )
