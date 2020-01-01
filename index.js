@@ -110,7 +110,7 @@ wtfScene.leave((ctx) => {
     })(ctx);
 });
 
-wtfScene.hears(/^c\d{1,}/gi, ctx => {
+wtfScene.hears(/^[cC]\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('c', '');
         const { textTag } = ctx.session;
@@ -157,7 +157,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.hears(/^p\d{1,}/gi, ctx => {
+wtfScene.hears(/^[pP]\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('p', '');
         const { items, command } = ctx.session.posts;
@@ -172,20 +172,22 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
             const result = await page.evaluate((command) => {
+                const pRegExp = /\n{1,}/gi;
+                const pRegReplace = '</p><p>';
                 const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                 const comments = document.querySelectorAll('#commentsArea .singleComment');
                 const content = [];
                 for (const comment of comments) {
                     if (comment.querySelector('.sign').innerText === command.name) {
-                        content.push(comment.querySelector('[id^=morec]').innerText);
+                        content.push(comment.querySelector('[id^=morec]').innerText.replace(pRegExp, pRegReplace));
                     }
                 }
-                return `<p>${post}</p><p>${content.join('</p><p>')}</p>`;
+                return `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`;
             }, command);
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result.replace(/\n{1,}/gi, '</p><p>')}</p></body>
+                <body><title>${item.name}</title><p>${result}</p></body>
                 </FictionBook>`;
             ctx.reply(string.slice(300, 600));
             ctx.replyWithDocument(
