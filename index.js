@@ -166,15 +166,15 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
         } else {
             const item = ctx.session.posts.items[value];
             const page = (await browser.pages())[0];
-            await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
-            });
+            // await page.setRequestInterception(true);
+            // page.on('request', (req) => {
+            //     if (req.resourceType() === 'image') {
+            //         req.abort();
+            //     }
+            //     else {
+            //         req.continue();
+            //     }
+            // });
             const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
