@@ -170,7 +170,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
-            const result = await page.evaluate(() => {
+            const result = await page.evaluate((item) => {
                 const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                 const comments = document.querySelectorAll('#commentsArea .singleComment');
                 const content = [];
@@ -180,7 +180,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     }
                 }
                 return `<p>${post}</p><p>${content.join('</p><p>')}</p>`;
-            });
+            }, item);
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
