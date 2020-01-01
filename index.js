@@ -185,36 +185,41 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                 const result = await page.evaluate(() => {
                     return document.querySelector('#page-t').innerText;
                 });
-                ctx.reply(result.slice(300, 600));
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description>
-                  <title-info>
-                  <book-title>${item.name}</book-title>
+                <title-info>
+                <book-title>${item.name}</book-title>
                   <lang>ru</lang>
                   <src-lang>ru</src-lang>
                   </title-info>  
                   <src-url>${link}</src-url>
                   <id>${item.id}</id>
                   <version>2.0</version>
-                </description>
-                <body>
-                <title>${item.name}</title>
+                  </description>
+                  <body>
+                  <title>${item.name}</title>
                   <p>
-                ${result}
+                  ${result}
                   </p>
-                </body>
-                </FictionBook>`;
-                var formData = new FormData();
-                formData.append('chat_id', ctx.from.id);
-                formData.append('document', stringToArrayBuffer(string));
-                ctx.telegram.sendDocument(formData).catch(function (error) {
+                  </body>
+                  </FictionBook>`;
+                  ctx.reply(string.slice(300, 600));
+                  ctx.telegram.sendDocument(ctx.from.id, {
+                    source: stringToArrayBuffer(string),
+                    filename: `${item.id}.fb2`
+                }).catch(function (error) {
                     ctx.reply({ error })
                 })
-                ctx.replyWithDocument(formData)
+                ctx.replyWithDocument(
+                    // {
+                    // source: stringToArrayBuffer(string),
+                    // filename: `${item.id}.fb2`
+                // }
+                'http://www.lehtml.com/download/js_doc.pdf'
+                )
             }
         })(ctx);
-
     } catch (err) {
         ctx.reply({ err })
     }
