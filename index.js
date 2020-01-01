@@ -112,7 +112,7 @@ wtfScene.leave((ctx) => {
 
 wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace('c', '').toLowerCase();
+        const value = ctx.match[0].replace(/(c|C)/, '');
         const { textTag } = ctx.session;
         const { items } = ctx.session.commands;
         if (!items[value]) {
@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 
 wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace('p', '').toLowerCase();
+        const value = ctx.match[0].replace(/(p|P)/, '');
         const { items, command } = ctx.session.posts;
         if (!items[value]) {
             ctx.reply('Нет такого поста')
