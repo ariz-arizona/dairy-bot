@@ -112,7 +112,7 @@ wtfScene.leave((ctx) => {
 
 wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace('c', '');
+        const value = ctx.match[0].replace('c', '').toLowerCase();
         const { textTag } = ctx.session;
         const { items } = ctx.session.commands;
         if (!items[value]) {
@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 
 wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace('p', '');
+        const value = ctx.match[0].replace('p', '').toLowerCase();
         const { items, command } = ctx.session.posts;
         if (!items[value]) {
             ctx.reply('Нет такого поста')
@@ -194,7 +194,6 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
                 <body><title>${item.name}</title><p>${result}</p></body>
                 </FictionBook>`;
-            ctx.reply(string.slice(300, 600));
             ctx.replyWithDocument(
                 {
                     source: Buffer.from(string, 'utf8'),
