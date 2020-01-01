@@ -166,15 +166,15 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
         } else {
             const item = ctx.session.posts.items[value];
             const page = (await browser.pages())[0];
-            // await page.setRequestInterception(true);
-            // page.on('request', (req) => {
-            //     if (req.resourceType() === 'image') {
-            //         // req.abort();
-            //     }
-            //     else {
-            //         req.continue();
-            //     }
-            // });
+            await page.setRequestInterception(true);
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                }
+                else {
+                    req.continue();
+                }
+            });
             const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
@@ -185,7 +185,7 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result.slice(300, 600)}</p></body>
+                <body><title>${item.name}</title>${result}</body>
                 </FictionBook>`;
             ctx.reply(string.slice(300, 600));
             ctx.replyWithDocument(
@@ -248,22 +248,3 @@ stage.command('cancel', leave())
 
 bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
 bot.launch();
-
-function stringToArrayBuffer(str) {
-    if (/[\u0080-\uffff]/.test(str)) {
-        throw new Error("this needs encoding, like UTF-8");
-    }
-    var arr = new Uint8Array(str.length);
-    for (var i = str.length; i--;)
-        arr[i] = str.charCodeAt(i);
-    return new Blob(arr.buffer, { type: "" });
-}
-
-function arrayBufferToString(buffer) {
-    var arr = new Uint8Array(buffer);
-    var str = String.fromCharCode.apply(String, arr);
-    if (/[\u0080-\uffff]/.test(str)) {
-        throw new Error("this string seems to contain (still encoded) multibytes");
-    }
-    return str;
-}
