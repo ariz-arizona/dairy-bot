@@ -110,7 +110,7 @@ wtfScene.leave((ctx) => {
     })(ctx);
 });
 
-wtfScene.hears(/^[cC]\d{1,}/gi, ctx => {
+wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('c', '');
         const { textTag } = ctx.session;
@@ -157,7 +157,7 @@ wtfScene.hears(/^[cC]\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.hears(/^[pP]\d{1,}/gi, ctx => {
+wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     (async (ctx) => {
         const value = ctx.match[0].replace('p', '');
         const { items, command } = ctx.session.posts;
@@ -184,7 +184,7 @@ wtfScene.hears(/^[pP]\d{1,}/gi, ctx => {
                     }
                     if (text) {
                         text.style.display = 'block';
-                        content.push(comment.querySelector('[id^=morec]').innerText.replace(pRegExp, pRegReplace));
+                        content.push(text.innerText.replace(pRegExp, pRegReplace));
                     }
                 }
                 return `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`;
