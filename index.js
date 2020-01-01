@@ -4,10 +4,8 @@ const Stage = require('telegraf/stage')
 const { leave } = Stage
 const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
-const Extra = require('telegraf/extra');
 const puppeteer = require('puppeteer');
 
-const url = 'http://www.diary.ru/api/';
 const login = 'dairy-bot';
 const password = '319992738';
 const urls = {
@@ -135,6 +133,7 @@ wtfScene.hears(/^c\d{1,}/gi, ctx => {
             const link = `${urls.wtf2019}?tag[]=${textTag}&tag[]=${item.id}`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
+            // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
             const newItems = await page.evaluate(() => {
                 const res = [];
@@ -169,20 +168,29 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
+            // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
             const result = await page.evaluate(() => {
-                return document.querySelector('#page-t').innerText;
+                const post = document.querySelector('.singlePost .postContent .postInner').innerText;
+                const comments = document.querySelectorAll('#commentsArea .singleComment');
+                const content = [];
+                for (const comment of comments) {
+                    if (comment.querySelector('.sign').innerText === item.name) {
+                        content.push(comment.querySelector('[id^=morec]').innerText);
+                    }
+                }
+                return `<p>${post}</p><p>${content.join('</p><p>')}</p>`;
             });
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result.replace(/\n{2,}/gi,'</p><p>') }</p></body>
+                <body><title>${item.name}</title><p>${result.replace(/\n{1,}/gi, '</p><p>')}</p></body>
                 </FictionBook>`;
             ctx.reply(string.slice(300, 600));
             ctx.replyWithDocument(
                 {
                     source: Buffer.from(string, 'utf8'),
-                    filename: `${item.id}.fb2`
+                    filename: `${item.name}.fb2`
                 }
             )
         }
