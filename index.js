@@ -185,16 +185,9 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
             const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result}</p></body>
+                <body><title>${item.name}</title><p>${result.slice(300, 600)}</p></body>
                 </FictionBook>`;
             ctx.reply(string.slice(300, 600));
-            ctx.telegram.sendDocument(ctx.from.id, {
-                source: Buffer.from(string, 'utf8'),
-                filename: `${item.id}.fb2`
-            }
-            ).catch(function (error) {
-                ctx.reply({ error })
-            })
             ctx.replyWithDocument(
                 {
                     source: Buffer.from(string, 'utf8'),
