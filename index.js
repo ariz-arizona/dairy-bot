@@ -214,14 +214,14 @@ wtfScene.hears(/^p\d{1,}/gi, ctx => {
                     ).catch(function (error) {
                         ctx.reply({ error })
                     })
-                    ctx.replyWithDocument(
-                        f
-                        //     {
-                        //     source: f,
-                        //     filename: `${item.id}.fb2`
-                        // }
-                        // 'http://www.lehtml.com/download/js_doc.pdf'
-                    )
+                    // ctx.replyWithDocument(
+                    //     f
+                    //     //     {
+                    //     //     source: f,
+                    //     //     filename: `${item.id}.fb2`
+                    //     // }
+                    //     // 'http://www.lehtml.com/download/js_doc.pdf'
+                    // )
                 } catch (error) {
                     ctx.reply({ error })
                 }
