@@ -251,5 +251,5 @@ wtfScene.action('p_next', ctx => {
 stage.register(wtfScene);
 stage.command('cancel', leave())
 
-bot.command("wtfScene", (ctx) => ctx.scene.enter("wtfScene"));
+bot.command("wtf2019", (ctx) => ctx.scene.enter("wtfScene"));
 bot.launch();
