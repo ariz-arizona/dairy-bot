@@ -56,7 +56,7 @@ function renderList(commands, curPage, pages, addSymbol = '') {
 }
 
 wtfScene.enter((ctx, initialState) => {
-    (async (ctx) => {
+    (async (ctx, initialState) => {
         browser = await puppeteer.launch(browserArgs);
         const page = await browser.newPage();
         await page.setRequestInterception(true);
@@ -69,7 +69,7 @@ wtfScene.enter((ctx, initialState) => {
             }
         });
         ctx.reply("OPEN BROWSER");
-        ctx.reply(initialState.id)
+        ctx.reply(JSON.stringify(initialState))
         await page.goto(`${urls.wtf2019}?tags=`)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
