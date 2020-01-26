@@ -69,8 +69,7 @@ wtfScene.enter((ctx, initialState) => {
             }
         });
         ctx.reply("OPEN BROWSER");
-        ctx.reply(ctx.scene.state.id)
-        await page.goto(`${urls.wtf2019}?tags=`)
+        await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
         page.click('#inform_box button');
@@ -131,7 +130,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     req.continue();
                 }
             });
-            const link = `${urls.wtf2019}?tag[]=${textTag}&tag[]=${item.id}`;
+            const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
@@ -167,7 +166,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
         } else {
             const item = ctx.session.posts.items[value];
             const page = (await browser.pages())[0];
-            const link = `${urls.wtf2019}p${item.id}.html?oam=1`;
+            const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
