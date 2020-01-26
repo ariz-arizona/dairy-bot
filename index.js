@@ -69,8 +69,7 @@ wtfScene.enter((ctx, initialState) => {
             }
         });
         ctx.reply("OPEN BROWSER");
-        ctx.reply(JSON.stringify(initialState))
-        ctx.reply(JSON.stringify(ctx.scene.state))
+        ctx.reply(ctx.scene.state.id)
         await page.goto(`${urls.wtf2019}?tags=`)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
