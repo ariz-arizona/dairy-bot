@@ -9,7 +9,8 @@ const puppeteer = require('puppeteer');
 const login = 'dairy-bot';
 const password = '319992738';
 const urls = {
-    wtf2019: 'https://wtf-2019.diary.ru/'
+    wtf2019: 'https://wtf-2019.diary.ru/',
+    wtf2020: 'https://wtfk2020.diary.ru/'
 }
 const browserArgs = {
     headless: true, args: [
@@ -68,7 +69,7 @@ wtfScene.enter((ctx) => {
             }
         });
         ctx.reply("OPEN BROWSER");
-
+ctx.reply(cts.session.id)
         await page.goto(`${urls.wtf2019}?tags=`)
         await page.type('#user_login', login)
         await page.type('#user_pass', password)
@@ -251,5 +252,6 @@ wtfScene.action('p_next', ctx => {
 stage.register(wtfScene);
 stage.command('cancel', leave())
 
-bot.command("wtf2019", (ctx) => ctx.scene.enter("wtfScene"));
+bot.command("wtf2019", (ctx) => ctx.scene.enter("wtfScene", {id: 'wtf2019'}));
+bot.command("wtf2020", ctx => ctx.scene.enter("wtfScene", {id: 'wtf2020'}));
 bot.launch();
