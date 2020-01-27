@@ -47,7 +47,7 @@ function renderList(commands, curPage, pages, addSymbol = '') {
         btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
     }
     return [
-        `Введите идентификатор одного из элементов:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`,
+        `Введите идентификатор элемента:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`,
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(btns)
@@ -121,15 +121,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             const item = ctx.session.commands.items[value];
             ctx.reply(`Вы выбрали команду ${item.name}`);
             const page = (await browser.pages())[0];
-            await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
-            });
             const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
             page.goto(link);
             ctx.reply(`GO TO ${link}`)
@@ -139,9 +130,24 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
-                    const name = post.querySelector('.postTitle h2').innerText;
+                    // const name = post.querySelector('.postTitle h2').innerText;
+                    const titles = post.innerText.match(/Название:(.*)\n/gi);
+                    const pairings = post.innerText.match(/П[е|э]йринг(.*)\n/gi);
+                    const categories = post.innerText.match(/Категория:(.*)\n/gi);
+                    const ratings = post.innerText.match(/Рейтинг:(.*)\n/gi);
+                    const genres = post.innerText.match(/Жанр:(.*)\n/gi);
+                    const res = [];
+                    for (let i = 0; i < title.length; i++) {
+                        const title = titles[i].replace(/^.*: ?/, '');
+                        const pairing = pairings[i].replace(/^.*: ?/, '');
+                        const category = categories[i].replace(/^.*: ?/, '');
+                        const rating = ratings[i].replace(/^.*: ?/, '');
+                        const genre = genres[i].replace(/^.*: ?/, '');
+                        const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                        res.push(string);
+                    }
                     const id = post.id.replace('post', '');
-                    res.push({ id, name });
+                    res.push({ id, name: res.join(' | ')});
                 }
                 return res;
             });
@@ -261,8 +267,8 @@ bot.start((ctx) => ctx.reply(
     }
 ));
 
-bot.action("wtf2019", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2019' }));
+bot.action("wtf2019", ctx => { ctx.scene.enter("wtfScene", { id: 'wtf2019' }); return true });
 bot.command("wtf2019", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2019' }));
-bot.action("wtf2020", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2020' }));
+bot.action("wtf2020", ctx => { ctx.scene.enter("wtfScene", { id: 'wtf2020' }); return true });
 bot.command("wtf2020", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2020' }));
 bot.launch();
