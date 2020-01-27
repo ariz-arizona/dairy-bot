@@ -249,8 +249,20 @@ wtfScene.action('p_next', ctx => {
 })
 
 stage.register(wtfScene);
-stage.command('cancel', leave())
+stage.command("cancel", leave());
 
-bot.command("wtf2019", (ctx) => ctx.scene.enter("wtfScene", {id: 'wtf2019'}));
-bot.command("wtf2020", ctx => ctx.scene.enter("wtfScene", {id: 'wtf2020'}));
+bot.start((ctx) => ctx.reply(
+    'Привет! /n/nЯ — бот-помощник для чтения текстов с Зимней фандомной битвы (проходит в асоциальной сети http://diary.ru) в формате FB2.\n\nЕсли я не работаю — напишите, пожалуйста, @aarizona',
+    {
+        reply_markup: Markup.inlineKeyboard([
+            Markup.callbackButton('wtf 2019', `wtf2019`),
+            Markup.callbackButton('wtf 2020', `wtf2020`)
+        ])
+    }
+));
+
+bot.action("wtf2019", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2019' }));
+bot.command("wtf2019", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2019' }));
+bot.action("wtf2020", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2020' }));
+bot.command("wtf2020", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2020' }));
 bot.launch();
