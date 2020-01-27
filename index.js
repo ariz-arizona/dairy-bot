@@ -132,7 +132,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for (const post of items) {
                     // const name = post.querySelector('.postTitle h2').innerText;
                     const clearRegexp = /^.*: ?/;
-                    const inner = post.innerText;
+                    const inner = post.querySelector('span[id*=more]').innerText;
                     const titles = inner.match(/Название:(.*)\n/gi);
                     const pairings = inner.match(/П[е|э]йринг(.*)\n/gi);
                     const categories = inner.match(/Категория:(.*)\n/gi);
