@@ -126,27 +126,20 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
-            const test = await page.evaluate(() => {
-                const items = document.querySelectorAll('.singlePost');
-                const post = items[0];
-                post.querySelector('a+span').style.display = 'block';
-                const inner = post.querySelector('a+span').textContent;
-                return inner;
-            });
-            // ctx.reply(test.slice(0, 400));
             const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
                     const id = post.id.replace('post', '');
-                    const clearRegexp = /^.*: ?/;
                     post.querySelector('a+span').style.display = 'block';
                     const inner = post.querySelector('a+span').textContent;
-                    const titles = inner.match(/Название:(.*)\n/gi) || [];
-                    const pairings = inner.match(/П[е|э]йринг(.*)\n/gi) || [];
-                    const categories = inner.match(/Категория:(.*)\n/gi) || [];
-                    const ratings = inner.match(/Рейтинг:(.*)\n/gi) || [];
-                    const genres = inner.match(/Жанр:(.*)\n/gi) || [];
+                    const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
+                    const clearRegexp = `/${regStrings}$/`;
+                    const titles = inner.match(`/Название:(.*?)${regStrings}/gi`) || [];
+                    const pairings = inner.match(`/Пейринг\/Персонажи:(.*?)${regStrings}/gi`) || [];
+                    const categories = inner.match(`/Категория:(.*?)${regStrings}/gi`) || [];
+                    const ratings = inner.match(`/Рейтинг:(.*?)${regStrings}/gi`) || [];
+                    const genres = inner.match(`/Жанр:(.*?)${regStrings}/gi`) || [];
                     if (pairings.length) {
                         const temp = [];
                         for (let i = 0; i < pairings.length; i++) {
