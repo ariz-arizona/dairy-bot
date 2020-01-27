@@ -132,6 +132,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for (const post of items) {
                     // const name = post.querySelector('.postTitle h2').innerText;
                     const clearRegexp = /^.*: ?/;
+                    post.querySelector('span[id*=more]').style.display = 'block';
                     const inner = post.querySelector('span[id*=more]').innerText;
                     const titles = inner.match(/Название:(.*)\n/gi);
                     const pairings = inner.match(/П[е|э]йринг(.*)\n/gi);
@@ -260,7 +261,7 @@ stage.register(wtfScene);
 stage.command("cancel", leave());
 
 bot.start((ctx) => ctx.reply(
-    'Привет! /n/nЯ — бот-помощник для чтения текстов с Зимней фандомной битвы (проходит в асоциальной сети http://diary.ru) в формате FB2.\n\nЕсли я не работаю — напишите, пожалуйста, @aarizona',
+    'Привет! \n\nЯ — бот-помощник для чтения текстов с Зимней фандомной битвы (проходит в асоциальной сети http://diary.ru) в формате FB2.\n\nЕсли я не работаю — напишите, пожалуйста, @aarizona',
     {
         reply_markup: Markup.inlineKeyboard([
             Markup.callbackButton('wtf 2019', `wtf2019`),
