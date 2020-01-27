@@ -6,8 +6,8 @@ const Scene = require('telegraf/scenes/base')
 const Markup = require('telegraf/markup');
 const puppeteer = require('puppeteer');
 
-const login = 'dairy-bot';
-const password = '319992738';
+const login = process.env.LOGIN;
+const password = process.env.PASSWORD;
 const urls = {
     wtf2019: 'https://wtf-2019.diary.ru/',
     wtf2020: 'https://wtfk2020.diary.ru/'
@@ -22,7 +22,7 @@ const browserArgs = {
 };
 const pageSize = 20;
 
-const bot = new Telegraf(process.env.TOKEN)
+const bot = new Telegraf(process.env.TOKEN);
 const stage = new Stage();
 
 bot.use(session());
