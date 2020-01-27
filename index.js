@@ -133,7 +133,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const inner = post.querySelector('a+span').textContent;
                 return inner;
             });
-            ctx.reply(test);
+            ctx.reply(test.splice(0, 400));
             const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
