@@ -153,7 +153,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         res.push({ id, name: res.join(' | ') });
                     } else {
                         const name = post.querySelector('.postTitle h2').innerText;
-                        res.push({ id, name: res.join(' | ') });
+                        res.push({ id, name: name });
                     }
                 }
                 return res;
