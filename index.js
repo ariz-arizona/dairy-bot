@@ -131,23 +131,25 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
                     // const name = post.querySelector('.postTitle h2').innerText;
-                    const titles = post.innerText.match(/Название:(.*)\n/gi);
-                    const pairings = post.innerText.match(/П[е|э]йринг(.*)\n/gi);
-                    const categories = post.innerText.match(/Категория:(.*)\n/gi);
-                    const ratings = post.innerText.match(/Рейтинг:(.*)\n/gi);
-                    const genres = post.innerText.match(/Жанр:(.*)\n/gi);
+                    const clearRegexp = /^.*: ?/;
+                    const inner = post.innerText;
+                    const titles = inner.match(/Название:(.*)\n/gi);
+                    const pairings = inner.match(/П[е|э]йринг(.*)\n/gi);
+                    const categories = inner.match(/Категория:(.*)\n/gi);
+                    const ratings = inner.match(/Рейтинг:(.*)\n/gi);
+                    const genres = inner.match(/Жанр:(.*)\n/gi);
                     const res = [];
-                    for (let i = 0; i < title.length; i++) {
-                        const title = titles[i].replace(/^.*: ?/, '');
-                        const pairing = pairings[i].replace(/^.*: ?/, '');
-                        const category = categories[i].replace(/^.*: ?/, '');
-                        const rating = ratings[i].replace(/^.*: ?/, '');
-                        const genre = genres[i].replace(/^.*: ?/, '');
+                    for (let i = 0; i < titles.length; i++) {
+                        const title = titles[i].replace(clearRegexp, '');
+                        const pairing = pairings[i].replace(clearRegexp, '');
+                        const category = categories[i].replace(clearRegexp, '');
+                        const rating = ratings[i].replace(clearRegexp, '');
+                        const genre = genres[i].replace(clearRegexp, '');
                         const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                         res.push(string);
                     }
                     const id = post.id.replace('post', '');
-                    res.push({ id, name: res.join(' | ')});
+                    res.push({ id, name: res.join(' | ') });
                 }
                 return res;
             });
