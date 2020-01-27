@@ -130,27 +130,31 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
-                    // const name = post.querySelector('.postTitle h2').innerText;
+                    const id = post.id.replace('post', '');
                     const clearRegexp = /^.*: ?/;
                     post.querySelector('span[id*=more]').style.display = 'block';
-                    const inner = post.querySelector('span[id*=more]').innerText;
-                    const titles = inner.match(/Название:(.*)\n/gi);
-                    const pairings = inner.match(/П[е|э]йринг(.*)\n/gi);
-                    const categories = inner.match(/Категория:(.*)\n/gi);
-                    const ratings = inner.match(/Рейтинг:(.*)\n/gi);
-                    const genres = inner.match(/Жанр:(.*)\n/gi);
-                    const res = [];
-                    for (let i = 0; i < pairings.length; i++) {
-                        const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
-                        const pairing = pairings[i].replace(clearRegexp, '');
-                        const category = categories[i].replace(clearRegexp, '');
-                        const rating = ratings[i].replace(clearRegexp, '');
-                        const genre = genres[i].replace(clearRegexp, '');
-                        const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                        res.push(string);
+                    const inner = post.querySelector('span[id*=more]').textContent;
+                    const titles = inner.match(/Название:(.*)\n/gi) || [];
+                    const pairings = inner.match(/П[е|э]йринг(.*)\n/gi) || [];
+                    const categories = inner.match(/Категория:(.*)\n/gi) || [];
+                    const ratings = inner.match(/Рейтинг:(.*)\n/gi) || [];
+                    const genres = inner.match(/Жанр:(.*)\n/gi) || [];
+                    if (pairings.length) {
+                        const res = [];
+                        for (let i = 0; i < pairings.length; i++) {
+                            const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
+                            const pairing = pairings[i].replace(clearRegexp, '');
+                            const category = categories[i].replace(clearRegexp, '');
+                            const rating = ratings[i].replace(clearRegexp, '');
+                            const genre = genres[i].replace(clearRegexp, '');
+                            const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                            res.push(string);
+                        }
+                        res.push({ id, name: res.join(' | ') });
+                    } else {
+                        const name = post.querySelector('.postTitle h2').innerText;
+                        res.push({ id, name: res.join(' | ') });
                     }
-                    const id = post.id.replace('post', '');
-                    res.push({ id, name: res.join(' | ') });
                 }
                 return res;
             });
