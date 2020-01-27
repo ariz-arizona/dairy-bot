@@ -129,8 +129,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             const test = await page.evaluate(() => {
                 const items = document.querySelectorAll('.singlePost');
                 const post = items[0];
-                post.querySelector('span[id*=more]').style.display = 'block';
-                const inner = post.querySelector('span[id*=more]').textContent;
+                post.querySelector('a+span').style.display = 'block';
+                const inner = post.querySelector('a+span').textContent;
                 return inner;
             });
             ctx.reply(test);
@@ -140,8 +140,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for (const post of items) {
                     const id = post.id.replace('post', '');
                     const clearRegexp = /^.*: ?/;
-                    post.querySelector('span[id*=more]').style.display = 'block';
-                    const inner = post.querySelector('span[id*=more]').textContent;
+                    post.querySelector('a+span').style.display = 'block';
+                    const inner = post.querySelector('a+span').textContent;
                     const titles = inner.match(/Название:(.*)\n/gi) || [];
                     const pairings = inner.match(/П[е|э]йринг(.*)\n/gi) || [];
                     const categories = inner.match(/Категория:(.*)\n/gi) || [];
