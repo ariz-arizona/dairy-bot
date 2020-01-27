@@ -126,7 +126,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
-            const newItems = await page.evaluate((ctx) => {
+            const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
@@ -134,14 +134,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     const clearRegexp = /^.*: ?/;
                     post.querySelector('span[id*=more]').style.display = 'block';
                     const inner = post.querySelector('span[id*=more]').textContent;
-                    ctx.reply(inner)
                     const titles = inner.match(/Название:(.*)\n/gi) || [];
                     const pairings = inner.match(/П[е|э]йринг(.*)\n/gi) || [];
                     const categories = inner.match(/Категория:(.*)\n/gi) || [];
                     const ratings = inner.match(/Рейтинг:(.*)\n/gi) || [];
                     const genres = inner.match(/Жанр:(.*)\n/gi) || [];
                     if (pairings.length) {
-                        const res = [];
+                        const temp = [];
                         for (let i = 0; i < pairings.length; i++) {
                             const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
                             const pairing = pairings[i].replace(clearRegexp, '');
@@ -151,7 +150,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                             res.push(string);
                         }
-                        res.push({ id, name: res.join(' | ') });
+                        res.push({ id, name: temp.join(' | ') });
                     } else {
                         const name = post.querySelector('.postTitle h2').innerText;
                         res.push({ id, name: name });
