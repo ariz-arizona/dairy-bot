@@ -126,6 +126,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
+            const test = await page.evaluate(() => {
+                const res = [];
+                const items = document.querySelectorAll('.singlePost');
+                const post = items[0];
+                
             const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
