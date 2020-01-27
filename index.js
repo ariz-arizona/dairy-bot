@@ -126,7 +126,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             ctx.reply(`GO TO ${link}`)
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
-            const newItems = await page.evaluate(() => {
+            const newItems = await page.evaluate((ctx) => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
@@ -134,6 +134,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     const clearRegexp = /^.*: ?/;
                     post.querySelector('span[id*=more]').style.display = 'block';
                     const inner = post.querySelector('span[id*=more]').textContent;
+                    ctx.reply(inner)
                     const titles = inner.match(/Название:(.*)\n/gi) || [];
                     const pairings = inner.match(/П[е|э]йринг(.*)\n/gi) || [];
                     const categories = inner.match(/Категория:(.*)\n/gi) || [];
