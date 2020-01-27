@@ -131,31 +131,31 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
                     const id = post.id.replace('post', '');
-                    post.querySelector('a+span').style.display = 'block';
-                    const inner = post.querySelector('a+span').textContent;
-                    const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
-                    const clearRegexp = new RegExp(`${regStrings}$/`);
-                    const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
-                    const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
-                    const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
-                    const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
-                    const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
-                    if (pairings.length) {
-                        const temp = [];
-                        for (let i = 0; i < pairings.length; i++) {
-                            const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
-                            const pairing = pairings[i].replace(clearRegexp, '');
-                            const category = categories[i].replace(clearRegexp, '');
-                            const rating = ratings[i].replace(clearRegexp, '');
-                            const genre = genres[i].replace(clearRegexp, '');
-                            const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                            res.push(string);
-                        }
-                        res.push({ id, name: temp.join(' | ') });
-                    } else {
+                    // post.querySelector('a+span').style.display = 'block';
+                    // const inner = post.querySelector('a+span').textContent;
+                    // const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
+                    // const clearRegexp = new RegExp(`${regStrings}$/`);
+                    // const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
+                    // const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
+                    // const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
+                    // const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
+                    // const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
+                    // if (pairings.length) {
+                    //     const temp = [];
+                    //     for (let i = 0; i < pairings.length; i++) {
+                    //         const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
+                    //         const pairing = pairings[i].replace(clearRegexp, '');
+                    //         const category = categories[i].replace(clearRegexp, '');
+                    //         const rating = ratings[i].replace(clearRegexp, '');
+                    //         const genre = genres[i].replace(clearRegexp, '');
+                    //         const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                    //         res.push(string);
+                    //     }
+                    //     res.push({ id, name: temp.join(' | ') });
+                    // } else {
                         const name = post.querySelector('.postTitle h2').innerText;
                         res.push({ id, name: name });
-                    }
+                    // }
                 }
                 return res;
             });
