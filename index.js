@@ -127,14 +127,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             // todo многостраничность, выбор комментариев
             await page.waitForNavigation();
             const test = await page.evaluate(() => {
-                const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 const post = items[0];
                 post.querySelector('span[id*=more]').style.display = 'block';
                 const inner = post.querySelector('span[id*=more]').textContent;
                 return inner;
             });
-            ctx.reply(inner);
+            ctx.reply(test);
             const newItems = await page.evaluate(() => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
