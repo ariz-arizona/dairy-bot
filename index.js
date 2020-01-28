@@ -68,6 +68,12 @@ wtfScene.enter((ctx, initialState) => {
                 req.continue();
             }
         });
+        page.on("error", function (err) {  
+            theTempValue = err.toString();
+            console.log("Error: " + theTempValue); 
+            ctx.reply("Browser error: " + theTempValue)
+        });
+
         ctx.reply("OPEN BROWSER");
         await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
         await page.type('#user_login', login)

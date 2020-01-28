@@ -9,7 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "logs": "heroku logs -t --app diary-ru-bot",
+    "logs_prod": "heroku logs -t --app diary-ru-bot",
+    "logs_stage": "heroku logs -t --app diary-ru-bot-stage",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
