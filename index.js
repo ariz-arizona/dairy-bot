@@ -173,10 +173,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             res.push({ id, name: name });
                         }
                     }
-                    return [res, test];
+                    return [res];
                 }, item.name);
                 const newItems = data[0];
-                ctx.reply(JSON.stringify(data[1]).slice(0, 2000));
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
@@ -212,8 +211,10 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                     const comments = document.querySelectorAll('#commentsArea .singleComment');
                     const content = [];
+                    const names = [];
                     for (const comment of comments) {
                         const text = comment.querySelector('[id^=morec]');
+                        names.push(comment.querySelector('.sign').innerText);
                         if (comment.querySelector('.sign').innerText !== command.name) {
                             // continue;
                         }
@@ -222,7 +223,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                             content.push(text.innerText.replace(pRegExp, pRegReplace));
                         }
                     }
-                    return [comment.querySelector('.sign').innerText, `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
+                    return [names.join(', '), `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
                 }, command);
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -240,7 +241,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.action('c_back_\d{1,}', ctx => {
+wtfScene.action(/c_back_\d{1,}/, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
@@ -252,7 +253,7 @@ wtfScene.action('c_back_\d{1,}', ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('c_next_\d{1,}', ctx => {
+wtfScene.action(/c_next_\d{1,}/, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
@@ -264,7 +265,7 @@ wtfScene.action('c_next_\d{1,}', ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('p_back_\d{1,}', ctx => {
+wtfScene.action(/p_back_\d{1,}/, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
@@ -276,7 +277,7 @@ wtfScene.action('p_back_\d{1,}', ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('p_next_\d{1,}', ctx => {
+wtfScene.action(/p_next_\d{1,}/, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
