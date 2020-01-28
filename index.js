@@ -40,14 +40,14 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     const end = curPage * pageSize;
     const btns = [];
     if (curPage > 1) {
-        btns.push(Markup.callbackButton('Назад', `${addSymbol}_back`))
+        btns.push(Markup.callbackButton('Назад', `${addSymbol}_back_${pageSize}`))
     }
     if (curPage <= pages - 1) {
-        btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
+        btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next_${pageSize}`))
     }
     return [
         `Введите идентификатор элемента:\n
-        ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 300)).join(`\n`)}`,
+        ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
         {
             parse_mode: 'HTML',
             reply_markup: end > 1 ? Markup.inlineKeyboard(btns) : false
@@ -222,12 +222,12 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                             content.push(text.innerText.replace(pRegExp, pRegReplace));
                         }
                     }
-                    return `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`;
+                    return [comment.querySelector('.sign').innerText, `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
                 }, command);
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result}</p></body>
+                <body><title>${item.name}</title><p>${result[1]}</p></body>
                 </FictionBook>`;
                 ctx.replyWithDocument(
                     {
@@ -240,47 +240,51 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.action('c_back', ctx => {
+wtfScene.action('c_back_\d{1,}', ctx => {
+    const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
     }
     ctx.session.commands.curPage = oldCurPage - 1;
     const { curPage } = ctx.session.commands;
-    const response = renderList(items, curPage, pages, 'c');
+    const response = renderList(items, curPage, pages, 'c', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('c_next', ctx => {
+wtfScene.action('c_next_\d{1,}', ctx => {
+    const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
     }
     ctx.session.commands.curPage = oldCurPage + 1;
     const { curPage } = ctx.session.commands;
-    const response = renderList(items, curPage, pages, 'c');
+    const response = renderList(items, curPage, pages, 'c', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('p_back', ctx => {
+wtfScene.action('p_back_\d{1,}', ctx => {
+    const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
     }
     ctx.session.posts.curPage = oldCurPage - 1;
     const { curPage } = ctx.session.posts;
-    const response = renderList(items, curPage, pages, 'p');
+    const response = renderList(items, curPage, pages, 'p', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action('p_next', ctx => {
+wtfScene.action('p_next_\d{1,}', ctx => {
+    const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
     }
     ctx.session.posts.curPage = oldCurPage + 1;
     const { curPage } = ctx.session.posts;
-    const response = renderList(items, curPage, pages, 'p');
+    const response = renderList(items, curPage, pages, 'p', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
 
