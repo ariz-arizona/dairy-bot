@@ -119,7 +119,6 @@ wtfScene.leave((ctx) => {
 wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
-
             const value = ctx.match[0].replace(/(c|C)/, '');
             const { textTag } = ctx.session;
             const { items } = ctx.session.commands;
@@ -174,7 +173,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     }
                     return res;
-                })(item.name);
+                },item.name);
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
