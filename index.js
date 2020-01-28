@@ -143,7 +143,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     const inner = post.querySelector('a+span').textContent;
                     return inner;
                 });
-                ctx.reply(test.slice(0, 300));
+                // ctx.reply(test.slice(0, 300));
                 const newItems = await page.evaluate((commandName, ctx) => {
                     const res = [];
                     const items = document.querySelectorAll('.singlePost');
@@ -151,7 +151,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const id = post.id.replace('post', '');
                         post.querySelector('a+span').style.display = 'block';
                         const inner = post.querySelector('a+span').textContent;
-                        ctx.reply(inner.slice(0, 300));
+                        ctx.reply(inner.slice(0, 3000));
                         const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
