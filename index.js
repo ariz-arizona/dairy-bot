@@ -49,7 +49,7 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
         parse_mode: 'HTML',
     };
     if (end > 1) {
-        reply.reply_markup: Markup.inlineKeyboard(btns)
+        reply.reply_markup = Markup.inlineKeyboard(btns)
     }
     return [
         `Введите идентификатор элемента:\n
