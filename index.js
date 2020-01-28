@@ -217,8 +217,8 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     const names = [];
                     for (const comment of comments) {
                         const text = comment.querySelector('[id^=morec]');
-                        names.push(comment.querySelector('.sign').innerText);
-                        if (comment.querySelector('.sign').innerText !== command.name) {
+                        names.push(comment.querySelector('.authorName').innerText);
+                        if (comment.querySelector('.authorName').innerText !== command.name) {
                             // continue;
                         }
                         if (text) {
@@ -228,7 +228,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     }
                     return [names.join(', '), `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
                 }, command);
-                ctx.reply(result[0])
+                // ctx.reply(result[0])
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
