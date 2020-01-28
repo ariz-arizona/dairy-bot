@@ -47,8 +47,8 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     }
     return [
         `Введите идентификатор элемента:\n
-        ${commands.slice(start, end).map((el, i) =>
-            `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 200)
+        ${commands.slice(start, end).map(
+            (el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 300)
         ).join(`\n`)}`,
         {
             parse_mode: 'HTML',
@@ -165,11 +165,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         if (pairings.length) {
                             const temp = [];
                             for (let i = 0; i < pairings.length; i++) {
-                                const title = titles[i] ? titles[i] : commandName;
-                                const pairing = pairings[i]
-                                const category = categories[i]
-                                const rating = ratings[i]
-                                const genre = genres[i]
+                                const title = titles[i].replace(/Название:? ?/, '');
+                                const pairing = pairings[i].replace(/Пейринг\/Персонажи:? ?/, '');
+                                const category = categories[i].replace(/Категория:? ?/, '');
+                                const rating = ratings[i].replace(/Рейтинг:? ?/, '');
+                                const genre = genres[i].replace(/Жанр:? ?/, '');
                                 const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                                 temp.push(string);
                             }
