@@ -144,14 +144,14 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     return inner;
                 });
                 // ctx.reply(test.slice(0, 300));
-                const newItems = await page.evaluate((commandName, ctx) => {
+                const data = await page.evaluate((commandName) => {
                     const res = [];
+                    const test = [];
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
                         const id = post.id.replace('post', '');
                         post.querySelector('a+span').style.display = 'block';
                         const inner = post.querySelector('a+span').textContent;
-                        ctx.reply(inner.slice(0, 3000));
                         const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
@@ -159,6 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
                         const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
                         const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
+                        test.push({inner: inner.slice(0, 300), titles, pairings, categories});
                         if (pairings.length) {
                             const temp = [];
                             for (let i = 0; i < pairings.length; i++) {
@@ -176,8 +177,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             res.push({ id, name: name });
                         }
                     }
-                    return res;
-                }, item.name, ctx);
+                    return [res, test];
+                }, item.name);
+                const newItems = data[0];
+                ctx.reply(data[1]);
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
