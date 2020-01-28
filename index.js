@@ -47,7 +47,7 @@ function renderList(commands, curPage, pages, addSymbol = '') {
         btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
     }
     return [
-        `Введите идентификатор элемента:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`,
+        `Введите идентификатор элемента:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`.slice(0, 300),
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(btns)
@@ -154,11 +154,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const inner = post.querySelector('a+span').innerText;
                         const regStrings = '(?:(?:Название)|(?:Канон)|(?:Автор)|(?:Бета)|(?:Переводчик)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
-                        const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
-                        const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
-                        const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
-                        const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
-                        const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
+                        const titles = inner.match(/Название:(.*)/g) || [];
+                        const pairings = inner.match(/Пейринг\/Персонажи:(.*)/g) || [];
+                        const categories = inner.match(/Категория:(.*)/g) || [];
+                        const ratings = inner.match(/Рейтинг:(.*)/g) || [];
+                        const genres = inner.match(/Жанр:(.*)/g) || [];
                         test.push({inner: inner.slice(0, 300), titles, pairings, categories});
                         if (pairings.length) {
                             const temp = [];
