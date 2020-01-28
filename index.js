@@ -258,8 +258,8 @@ wtfScene.action(/c_back_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/c_next_\d{1,}/gi, ctx => {
-    ctx.replace( ctx.match[0]);
-    const pageSize = ctx.match[0].replace('p_next', '');
+    ctx.reply( ctx.match[0]);
+    const pageSize = parseInt(ctx.match[0].replace('p_next', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
