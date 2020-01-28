@@ -20,7 +20,6 @@ const browserArgs = {
         '--single-process'
     ],
 };
-const pageSize = 20;
 
 const bot = new Telegraf(process.env.TOKEN);
 const stage = new Stage();
@@ -35,6 +34,7 @@ bot.catch((err, ctx) => {
 
 let browser;
 const wtfScene = new Scene('wtfScene');
+const pageSize = 20;
 
 function renderList(commands, curPage, pages, addSymbol = '') {
     const start = (curPage - 1) * pageSize;
@@ -144,15 +144,15 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     return inner;
                 });
                 // ctx.reply(test.slice(0, 300));
+                page.click('.linkMore')
                 const data = await page.evaluate((commandName) => {
                     const res = [];
                     const test = [];
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
                         const id = post.id.replace('post', '');
-                        post.querySelector('a+span').style.display = 'block';
-                        const inner = post.querySelector('a+span').textContent;
-                        const regStrings = '(?:(?:Название)|(?:Автор)|(?:Канон)|(?:Бета)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
+                        const inner = post.querySelector('a+span').innerText;
+                        const regStrings = '(?:(?:Название)|(?:Канон)|(?:Автор)|(?:Бета)|(?:Переводчик)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
                         const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
