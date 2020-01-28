@@ -180,7 +180,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     return [res, test];
                 }, item.name);
                 const newItems = data[0];
-                ctx.reply(data[1].slice(0, 2000));
+                ctx.reply(JSON.stringify(data[1]).slice(0, 2000));
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
