@@ -140,7 +140,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 return inner;
             });
             ctx.reply(test.slice(0, 300));
-            const newItems = await page.evaluate(() => {
+            const newItems = await page.evaluate((commandName) => {
                 const res = [];
                 const items = document.querySelectorAll('.singlePost');
                 for (const post of items) {
@@ -157,7 +157,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     if (pairings.length) {
                         const temp = [];
                         for (let i = 0; i < pairings.length; i++) {
-                            const title = titles[i] ? titles[i].replace(clearRegexp, '') : item.name;
+                            const title = titles[i] ? titles[i].replace(clearRegexp, '') : commandName;
                             const pairing = pairings[i].replace(clearRegexp, '');
                             const category = categories[i].replace(clearRegexp, '');
                             const rating = ratings[i].replace(clearRegexp, '');
@@ -172,7 +172,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     }
                 }
                 return res;
-            });
+            })(item.name);
             ctx.session.posts = {};
             ctx.session.posts.command = item;
             ctx.session.posts.items = newItems;
