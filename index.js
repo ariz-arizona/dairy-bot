@@ -153,23 +153,23 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
                         const id = post.id.replace('post', '');
-                        const inner = post.querySelector('a+span').innerText;
+                        const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
                         const regStrings = '(?:(?:Название)|(?:Канон)|(?:Автор)|(?:Бета)|(?:Переводчик)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
-                        const titles = inner.match(/Название:(.*)\n/g) || [];
-                        const pairings = inner.match(/Пейринг\/Персонажи:(.*)\n/g) || [];
-                        const categories = inner.match(/Категория:(.*)\n/g) || [];
-                        const ratings = inner.match(/Рейтинг:(.*)\n/g) || [];
-                        const genres = inner.match(/Жанр:(.*)\n/g) || [];
+                        const titles = inner.match(/Название:(.*?)__/g) || [];
+                        const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
+                        const categories = inner.match(/Категория:(.*?)__/g) || [];
+                        const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
+                        const genres = inner.match(/Жанр:(.*?)__/g) || [];
                         test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
                         if (pairings.length) {
                             const temp = [];
                             for (let i = 0; i < pairings.length; i++) {
-                                const title = titles[i].replace(/Название:? ?/, '');
-                                const pairing = pairings[i].replace(/Пейринг\/Персонажи:? ?/, '');
-                                const category = categories[i].replace(/Категория:? ?/, '');
-                                const rating = ratings[i].replace(/Рейтинг:? ?/, '');
-                                const genre = genres[i].replace(/Жанр:? ?/, '');
+                                const title = titles[i].replace('__', '').replace(/Название:? ?/, '');
+                                const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '');
+                                const category = categories[i].replace('__', '').replace(/Категория:? ?/, '');
+                                const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '');
+                                const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '');
                                 const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                                 temp.push(string);
                             }
@@ -221,7 +221,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     for (const comment of comments) {
                         const text = comment.querySelector('[id^=morec]');
                         if (comment.querySelector('.sign').innerText !== command.name) {
-                            continue;
+                            // continue;
                         }
                         if (text) {
                             text.style.display = 'block';
