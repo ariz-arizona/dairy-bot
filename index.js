@@ -34,9 +34,8 @@ bot.catch((err, ctx) => {
 
 let browser;
 const wtfScene = new Scene('wtfScene');
-const pageSize = 20;
 
-function renderList(commands, curPage, pages, addSymbol = '') {
+function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
     const btns = [];
@@ -47,7 +46,10 @@ function renderList(commands, curPage, pages, addSymbol = '') {
         btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next`))
     }
     return [
-        `Введите идентификатор элемента:\n${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`).join(`\n`)}`.slice(0, 300),
+        `Введите идентификатор элемента:\n
+        ${commands.slice(start, end).map((el, i) =>
+            `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 40)
+        ).join(`\n`)}`,
         {
             parse_mode: 'HTML',
             reply_markup: Markup.inlineKeyboard(btns)
@@ -58,7 +60,6 @@ function renderList(commands, curPage, pages, addSymbol = '') {
 wtfScene.enter((ctx, initialState) => {
     (async (ctx, initialState) => {
         try {
-
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
@@ -159,7 +160,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const categories = inner.match(/Категория:(.*)/g) || [];
                         const ratings = inner.match(/Рейтинг:(.*)/g) || [];
                         const genres = inner.match(/Жанр:(.*)/g) || [];
-                        test.push({inner: inner.slice(0, 300), titles, pairings, categories});
+                        test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
                         if (pairings.length) {
                             const temp = [];
                             for (let i = 0; i < pairings.length; i++) {
@@ -187,7 +188,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.session.posts.curPage = 1;
                 ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
                 const { items, curPage, pages } = ctx.session.posts;
-                const result = renderList(items, curPage, pages, 'p');
+                const result = renderList(items, curPage, pages, 'p', 10);
                 ctx.reply(result[0], result[1]);
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
@@ -196,48 +197,50 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 
 wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace(/(p|P)/, '');
-        const { items, command } = ctx.session.posts;
-        if (!items[value]) {
-            ctx.reply('Нет такого поста')
-        } else {
-            const item = ctx.session.posts.items[value];
-            const page = (await browser.pages())[0];
-            const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-            page.goto(link);
-            ctx.reply(`GO TO ${link}`)
-            // todo многостраничность, выбор комментариев
-            await page.waitForNavigation();
-            const result = await page.evaluate((command) => {
-                const pRegExp = /\n{1,}/gi;
-                const pRegReplace = '</p><p>';
-                const post = document.querySelector('.singlePost .postContent .postInner').innerText;
-                const comments = document.querySelectorAll('#commentsArea .singleComment');
-                const content = [];
-                for (const comment of comments) {
-                    const text = comment.querySelector('[id^=morec]');
-                    if (comment.querySelector('.sign').innerText !== command.name) {
-                        continue;
+        try {
+            const value = ctx.match[0].replace(/(p|P)/, '');
+            const { items, command } = ctx.session.posts;
+            if (!items[value]) {
+                ctx.reply('Нет такого поста')
+            } else {
+                const item = ctx.session.posts.items[value];
+                const page = (await browser.pages())[0];
+                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
+                page.goto(link);
+                ctx.reply(`GO TO ${link}`)
+                // todo многостраничность, выбор комментариев
+                await page.waitForNavigation();
+                const result = await page.evaluate((command) => {
+                    const pRegExp = /\n{1,}/gi;
+                    const pRegReplace = '</p><p>';
+                    const post = document.querySelector('.singlePost .postContent .postInner').innerText;
+                    const comments = document.querySelectorAll('#commentsArea .singleComment');
+                    const content = [];
+                    for (const comment of comments) {
+                        const text = comment.querySelector('[id^=morec]');
+                        if (comment.querySelector('.sign').innerText !== command.name) {
+                            continue;
+                        }
+                        if (text) {
+                            text.style.display = 'block';
+                            content.push(text.innerText.replace(pRegExp, pRegReplace));
+                        }
                     }
-                    if (text) {
-                        text.style.display = 'block';
-                        content.push(text.innerText.replace(pRegExp, pRegReplace));
-                    }
-                }
-                return `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`;
-            }, command);
-            const string = `<?xml version="1.0" encoding="UTF-8"?>
+                    return `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`;
+                }, command);
+                const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
                 <body><title>${item.name}</title><p>${result}</p></body>
                 </FictionBook>`;
-            ctx.replyWithDocument(
-                {
-                    source: Buffer.from(string, 'utf8'),
-                    filename: `${item.name}.fb2`
-                }
-            )
-        }
+                ctx.replyWithDocument(
+                    {
+                        source: Buffer.from(string, 'utf8'),
+                        filename: `${item.name}.fb2`
+                    }
+                )
+            }
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
 });
 
