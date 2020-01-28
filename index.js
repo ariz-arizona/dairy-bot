@@ -113,7 +113,8 @@ wtfScene.enter((ctx, initialState) => {
             ctx.reply(response[0], response[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx)
-})
+});
+
 wtfScene.leave((ctx) => {
     (async (ctx) => {
         await browser.close();
@@ -138,15 +139,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`GO TO ${link}`)
                 // todo многостраничность, выбор комментариев
                 await page.waitForNavigation();
-                const test = await page.evaluate(() => {
+                // page.click('.linkMore')
+                await page.evaluate(() => {
                     const items = document.querySelectorAll('.singlePost');
-                    const post = items[0];
-                    post.querySelector('a+span').style.display = 'block';
-                    const inner = post.querySelector('a+span').textContent;
-                    return inner;
-                });
-                // ctx.reply(test.slice(0, 300));
-                page.click('.linkMore')
+                    for (const post of items) {
+                        post.querySelector('.LinkMore').click();\
+                    }
+                })
                 const data = await page.evaluate((commandName) => {
                     const res = [];
                     const test = [];
@@ -187,7 +186,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
                 ctx.session.posts.curPage = 1;
-                const pageSize = 10;
+                const pageSize = 5;
                 ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
                 const { items, curPage, pages } = ctx.session.posts;
                 const result = renderList(items, curPage, pages, 'p', pageSize);
