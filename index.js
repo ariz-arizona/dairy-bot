@@ -241,7 +241,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.action(/c_back_\d{1,}/, ctx => {
+wtfScene.action(/c_back_\d{1,}/gi, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
@@ -253,7 +253,7 @@ wtfScene.action(/c_back_\d{1,}/, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/c_next_\d{1,}/, ctx => {
+wtfScene.action(/c_next_\d{1,}/gi, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
@@ -265,7 +265,7 @@ wtfScene.action(/c_next_\d{1,}/, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/p_back_\d{1,}/, ctx => {
+wtfScene.action(/p_back_\d{1,}/gi, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
@@ -277,7 +277,7 @@ wtfScene.action(/p_back_\d{1,}/, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/p_next_\d{1,}/, ctx => {
+wtfScene.action(/p_next_\d{1,}/gi, ctx => {
     const pageSize = ctx.match[0].replace('p_next','');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
