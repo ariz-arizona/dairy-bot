@@ -45,13 +45,16 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     if (curPage <= pages - 1) {
         btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next_${pageSize}`))
     }
+    const reply = {
+        parse_mode: 'HTML',
+    };
+    if (end > 1) {
+        reply.reply_markup: Markup.inlineKeyboard(btns)
+    }
     return [
         `Введите идентификатор элемента:\n
         ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
-        {
-            parse_mode: 'HTML',
-            reply_markup: end > 1 ? Markup.inlineKeyboard(btns) : false
-        }
+        reply
     ]
 }
 
@@ -242,7 +245,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
 });
 
 wtfScene.action(/c_back_\d{1,}/gi, ctx => {
-    const pageSize = ctx.match[0].replace('p_next','');
+    const pageSize = ctx.match[0].replace('p_next', '');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
@@ -254,7 +257,7 @@ wtfScene.action(/c_back_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/c_next_\d{1,}/gi, ctx => {
-    const pageSize = ctx.match[0].replace('p_next','');
+    const pageSize = ctx.match[0].replace('p_next', '');
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
@@ -266,7 +269,7 @@ wtfScene.action(/c_next_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/p_back_\d{1,}/gi, ctx => {
-    const pageSize = ctx.match[0].replace('p_next','');
+    const pageSize = ctx.match[0].replace('p_next', '');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
@@ -278,7 +281,7 @@ wtfScene.action(/p_back_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/p_next_\d{1,}/gi, ctx => {
-    const pageSize = ctx.match[0].replace('p_next','');
+    const pageSize = ctx.match[0].replace('p_next', '');
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
