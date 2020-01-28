@@ -106,9 +106,10 @@ wtfScene.enter((ctx, initialState) => {
             ctx.session.commands = {};
             ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
+            const pageSize = 20;
             ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
             const { curPage, pages, items } = ctx.session.commands;
-            const response = renderList(items, curPage, pages, 'c');
+            const response = renderList(items, curPage, pages, 'c', pageSize);
             ctx.reply(response[0], response[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx)
