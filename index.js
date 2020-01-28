@@ -143,7 +143,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 await page.evaluate(() => {
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
-                        post.querySelector('.LinkMore').click();\
+                        post.querySelector('.LinkMore').click();
                     }
                 })
                 const data = await page.evaluate((commandName) => {
