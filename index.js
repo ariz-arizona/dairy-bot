@@ -48,7 +48,7 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     return [
         `Введите идентификатор элемента:\n
         ${commands.slice(start, end).map((el, i) =>
-            `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 40)
+            `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 200)
         ).join(`\n`)}`,
         {
             parse_mode: 'HTML',
