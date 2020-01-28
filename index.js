@@ -68,9 +68,9 @@ wtfScene.enter((ctx, initialState) => {
                 req.continue();
             }
         });
-        page.on("error", function (err) {  
+        page.on("error", function (err) {
             theTempValue = err.toString();
-            console.log("Error: " + theTempValue); 
+            console.log("Error: " + theTempValue);
             ctx.reply("Browser error: " + theTempValue)
         });
 
@@ -118,70 +118,73 @@ wtfScene.leave((ctx) => {
 
 wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
-        const value = ctx.match[0].replace(/(c|C)/, '');
-        const { textTag } = ctx.session;
-        const { items } = ctx.session.commands;
-        if (!items[value]) {
-            ctx.reply('Нет такой команды')
-        } else {
-            const item = ctx.session.commands.items[value];
-            ctx.reply(`Вы выбрали команду ${item.name}`);
-            const page = (await browser.pages())[0];
-            const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
-            page.goto(link);
-            ctx.reply(`GO TO ${link}`)
-            // todo многостраничность, выбор комментариев
-            await page.waitForNavigation();
-            const test = await page.evaluate(() => {
-                const items = document.querySelectorAll('.singlePost');
-                const post = items[0];
-                post.querySelector('a+span').style.display = 'block';
-                const inner = post.querySelector('a+span').textContent;
-                return inner;
-            });
-            ctx.reply(test.slice(0, 300));
-            const newItems = await page.evaluate((commandName) => {
-                const res = [];
-                const items = document.querySelectorAll('.singlePost');
-                for (const post of items) {
-                    const id = post.id.replace('post', '');
+        try {
+
+            const value = ctx.match[0].replace(/(c|C)/, '');
+            const { textTag } = ctx.session;
+            const { items } = ctx.session.commands;
+            if (!items[value]) {
+                ctx.reply('Нет такой команды')
+            } else {
+                const item = ctx.session.commands.items[value];
+                ctx.reply(`Вы выбрали команду ${item.name}`);
+                const page = (await browser.pages())[0];
+                const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
+                page.goto(link);
+                ctx.reply(`GO TO ${link}`)
+                // todo многостраничность, выбор комментариев
+                await page.waitForNavigation();
+                const test = await page.evaluate(() => {
+                    const items = document.querySelectorAll('.singlePost');
+                    const post = items[0];
                     post.querySelector('a+span').style.display = 'block';
                     const inner = post.querySelector('a+span').textContent;
-                    const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
-                    const clearRegexp = new RegExp(`${regStrings}$/`);
-                    const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
-                    const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
-                    const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
-                    const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
-                    const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
-                    if (pairings.length) {
-                        const temp = [];
-                        for (let i = 0; i < pairings.length; i++) {
-                            const title = titles[i] ? titles[i].replace(clearRegexp, '') : commandName;
-                            const pairing = pairings[i].replace(clearRegexp, '');
-                            const category = categories[i].replace(clearRegexp, '');
-                            const rating = ratings[i].replace(clearRegexp, '');
-                            const genre = genres[i].replace(clearRegexp, '');
-                            const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                            res.push(string);
+                    return inner;
+                });
+                ctx.reply(test.slice(0, 300));
+                const newItems = await page.evaluate((commandName) => {
+                    const res = [];
+                    const items = document.querySelectorAll('.singlePost');
+                    for (const post of items) {
+                        const id = post.id.replace('post', '');
+                        post.querySelector('a+span').style.display = 'block';
+                        const inner = post.querySelector('a+span').textContent;
+                        const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
+                        const clearRegexp = new RegExp(`${regStrings}$/`);
+                        const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
+                        const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
+                        const categories = inner.match(new RegExp(`Категория:(.*?)${regStrings}`), 'gi') || [];
+                        const ratings = inner.match(new RegExp(`Рейтинг:(.*?)${regStrings}`), 'gi') || [];
+                        const genres = inner.match(new RegExp(`Жанр:(.*?)${regStrings}`), 'gi') || [];
+                        if (pairings.length) {
+                            const temp = [];
+                            for (let i = 0; i < pairings.length; i++) {
+                                const title = titles[i] ? titles[i] : commandName;
+                                const pairing = pairings[i]
+                                const category = categories[i]
+                                const rating = ratings[i]
+                                const genre = genres[i]
+                                const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                                res.push(string);
+                            }
+                            res.push({ id, name: temp.join(' | ') });
+                        } else {
+                            const name = post.querySelector('.postTitle h2').innerText;
+                            res.push({ id, name: name });
                         }
-                        res.push({ id, name: temp.join(' | ') });
-                    } else {
-                        const name = post.querySelector('.postTitle h2').innerText;
-                        res.push({ id, name: name });
                     }
-                }
-                return res;
-            })(item.name);
-            ctx.session.posts = {};
-            ctx.session.posts.command = item;
-            ctx.session.posts.items = newItems;
-            ctx.session.posts.curPage = 1;
-            ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
-            const { items, curPage, pages } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 'p');
-            ctx.reply(result[0], result[1]);
-        }
+                    return res;
+                })(item.name);
+                ctx.session.posts = {};
+                ctx.session.posts.command = item;
+                ctx.session.posts.items = newItems;
+                ctx.session.posts.curPage = 1;
+                ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
+                const { items, curPage, pages } = ctx.session.posts;
+                const result = renderList(items, curPage, pages, 'p');
+                ctx.reply(result[0], result[1]);
+            }
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
 });
 
