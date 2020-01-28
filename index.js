@@ -156,11 +156,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const inner = post.querySelector('a+span').innerText;
                         const regStrings = '(?:(?:Название)|(?:Канон)|(?:Автор)|(?:Бета)|(?:Переводчик)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
-                        const titles = inner.match(/Название:(.*)/g) || [];
-                        const pairings = inner.match(/Пейринг\/Персонажи:(.*)/g) || [];
-                        const categories = inner.match(/Категория:(.*)/g) || [];
-                        const ratings = inner.match(/Рейтинг:(.*)/g) || [];
-                        const genres = inner.match(/Жанр:(.*)/g) || [];
+                        const titles = inner.match(/Название:(.*)\n/g) || [];
+                        const pairings = inner.match(/Пейринг\/Персонажи:(.*)\n/g) || [];
+                        const categories = inner.match(/Категория:(.*)\n/g) || [];
+                        const ratings = inner.match(/Рейтинг:(.*)\n/g) || [];
+                        const genres = inner.match(/Жанр:(.*)\n/g) || [];
                         test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
                         if (pairings.length) {
                             const temp = [];
