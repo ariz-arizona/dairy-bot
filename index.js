@@ -187,9 +187,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
                 ctx.session.posts.curPage = 1;
+                const pageSize = 10;
                 ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
                 const { items, curPage, pages } = ctx.session.posts;
-                const result = renderList(items, curPage, pages, 'p', 10);
+                const result = renderList(items, curPage, pages, 'p', pageSize);
                 ctx.reply(result[0], result[1]);
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
