@@ -47,12 +47,10 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     }
     return [
         `Введите идентификатор элемента:\n
-        ${commands.slice(start, end).map(
-            (el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 300)
-        ).join(`\n`)}`,
+        ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 300)).join(`\n`)}`,
         {
             parse_mode: 'HTML',
-            reply_markup: Markup.inlineKeyboard(btns)
+            reply_markup: end > 1 ? Markup.inlineKeyboard(btns) : false
         }
     ]
 }
@@ -139,7 +137,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`GO TO ${link}`)
                 // todo многостраничность, выбор комментариев
                 await page.waitForNavigation();
-                // page.click('.linkMore')
                 await page.evaluate(() => {
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
@@ -153,8 +150,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     for (const post of items) {
                         const id = post.id.replace('post', '');
                         const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                        const regStrings = '(?:(?:Название)|(?:Канон)|(?:Автор)|(?:Бета)|(?:Переводчик)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
-                        const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(/Название:(.*?)__/g) || [];
                         const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
                         const categories = inner.match(/Категория:(.*?)__/g) || [];
@@ -163,16 +158,16 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
                         if (pairings.length) {
                             const temp = [];
-                            for (let i = 0; i < pairings.length; i++) {
-                                const title = titles[i].replace('__', '').replace(/Название:? ?/, '');
-                                const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '');
-                                const category = categories[i].replace('__', '').replace(/Категория:? ?/, '');
-                                const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '');
-                                const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '');
+                            for (let i = 0; i < titles.length; i++) {
+                                const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
+                                const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
+                                const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
+                                const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
+                                const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
                                 const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                                 temp.push(string);
                             }
-                            res.push({ id, name: temp.join(' | ') });
+                            res.push({ id, name: temp.join('\n') });
                         } else {
                             const name = post.querySelector('.postTitle h2').innerText;
                             res.push({ id, name: name });
