@@ -258,7 +258,7 @@ wtfScene.action(/c_back_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/c_next_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('c_next', ''));
+    const pageSize = parseInt(ctx.match[0].replace('c_next_', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
@@ -270,7 +270,7 @@ wtfScene.action(/c_next_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/p_back_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('p_back', ''));
+    const pageSize = parseInt(ctx.match[0].replace('p_back_', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
@@ -282,7 +282,7 @@ wtfScene.action(/p_back_\d{1,}/gi, ctx => {
 })
 
 wtfScene.action(/p_next_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('p_next', ''));
+    const pageSize = parseInt(ctx.match[0].replace('p_next_', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
