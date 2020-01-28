@@ -57,56 +57,59 @@ function renderList(commands, curPage, pages, addSymbol = '') {
 
 wtfScene.enter((ctx, initialState) => {
     (async (ctx, initialState) => {
-        browser = await puppeteer.launch(browserArgs);
-        const page = await browser.newPage();
-        await page.setRequestInterception(true);
-        page.on('request', (req) => {
-            if (req.resourceType() === 'image') {
-                req.abort();
-            }
-            else {
-                req.continue();
-            }
-        });
-        page.on("error", function (err) {
-            theTempValue = err.toString();
-            console.log("Error: " + theTempValue);
-            ctx.reply("Browser error: " + theTempValue)
-        });
+        try {
 
-        ctx.reply("OPEN BROWSER");
-        await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
-        await page.type('#user_login', login)
-        await page.type('#user_pass', password)
-        page.click('#inform_box button');
-        ctx.reply("WAIT LOGIN");
-        await page.waitForNavigation();
-        ctx.reply("WAIT DATA");
+            browser = await puppeteer.launch(browserArgs);
+            const page = await browser.newPage();
+            await page.setRequestInterception(true);
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                }
+                else {
+                    req.continue();
+                }
+            });
+            page.on("error", function (err) {
+                theTempValue = err.toString();
+                console.log("Error: " + theTempValue);
+                ctx.reply("Browser error: " + theTempValue)
+            });
 
-        const result = await page.evaluate(() => {
-            const items = [];
-            let textTag = '';
-            const links = document.querySelectorAll('a[id*=tag]');
-            for (const link of links) {
-                const name = link.innerText;
-                const id = link.id.replace('tag', '')
-                if (name.indexOf('WTF') !== -1) {
-                    items.push({ id, name })
+            ctx.reply("OPEN BROWSER");
+            await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
+            await page.type('#user_login', login)
+            await page.type('#user_pass', password)
+            page.click('#inform_box button');
+            ctx.reply("WAIT LOGIN");
+            await page.waitForNavigation();
+            ctx.reply("WAIT DATA");
+
+            const result = await page.evaluate(() => {
+                const items = [];
+                let textTag = '';
+                const links = document.querySelectorAll('a[id*=tag]');
+                for (const link of links) {
+                    const name = link.innerText;
+                    const id = link.id.replace('tag', '')
+                    if (name.indexOf('WTF') !== -1) {
+                        items.push({ id, name })
+                    }
+                    if (name === 'тексты') {
+                        textTag = id;
+                    }
                 }
-                if (name === 'тексты') {
-                    textTag = id;
-                }
-            }
-            return { items, textTag };
-        });
-        ctx.session.textTag = result.textTag;
-        ctx.session.commands = {};
-        ctx.session.commands.items = result.items;
-        ctx.session.commands.curPage = 1;
-        ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
-        const { curPage, pages, items } = ctx.session.commands;
-        const response = renderList(items, curPage, pages, 'c');
-        ctx.reply(response[0], response[1]);
+                return { items, textTag };
+            });
+            ctx.session.textTag = result.textTag;
+            ctx.session.commands = {};
+            ctx.session.commands.items = result.items;
+            ctx.session.commands.curPage = 1;
+            ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
+            const { curPage, pages, items } = ctx.session.commands;
+            const response = renderList(items, curPage, pages, 'c');
+            ctx.reply(response[0], response[1]);
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx)
 })
 wtfScene.leave((ctx) => {
@@ -141,13 +144,14 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     return inner;
                 });
                 ctx.reply(test.slice(0, 300));
-                const newItems = await page.evaluate((commandName) => {
+                const newItems = await page.evaluate((commandName, ctx) => {
                     const res = [];
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
                         const id = post.id.replace('post', '');
                         post.querySelector('a+span').style.display = 'block';
                         const inner = post.querySelector('a+span').textContent;
+                        ctx.reply(inner.slice(0, 300));
                         const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
@@ -173,7 +177,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     }
                     return res;
-                },item.name);
+                }, item.name, ctx);
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
