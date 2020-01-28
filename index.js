@@ -219,7 +219,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                         const text = comment.querySelector('[id^=morec]');
                         names.push(comment.querySelector('.authorName').innerText);
                         if (comment.querySelector('.authorName').innerText !== command.name) {
-                            // continue;
+                            continue;
                         }
                         if (text) {
                             text.style.display = 'block';
