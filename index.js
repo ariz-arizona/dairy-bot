@@ -152,7 +152,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const id = post.id.replace('post', '');
                         post.querySelector('a+span').style.display = 'block';
                         const inner = post.querySelector('a+span').textContent;
-                        const regStrings = '((Название)|(Автор)|(Канон)|(Автор)|(Бета)|(Размер)|(Пейринг\/Персонажи)|(Категория)|(Жанр)|(Рейтинг)|(Краткое\ содержание))';
+                        const regStrings = '(?:(?:Название)|(?:Автор)|(?:Канон)|(?:Бета)|(?:Размер)|(?:Пейринг\/Персонажи)|(?:Категория)|(?:Жанр)|(?:Рейтинг)|(?:Краткое\ содержание))';
                         const clearRegexp = new RegExp(`${regStrings}$/`);
                         const titles = inner.match(new RegExp(`Название:(.*?)${regStrings}`), 'gi') || [];
                         const pairings = inner.match(new RegExp(`Пейринг\/Персонажи:(.*?)${regStrings}`), 'gi') || [];
@@ -169,7 +169,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 const rating = ratings[i]
                                 const genre = genres[i]
                                 const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                                res.push(string);
+                                temp.push(string);
                             }
                             res.push({ id, name: temp.join(' | ') });
                         } else {
