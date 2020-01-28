@@ -51,11 +51,12 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     if (end > 1) {
         reply.reply_markup = Markup.inlineKeyboard(btns)
     }
-    return [
-        `Введите идентификатор элемента:\n
-        ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
-        reply
-    ]
+    return [`${command.length} ${start} ${end}`, reply]
+    // return [
+    //     `Введите идентификатор элемента:\n
+    //     ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
+    //     reply
+    // ]
 }
 
 wtfScene.enter((ctx, initialState) => {
