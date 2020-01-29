@@ -184,6 +184,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             return link.href;
                         }
                     });
+                    ctx.reply(nextLink)
                     page.goto(nextLink);
                 } while (nextLink)
 
