@@ -140,6 +140,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`GO TO ${link}`);
                 let data = [];
                 let nextLink;
+                let tempLink;
                 do {
                     await page.waitForNavigation();
                     await page.evaluate(() => {
@@ -178,14 +179,17 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                         return res;
                     }));
-                    nextLink = await page.evaluate(() => {
+                    tempLink = await page.evaluate(() => {
                         const link = document.querySelector('.pagination a:last-child');
                         if (link) {
                             return link.href;
                         }
                     });
+                    if (tempLink !== nextLink) {
+                        nextLink = tempLink;
+                    }
                     ctx.reply(nextLink)
-                    await page.goto(nextLink);
+                    page.goto(nextLink);
                 } while (nextLink)
 
                 // todo многостраничность, выбор комментариев
