@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
                         const genres = inner.match(/Жанр:(.*?)__/g) || [];
                         test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
-                        if (pairings.length) {
+                        try {
                             const temp = [];
                             for (let i = 0; i < titles.length; i++) {
                                 const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
@@ -171,7 +171,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 temp.push(string);
                             }
                             res.push({ id, name: temp.join('\n') });
-                        } else {
+                        } catch {
                             const name = post.querySelector('.postTitle h2').innerText;
                             res.push({ id, name: name });
                         }
