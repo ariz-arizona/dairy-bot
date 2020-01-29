@@ -137,8 +137,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 let data = [];
                 let tempLink;
+                let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
                 do {
-                    let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
                     ctx.reply(`GO TO ${link}`);
                     page.goto(link);
                     await page.waitForNavigation();
