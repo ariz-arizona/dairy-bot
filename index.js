@@ -185,7 +185,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     });
                     ctx.reply(nextLink)
-                    page.goto(nextLink);
+                    await page.goto(nextLink);
                 } while (nextLink)
 
                 // todo многостраничность, выбор комментариев
