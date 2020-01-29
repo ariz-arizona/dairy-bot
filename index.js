@@ -184,9 +184,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     }
                     return [res];
                 }
-                const data = await page.evaluate((commandName, getData) => {
-                    return getData(commandName);
-                }, item.name, getData);
+                const data = await page.evaluate((getData) => {
+                    return getData();
+                }, getData);
                 const newItems = data[0];
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
