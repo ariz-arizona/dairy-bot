@@ -152,7 +152,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         post.querySelector('.LinkMore').click();
                     }
                 });
-                const getData = (commandName) => {
+                const getData = function (commandName) {
                     const res = [];
                     const test = [];
                     const items = document.querySelectorAll('.singlePost');
