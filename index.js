@@ -153,6 +153,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         const items = document.querySelectorAll('.singlePost');
                         for (const post of items) {
                             const id = post.id.replace('post', '');
+                            const name = post.querySelector('.postTitle h2').innerText;
                             const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
                             const titles = inner.match(/Название:(.*?)__/g) || [];
                             const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
@@ -172,7 +173,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 }
                                 res.push({ id, name: temp.join('') ? temp.join('\n') : name });
                             } catch {
-                                const name = post.querySelector('.postTitle h2').innerText;
                                 res.push({ id, name: name });
                             }
                         }
