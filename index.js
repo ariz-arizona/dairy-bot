@@ -179,7 +179,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         return res;
                     }));
                     tempLink = await page.evaluate(() => {
-                        const link = document.querySelector('.pagination a:last-child');
+                        const link = document.querySelector('.pagination a:not(.active):last-child');
                         if (link) {
                             return link.href;
                         }
