@@ -187,7 +187,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     if (tempLink !== link) {
                         link = tempLink;
                     }
-                } while (nextLink)
+                } while (link)
 
                 // todo многостраничность, выбор комментариев
                 const newItems = data;
