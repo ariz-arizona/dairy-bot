@@ -188,7 +188,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     if (tempLink !== nextLink) {
                         nextLink = tempLink;
                     }
-                    ctx.reply(`GO TO ${nextLink}`))
+                    ctx.reply(`GO TO ${nextLink}`)
                     page.goto(nextLink);
                     await page.waitForNavigation();
                 } while (nextLink)
