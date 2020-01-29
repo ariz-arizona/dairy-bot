@@ -170,7 +170,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                     const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
                                     temp.push(string);
                                 }
-                                res.push({ id, name: temp.join('\n') });
+                                res.push({ id, name: temp.join('') ? temp.join('\n') : name });
                             } catch {
                                 const name = post.querySelector('.postTitle h2').innerText;
                                 res.push({ id, name: name });
@@ -188,8 +188,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         link = tempLink;
                     }
                 } while (link)
-
-                // todo многостраничность, выбор комментариев
                 const newItems = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
