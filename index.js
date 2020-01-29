@@ -136,13 +136,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
-                page.goto(link);
                 ctx.reply(`GO TO ${link}`);
+                page.goto(link);
+                await page.waitForNavigation();
                 let data = [];
                 let nextLink;
                 let tempLink;
                 do {
-                    await page.waitForNavigation();
                     await page.evaluate(() => {
                         const items = document.querySelectorAll('.singlePost');
                         for (const post of items) {
@@ -188,8 +188,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     if (tempLink !== nextLink) {
                         nextLink = tempLink;
                     }
-                    ctx.reply(nextLink)
+                    ctx.reply(`GO TO ${nextLink}`))
                     page.goto(nextLink);
+                    await page.waitForNavigation();
                 } while (nextLink)
 
                 // todo многостраничность, выбор комментариев
