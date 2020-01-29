@@ -138,10 +138,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`);
-                await page.waitForNavigation();
-                let nextLink;
                 let data = [];
+                let nextLink;
                 do {
+                    await page.waitForNavigation();
                     await page.evaluate(() => {
                         const items = document.querySelectorAll('.singlePost');
                         for (const post of items) {
@@ -184,6 +184,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             return link.href;
                         }
                     });
+                    page.goto(nextLink);
                 } while (nextLink)
 
                 // todo многостраничность, выбор комментариев
