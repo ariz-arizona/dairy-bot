@@ -137,16 +137,22 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
                 page.goto(link);
-                ctx.reply(`GO TO ${link}`)
-                // todo многостраничность, выбор комментариев
+                ctx.reply(`GO TO ${link}`);
                 await page.waitForNavigation();
+                const nextLink = await page.evaluate(() => {
+                    const link = document.querySelector('.pagination a:last-child');
+                    if (link) {
+                        return link.href;
+                    }
+                })
+                // todo многостраничность, выбор комментариев
                 await page.evaluate(() => {
                     const items = document.querySelectorAll('.singlePost');
                     for (const post of items) {
                         post.querySelector('.LinkMore').click();
                     }
-                })
-                const data = await page.evaluate((commandName) => {
+                });
+                const getData = (commandName) => {
                     const res = [];
                     const test = [];
                     const items = document.querySelectorAll('.singlePost');
@@ -177,7 +183,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     }
                     return [res];
-                }, item.name);
+                }
+                const data = await page.evaluate((commandName, getData) => {
+                    return getData(commandName);
+                }, item.name, getData);
                 const newItems = data[0];
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
