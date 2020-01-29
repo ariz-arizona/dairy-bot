@@ -139,55 +139,55 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`);
                 await page.waitForNavigation();
-                const nextLink = await page.evaluate(() => {
-                    const link = document.querySelector('.pagination a:last-child');
-                    if (link) {
-                        return link.href;
-                    }
-                })
-                // todo многостраничность, выбор комментариев
-                await page.evaluate(() => {
-                    const items = document.querySelectorAll('.singlePost');
-                    for (const post of items) {
-                        post.querySelector('.LinkMore').click();
-                    }
-                });
-                const getData = function (commandName) {
-                    const res = [];
-                    const test = [];
-                    const items = document.querySelectorAll('.singlePost');
-                    for (const post of items) {
-                        const id = post.id.replace('post', '');
-                        const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                        const titles = inner.match(/Название:(.*?)__/g) || [];
-                        const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
-                        const categories = inner.match(/Категория:(.*?)__/g) || [];
-                        const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
-                        const genres = inner.match(/Жанр:(.*?)__/g) || [];
-                        test.push({ inner: inner.slice(0, 300), titles, pairings, categories });
-                        try {
-                            const temp = [];
-                            for (let i = 0; i < titles.length; i++) {
-                                const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
-                                const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
-                                const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
-                                const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
-                                const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                                temp.push(string);
-                            }
-                            res.push({ id, name: temp.join('\n') });
-                        } catch {
-                            const name = post.querySelector('.postTitle h2').innerText;
-                            res.push({ id, name: name });
+                let nextLink;
+                let data = [];
+                do {
+                    await page.evaluate(() => {
+                        const items = document.querySelectorAll('.singlePost');
+                        for (const post of items) {
+                            post.querySelector('.LinkMore').click();
                         }
-                    }
-                    return [res];
-                }
-                const data = await page.evaluate((getData) => {
-                    return getData();
-                }, getData);
-                const newItems = data[0];
+                    });
+                    data = data.concat(await page.evaluate(() => {
+                        const res = [];
+                        const items = document.querySelectorAll('.singlePost');
+                        for (const post of items) {
+                            const id = post.id.replace('post', '');
+                            const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
+                            const titles = inner.match(/Название:(.*?)__/g) || [];
+                            const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
+                            const categories = inner.match(/Категория:(.*?)__/g) || [];
+                            const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
+                            const genres = inner.match(/Жанр:(.*?)__/g) || [];
+                            try {
+                                const temp = [];
+                                for (let i = 0; i < titles.length; i++) {
+                                    const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
+                                    const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
+                                    const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
+                                    const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
+                                    const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
+                                    const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                                    temp.push(string);
+                                }
+                                res.push({ id, name: temp.join('\n') });
+                            } catch {
+                                const name = post.querySelector('.postTitle h2').innerText;
+                                res.push({ id, name: name });
+                            }
+                        }
+                        return res;
+                    }));
+                    nextLink = await page.evaluate(() => {
+                        const link = document.querySelector('.pagination a:last-child');
+                        if (link) {
+                            return link.href;
+                        }
+                    });
+                } while (nextLink)
+
+                // todo многостраничность, выбор комментариев
+                const newItems = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.items = newItems;
