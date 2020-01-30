@@ -218,31 +218,48 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                 ctx.reply(`GO TO ${link}`)
                 // todo многостраничность, выбор комментариев
                 await page.waitForNavigation();
-                const result = await page.evaluate((command) => {
-                    const pRegExp = /\n{1,}/gi;
-                    const pRegReplace = '</p><p>';
-                    const post = document.querySelector('.singlePost .postContent .postInner').innerText;
-                    const comments = document.querySelectorAll('#commentsArea .singleComment');
-                    const content = [];
-                    const names = [];
-                    for (const comment of comments) {
-                        const text = comment.querySelector('[id^=morec]');
-                        names.push(comment.querySelector('.authorName').innerText);
-                        if (comment.querySelector('.authorName').innerText !== command.name) {
-                            continue;
-                        }
-                        if (text) {
-                            text.style.display = 'block';
-                            content.push(text.innerText.replace(pRegExp, pRegReplace));
-                        }
+                const frameLink = await page.evaluate(() => {
+                    const frame = document.querySelector('.singlePost iframe');
+                    if (frame) {
+                        return frame.src;
                     }
-                    return [names.join(', '), `<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
-                }, command);
-                // ctx.reply(result[0])
+                });
+                const pRegExp = /\n{1,}/gi;
+                const pRegReplace = '</p><p>';
+                let content;
+                if (frameLink) {
+                    page.goto(frameLink);
+                    ctx.reply(`GO TO ${link}`)
+                    await page.waitForNavigation();
+                    content = await page.evaluate(() => {
+                        return `<p>${document.body.innerText.replace(pRegExp, pRegReplace)}</p>`;
+                    })
+                } else {
+                    const result = await page.evaluate((command) => {
+                        const post = document.querySelector('.singlePost .postContent .postInner').innerText;
+                        const comments = document.querySelectorAll('#commentsArea .singleComment');
+                        const content = [];
+                        const names = [];
+                        for (const comment of comments) {
+                            const text = comment.querySelector('[id^=morec]');
+                            names.push(comment.querySelector('.authorName').innerText);
+                            if (comment.querySelector('.authorName').innerText !== command.name) {
+                                continue;
+                            }
+                            if (text) {
+                                text.style.display = 'block';
+                                content.push(text.innerText.replace(pRegExp, pRegReplace));
+                            }
+                        }
+                        return [`<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
+                    }, command);
+                    content = result[0];
+                }
+                ctx.reply(content.slice(0, 600));
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${result[1]}</p></body>
+                <body><title>${item.name}</title><p>${content}</p></body>
                 </FictionBook>`;
                 ctx.replyWithDocument(
                     {
