@@ -263,7 +263,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     }, command);
                     content = result;
                 }
-                const preparedContent = `<p>${content.replace(/(\n|\r){1,}/, '</p><p>')}<p>`;
+                const preparedContent = `<p>${content.replace(/(\n\r?|\r\n?){1,}/gi, '</p><p>')}<p>`;
                 ctx.reply(content.slice(0, 600));
                 ctx.reply(preparedContent.replace(/</gi, '< ').slice(0, 600))
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
