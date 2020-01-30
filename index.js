@@ -93,9 +93,10 @@ wtfScene.enter((ctx, initialState) => {
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
-                    const id = link.id.replace('tag', '')
+                    const id = link.id.replace('tag', '');
+                    const count = link.parentElement.children[0].textContent;
                     if (name.indexOf('WTF') !== -1) {
-                        items.push({ id, name })
+                        items.push({ id, name: `${name} (${count})` })
                     }
                     if (name === 'тексты') {
                         textTag = id;
@@ -105,7 +106,7 @@ wtfScene.enter((ctx, initialState) => {
             });
             ctx.session.textTag = result.textTag;
             ctx.session.commands = {};
-            ctx.session.commands.items = result.items;
+            ctx.session.commands.items = result.items.sort();
             ctx.session.commands.curPage = 1;
             const pageSize = 20;
             ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
@@ -229,13 +230,13 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                 let content;
                 if (frameLink) {
                     page.goto(frameLink);
-                    ctx.reply(`GO TO ${link}`)
+                    ctx.reply(`GO TO ${frameLink}`)
                     await page.waitForNavigation();
-                    content = await page.evaluate((pRegExp, pRegReplace) => {
-                        return `<p>${document.body.innerText.replace(pRegExp, pRegReplace)}</p>`;
-                    }, pRegExp, pRegReplace)
+                    content = await page.evaluate(() => {
+                        return `${document.body.innerText}`;
+                    })
                 } else {
-                    const result = await page.evaluate((command, pRegExp, pRegReplace) => {
+                    const result = await page.evaluate((command) => {
                         const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                         const comments = document.querySelectorAll('#commentsArea .singleComment');
                         const content = [];
@@ -251,11 +252,13 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                                 content.push(text.innerText.replace(pRegExp, pRegReplace));
                             }
                         }
-                        return [`<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
-                    }, command, pRegExp, pRegReplace);
-                    content = result[0];
+                        return `${post}\n\n${content}`;
+                    }, command);
+                    content = result;
                 }
+                const preparedContent = `<p>${content.replace(/(\n|\r){1,}/, '</p><p>')}<p>`;
                 ctx.reply(content.slice(0, 600));
+                ctx.reply(preparedContent.replace(/</gi, '< ').slice(0, 600))
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
