@@ -224,7 +224,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                         return frame.src;
                     }
                 });
-                const pRegExp = /\n{1,}/gi;
+                const pRegExp = /(\r\n|\r|\n){1,}/gi;
                 const pRegReplace = '</p><p>';
                 let content;
                 if (frameLink) {
