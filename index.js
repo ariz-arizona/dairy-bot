@@ -250,7 +250,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                         for (const comment of comments) {
                             const text = comment.querySelector('[id^=morec]');
                             names.push(comment.querySelector('.authorName').innerText);
-                            if (command.name.indexOf(comment.querySelector('.authorName').innerText) !== -1) {
+                            if (command.name.indexOf(comment.querySelector('.authorName').innerText) === -1) {
                                 continue;
                             }
                             if (text) {
