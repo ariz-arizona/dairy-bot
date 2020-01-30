@@ -242,10 +242,10 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                         return `${document.body.innerText}`;
                     })
                 } else {
-                    const result = await page.evaluate((command) => {
+                    content = await page.evaluate((command) => {
                         const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                         const comments = document.querySelectorAll('#commentsArea .singleComment');
-                        const content = [];
+                        const content = [post];
                         const names = [];
                         for (const comment of comments) {
                             const text = comment.querySelector('[id^=morec]');
@@ -258,9 +258,8 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                                 content.push(text.innerText);
                             }
                         }
-                        return `${post}\n\n${content.join('\n\n')}`;
+                        return `${content.join('\n\n')}`;
                     }, command);
-                    content = result;
                 }
                 const preparedContent = `<p>${content.replace(/(\n\r?|\r\n?|\v){1,}/gi, '</p><p>')}<p>`;
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
