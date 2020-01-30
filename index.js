@@ -94,7 +94,7 @@ wtfScene.enter((ctx, initialState) => {
                 for (const link of links) {
                     const name = link.innerText;
                     const id = link.id.replace('tag', '');
-                    const count = link.closest('li').children[0].textContent;
+                    const count = link.closest('li').querySelector('span[style]').textContent;
                     if (name.indexOf('WTF') !== -1) {
                         items.push({ id, name: `${name} (${count})` })
                     }
@@ -102,18 +102,19 @@ wtfScene.enter((ctx, initialState) => {
                         textTag = id;
                     }
                 }
+                items.sort((a, b) => {
+                    var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
+                    if (nameA < nameB)
+                        return -1
+                    if (nameA > nameB)
+                        return 1
+                    return 0
+                });
                 return { items, textTag };
             });
             ctx.session.textTag = result.textTag;
             ctx.session.commands = {};
-            ctx.session.commands.items = result.items.sort((a, b) => {
-                var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
-                if (nameA < nameB)
-                    return -1
-                if (nameA > nameB)
-                    return 1
-                return 0
-            });
+            ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
             const pageSize = 20;
             ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
@@ -232,8 +233,6 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                         return frame.src;
                     }
                 });
-                const pRegExp = /(\r\n|\r|\n){1,}/gi;
-                const pRegReplace = '</p><p>';
                 let content;
                 if (frameLink) {
                     page.goto(frameLink);
@@ -256,14 +255,14 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                             }
                             if (text) {
                                 text.style.display = 'block';
-                                content.push(text.innerText.replace(pRegExp, pRegReplace));
+                                content.push(text.innerText);
                             }
                         }
-                        return `${post}\n\n${content}`;
+                        return `${post}\n\n${content.join('\n\n')}`;
                     }, command);
                     content = result;
                 }
-                const preparedContent = `<p>${content.replace(/(\n\r?|\r\n?){1,}/gi, '</p><p>')}<p>`;
+                const preparedContent = `<p>${content.replace(/(\n\r?|\r\n?|\v){1,}/gi, '</p><p>')}<p>`;
                 ctx.reply(content.slice(0, 600));
                 ctx.reply(preparedContent.replace(/</gi, '< ').slice(0, 600))
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
