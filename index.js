@@ -231,11 +231,11 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     page.goto(frameLink);
                     ctx.reply(`GO TO ${link}`)
                     await page.waitForNavigation();
-                    content = await page.evaluate(() => {
+                    content = await page.evaluate((pRegExp, pRegReplace) => {
                         return `<p>${document.body.innerText.replace(pRegExp, pRegReplace)}</p>`;
-                    })
+                    }, pRegExp, pRegReplace)
                 } else {
-                    const result = await page.evaluate((command) => {
+                    const result = await page.evaluate((command, pRegExp, pRegReplace) => {
                         const post = document.querySelector('.singlePost .postContent .postInner').innerText;
                         const comments = document.querySelectorAll('#commentsArea .singleComment');
                         const content = [];
@@ -252,7 +252,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                             }
                         }
                         return [`<p>${post.replace(pRegExp, pRegReplace)}</p><p>${content.join(pRegReplace)}</p>`];
-                    }, command);
+                    }, command, pRegExp, pRegReplace);
                     content = result[0];
                 }
                 ctx.reply(content.slice(0, 600));
