@@ -94,7 +94,7 @@ wtfScene.enter((ctx, initialState) => {
                 for (const link of links) {
                     const name = link.innerText;
                     const id = link.id.replace('tag', '');
-                    const count = link.parentElement.children[0].textContent;
+                    const count = link.closest('li').children[0].textContent;
                     if (name.indexOf('WTF') !== -1) {
                         items.push({ id, name: `${name} (${count})` })
                     }
@@ -106,7 +106,14 @@ wtfScene.enter((ctx, initialState) => {
             });
             ctx.session.textTag = result.textTag;
             ctx.session.commands = {};
-            ctx.session.commands.items = result.items.sort();
+            ctx.session.commands.items = result.items.sort((a, b) => {
+                var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
+                if (nameA < nameB)
+                    return -1
+                if (nameA > nameB)
+                    return 1
+                return 0
+            });
             ctx.session.commands.curPage = 1;
             const pageSize = 20;
             ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
