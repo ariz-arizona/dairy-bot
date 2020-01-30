@@ -263,12 +263,10 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                     content = result;
                 }
                 const preparedContent = `<p>${content.replace(/(\n\r?|\r\n?|\v){1,}/gi, '</p><p>')}<p>`;
-                ctx.reply(content.slice(0, 600));
-                ctx.reply(preparedContent.replace(/</gi, '< ').slice(0, 600))
                 const string = `<?xml version="1.0" encoding="UTF-8"?>
                 <FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <description><title-info><book-title>${item.name}</book-title><lang>ru</lang><src-lang>ru</src-lang></title-info><src-url>${link}</src-url><id>${item.id}</id><version>2.0</version></description>
-                <body><title>${item.name}</title><p>${content}</p></body>
+                <body><title>${item.name}</title><p>${preparedContent}</p></body>
                 </FictionBook>`;
                 ctx.replyWithDocument(
                     {
