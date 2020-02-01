@@ -240,6 +240,7 @@ wtfScene.action(/^command_texts/gi, ctx => {
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
+    return true;
 });
 
 wtfScene.action(/^command_visual/gi, ctx => {
@@ -253,15 +254,56 @@ wtfScene.action(/^command_visual/gi, ctx => {
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
+    return true;
 });
 
-wtfScene.hears(/^(t|T|v|V)\d{1,}/gi, ctx => {
+wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
-            const value = ctx.match[0].replace(/(t|T|v|V)/, '');
-            const type = ctx.match[0].toLowerCase().indexOf('v') !== -1 ? 'visualItems' : 'textItems';
-            const { command } = ctx.session.posts;
-            const items = ctx.session.posts[type];
+            const value = ctx.match[0].replace(/(v|V)/, '');
+            const { textItems: items, command } = ctx.session.posts;
+            if (!items[value]) {
+                ctx.reply('Нет такого поста')
+            } else {
+                const item = ctx.session.posts[type][value];
+                const page = (await browser.pages())[0];
+                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
+                page.goto(link);
+                ctx.reply(`GO TO ${link}`)
+                await page.waitForNavigation();
+                const frameLinks = await page.evaluate(() => {
+                    const frames = document.querySelector('.singlePost iframe');
+                    if (frames) {
+                        return [].forEach.call(frames, function (frame) {
+                            return frame.src;
+                        })
+                    }
+                });
+                const imageLinks = await page.evaluate(() => {
+                    const images = document.querySelector('.singlePost a > img');
+                    if (images) {
+                        return [].forEach.call(images, function (image) {
+                            return images.src;
+                        })
+                    }
+                });
+                const replies = images.map(media => {
+                    return {
+                        type: 'photo',
+                        media
+                    }
+                })
+                ctx.replyWithMediaGroup(replies)
+            }
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
+    })(ctx);
+});
+
+wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
+    (async (ctx) => {
+        try {
+            const value = ctx.match[0].replace(/(t|T)/, '');
+            const { visualItems: items, command } = ctx.session.posts;
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
