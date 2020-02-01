@@ -90,6 +90,7 @@ wtfScene.enter((ctx, initialState) => {
             const result = await page.evaluate(() => {
                 const items = [];
                 let textTag = '';
+                let visualTag = '';
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
@@ -101,6 +102,9 @@ wtfScene.enter((ctx, initialState) => {
                     if (name === 'тексты') {
                         textTag = id;
                     }
+                    if (name === 'визуал') {
+                        visualTag = id;
+                    }
                 }
                 items.sort((a, b) => {
                     var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
@@ -110,9 +114,10 @@ wtfScene.enter((ctx, initialState) => {
                         return 1
                     return 0
                 });
-                return { items, textTag };
+                return { items, textTag, visualTag };
             });
             ctx.session.textTag = result.textTag;
+            ctx.session.textTag = result.visualTag;
             ctx.session.commands = {};
             ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
@@ -136,7 +141,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
             const value = ctx.match[0].replace(/(c|C)/, '');
-            const { textTag } = ctx.session;
+            const { textTag, visualTag } = ctx.session;
             const { items } = ctx.session.commands;
             if (!items[value]) {
                 ctx.reply('Нет такой команды')
@@ -146,66 +151,75 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 let data = [];
                 let tempLink;
-                let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
-                do {
-                    ctx.reply(`GO TO ${link}`);
-                    page.goto(link);
-                    await page.waitForNavigation();
-                    await page.evaluate(() => {
-                        const items = document.querySelectorAll('.singlePost');
-                        for (const post of items) {
-                            post.querySelector('.LinkMore').click();
-                        }
-                    });
-                    data = data.concat(await page.evaluate(() => {
-                        const res = [];
-                        const items = document.querySelectorAll('.singlePost');
-                        for (const post of items) {
-                            const id = post.id.replace('post', '');
-                            const name = post.querySelector('.postTitle h2').innerText;
-                            const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                            const titles = inner.match(/Название:(.*?)__/g) || [];
-                            const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
-                            const categories = inner.match(/Категория:(.*?)__/g) || [];
-                            const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
-                            const genres = inner.match(/Жанр:(.*?)__/g) || [];
-                            try {
-                                const temp = [];
-                                for (let i = 0; i < titles.length; i++) {
-                                    const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
-                                    const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
-                                    const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
-                                    const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
-                                    const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                    const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
-                                    temp.push(string);
-                                }
-                                res.push({ id, name: temp.join('') ? temp.join('\n') : name });
-                            } catch {
-                                res.push({ id, name: name });
+                const links = [
+                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
+                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
+                ];
+                links.forEach((link, i) => {
+                    // let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
+                    do {
+                        data[i] = [];
+                        ctx.reply(`GO TO ${link}`);
+                        page.goto(link);
+                        await page.waitForNavigation();
+                        await page.evaluate(() => {
+                            const items = document.querySelectorAll('.singlePost');
+                            for (const post of items) {
+                                post.querySelector('.LinkMore').click();
                             }
+                        });
+                        data[i] = data[i].concat(await page.evaluate(() => {
+                            const res = [];
+                            const items = document.querySelectorAll('.singlePost');
+                            for (const post of items) {
+                                const id = post.id.replace('post', '');
+                                const name = post.querySelector('.postTitle h2').innerText;
+                                const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
+                                const titles = inner.match(/Название:(.*?)__/g) || [];
+                                const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
+                                const categories = inner.match(/Категория:(.*?)__/g) || [];
+                                const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
+                                const genres = inner.match(/Жанр:(.*?)__/g) || [];
+                                try {
+                                    const temp = [];
+                                    for (let i = 0; i < titles.length; i++) {
+                                        const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
+                                        const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
+                                        const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
+                                        const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
+                                        const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
+                                        const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                                        temp.push(string);
+                                    }
+                                    res.push({ id, name: temp.join('') ? temp.join('\n') : name });
+                                } catch {
+                                    res.push({ id, name: name });
+                                }
+                            }
+                            return res;
+                        }));
+                        tempLink = await page.evaluate(() => {
+                            const link = document.querySelector('.pagination a:not(.active):last-child');
+                            if (link) {
+                                return link.href;
+                            }
+                        });
+                        if (tempLink !== link) {
+                            link = tempLink;
                         }
-                        return res;
-                    }));
-                    tempLink = await page.evaluate(() => {
-                        const link = document.querySelector('.pagination a:not(.active):last-child');
-                        if (link) {
-                            return link.href;
-                        }
-                    });
-                    if (tempLink !== link) {
-                        link = tempLink;
-                    }
-                } while (link)
-                const newItems = data;
+                    } while (link)
+                })
+                const [ textItems = [], visualItems = [] ] = data;
+                // const newItems = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
-                ctx.session.posts.items = newItems;
+                ctx.session.posts.textItems = textItems;
+                ctx.session.posts.visualItems = visualItems;
                 ctx.session.posts.curPage = 1;
                 const pageSize = 5;
-                ctx.session.posts.pages = Math.ceil((newItems || []).length / pageSize);
-                const { items, curPage, pages } = ctx.session.posts;
-                const result = renderList(items, curPage, pages, 'p', pageSize);
+                ctx.session.posts.pages = Math.ceil(textItems.length / pageSize);
+                const { textItems, curPage, pages } = ctx.session.posts;
+                const result = renderList(textItems, curPage, pages, 'p', pageSize);
                 ctx.reply(result[0], result[1]);
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
@@ -216,7 +230,7 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
             const value = ctx.match[0].replace(/(p|P)/, '');
-            const { items, command } = ctx.session.posts;
+            const { textItems: items, command } = ctx.session.posts;
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
@@ -225,7 +239,6 @@ wtfScene.hears(/^(p|P)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`)
-                // todo многостраничность, выбор комментариев
                 await page.waitForNavigation();
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
@@ -304,7 +317,7 @@ wtfScene.action(/c_next_\d{1,}/gi, ctx => {
 
 wtfScene.action(/p_back_\d{1,}/gi, ctx => {
     const pageSize = parseInt(ctx.match[0].replace('p_back_', ''));
-    const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
+    const { curPage: oldCurPage, textItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
     }
@@ -316,7 +329,7 @@ wtfScene.action(/p_back_\d{1,}/gi, ctx => {
 
 wtfScene.action(/p_next_\d{1,}/gi, ctx => {
     const pageSize = parseInt(ctx.match[0].replace('p_next_', ''));
-    const { curPage: oldCurPage, items, pages } = ctx.session.posts || {};
+    const { curPage: oldCurPage, textItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
     }
