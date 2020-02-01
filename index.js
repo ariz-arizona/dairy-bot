@@ -151,11 +151,12 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 let data = [];
                 let tempLink;
+                let i = 0;
                 const links = [
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                await Promise.all(links.map(async (link, i) => {
+                for await (const link of links) {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
@@ -206,8 +207,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         if (tempLink !== link) {
                             link = tempLink;
                         }
+                        i++;
                     } while (link)
-                }))
+                }
                 const [textItems = [], visualItems = []] = data;
                 ctx.reply(JSON.stringify(data).slice(0, 300))
                 ctx.session.posts = {};
