@@ -294,9 +294,10 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const replies = [];
                 imageLinks.map(media => { replies.push({ type: 'photo', media }) });
                 // frameLinks.map(media => { replies.push({ type: 'video', media }) });
-                for (let i = 0; i < Math.ceil(replies.length / 10); i++) {
-                    ctx.reply(JSON.stringify(replies.slice((i * 10), (i * 10) + 10)))
-                    ctx.replyWithMediaGroup(replies.slice((i * 10), (i * 10) + 10))
+                const size = 5;
+                for (let i = 0; i < Math.ceil(replies.length / size); i++) {
+                    ctx.reply(JSON.stringify(replies.slice((i * size), (i * size) + size)))
+                    ctx.replyWithMediaGroup(replies.slice((i * size), (i * size) + size))
                 }
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
