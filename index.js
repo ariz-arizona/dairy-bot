@@ -358,8 +358,8 @@ wtfScene.action(/^command_texts/gi, ctx => {
             const curPage = 1;
             const pageSize = 3;
             const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
-            ctx.session.commands.curPage = curPage;
-            ctx.session.commands.pages = pages;
+            ctx.session.posts.curPage = curPage;
+            ctx.session.posts.pages = pages;
             const { textItems: items } = ctx.session.posts;
             const result = renderList(items, curPage, pages, 't', pageSize);
             ctx.reply(result[0], result[1]);
@@ -374,8 +374,8 @@ wtfScene.action(/^command_visual/gi, ctx => {
             const curPage = 1;
             const pageSize = 3;
             const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
-            ctx.session.commands.curPage = curPage;
-            ctx.session.commands.pages = pages;
+            ctx.session.posts.curPage = curPage;
+            ctx.session.posts.pages = pages;
             const { visualItems: items } = ctx.session.posts;
             const result = renderList(items, curPage, pages, 'v', pageSize);
             ctx.reply(result[0], result[1]);
@@ -428,7 +428,6 @@ wtfScene.action(/t_next_\d{1,}/gi, ctx => {
     }
     ctx.session.posts.curPage = oldCurPage + 1;
     const { curPage } = ctx.session.posts;
-    ctx.reply(`${pageSize} on ${curPage} of ${pages}`)
     const response = renderList(items, curPage, pages, 't', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
