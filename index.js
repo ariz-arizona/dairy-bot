@@ -156,7 +156,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                for await (const link of links) {
+                for await (let link of links) {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
