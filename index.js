@@ -52,8 +52,7 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
         reply.reply_markup = Markup.inlineKeyboard(btns)
     }
     return [
-        `Введите идентификатор элемента:\n
-        ${items.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
+        `Введите идентификатор элемента:\n${items.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
         reply
     ]
 }
@@ -236,6 +235,7 @@ wtfScene.action(/^command_texts/gi, ctx => {
             ctx.session.commands.curPage = 1;
             ctx.session.commands.pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
             const { textItems: items, curPage = 1, pages } = ctx.session.posts;
+            ctx.reply(`${pageSize} ${ctx.session.posts.textItems.length} ${pages}`)
             const result = renderList(items, curPage, pages, 't', pageSize);
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
