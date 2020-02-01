@@ -52,7 +52,7 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
         reply.reply_markup = Markup.inlineKeyboard(btns)
     }
     return [
-        `Введите идентификатор элемента:\n${items.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
+        `Всего <b>${items.length}</b>. Введите айди элемента:\n${items.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
         reply
     ]
 }
@@ -190,7 +190,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
                                         temp.push(string);
                                     }
-                                    res.push({ id, name: temp.join('') ? temp.join('\n') : name });
+                                    res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
                                 } catch {
                                     res.push({ id, name: name });
                                 }
