@@ -233,7 +233,9 @@ wtfScene.action(/^command_texts/gi, ctx => {
     (async (ctx) => {
         try {
             const pageSize = 5;
-            const { textItems: items, curPage, pages } = ctx.session.posts;
+            ctx.session.commands.curPage = 1;
+            ctx.session.commands.pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
+            const { textItems: items, curPage = 1, pages } = ctx.session.posts;
             const result = renderList(items, curPage, pages, 'p_text_', pageSize);
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
@@ -244,7 +246,9 @@ wtfScene.action(/^command_visual/gi, ctx => {
     (async (ctx) => {
         try {
             const pageSize = 5;
-            const { visualItems: items, curPage, pages } = ctx.session.posts;
+            ctx.session.commands.curPage = 1;
+            ctx.session.commands.pages = Math.ceil(ctx.session.posts.visualItems.length / pageSize);
+            const { visualItems: items, curPage = 1, pages } = ctx.session.posts;
             const result = renderList(items, curPage, pages, 'p_visual_', pageSize);
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
