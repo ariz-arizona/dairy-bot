@@ -218,7 +218,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.session.posts.curPage = 1;
                 const pageSize = 5;
                 ctx.session.posts.pages = Math.ceil(textItems.length / pageSize);
-                const { items: textItems, curPage, pages } = ctx.session.posts;
+                const { textItems: items, curPage, pages } = ctx.session.posts;
                 const result = renderList(items, curPage, pages, 'p', pageSize);
                 ctx.reply(result[0], result[1]);
             }
