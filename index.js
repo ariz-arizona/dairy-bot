@@ -64,14 +64,14 @@ wtfScene.enter((ctx, initialState) => {
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
-            });
+            // page.on('request', (req) => {
+            //     if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
+            //         req.abort();
+            //     }
+            //     else {
+            //         req.continue();
+            //     }
+            // });
             page.on("error", function (err) {
                 theTempValue = err.toString();
                 console.log("Error: " + theTempValue);
