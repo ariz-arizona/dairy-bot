@@ -261,11 +261,11 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
             const value = ctx.match[0].replace(/(v|V)/, '');
-            const { textItems: items, command } = ctx.session.posts;
+            const { visualItems: items } = ctx.session.posts;
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
-                const item = ctx.session.posts[type][value];
+                const item = ctx.session.posts.visualItems[value];
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
@@ -287,7 +287,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         })
                     }
                 });
-                const replies = images.map(media => {
+                const replies = imageLinks.map(media => {
                     return {
                         type: 'photo',
                         media
@@ -303,7 +303,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
             const value = ctx.match[0].replace(/(t|T)/, '');
-            const { visualItems: items, command } = ctx.session.posts;
+            const { textItems: items, command } = ctx.session.posts;
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
