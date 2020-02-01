@@ -265,7 +265,7 @@ wtfScene.hears(/^(t|T|v|V)\d{1,}/gi, ctx => {
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
-                const item = ctx.session.posts.items[value];
+                const item = ctx.session.posts[type][value];
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
