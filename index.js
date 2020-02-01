@@ -299,7 +299,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     const arr = replies.slice((i * size), (i * size) + size);
                     if (arr.length > 1) {
                         try {
-                            ctx.replyWithMediaGroup(arr)
+                            await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
                             ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => { el.media })}`)
                         }
