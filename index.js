@@ -155,7 +155,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                await Promise.all(link.map( async (link, i) => {
+                await Promise.all(links.map( async (link, i) => {
 
                 // links.forEach(async (link, i) => {
                     // let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
