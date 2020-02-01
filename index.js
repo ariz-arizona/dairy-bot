@@ -66,7 +66,7 @@ wtfScene.enter((ctx, initialState) => {
             await page.setRequestInterception(true);
             page.on('request', (req) => {
                 if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
-                    request.abort();
+                    // request.abort();
                 } else {
                     request.continue();
                 }
