@@ -301,6 +301,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.reply(JSON.stringify(arr))
                         ctx.replyWithMediaGroup(arr)
                     } else {
+                        ctx.reply(arr[0])
                         ctx.replyWithPhoto(arr[0])
                     }
                 }
