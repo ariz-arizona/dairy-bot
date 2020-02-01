@@ -275,9 +275,9 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     const frames = document.querySelectorAll('.singlePost iframe');
                     const res = [];
                     if (frames) {
-                        [].forEach.call(frames, function (frame) {
+                        for (const frame of frames) {
                             res.push(frame.src);
-                        })
+                        }
                     }
                     return res;
                 });
@@ -292,13 +292,12 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     return res;
                 });
                 ctx.reply(JSON.stringify(imageLinks).split(0, 300))
-                const replies = imageLinks.map(media => {
-                    return {
-                        type: 'photo',
-                        media
-                    }
-                })
-                ctx.replyWithMediaGroup(replies)
+                const replies = [];
+                imageLinks.map(media => { replies.push({ type: 'photo', media }) });
+                frameLinks.map(media => { replies.push({ type: 'video', media }) });
+                for (let i = 0; i < Math.ceil(replies.length / 10); i++) {
+                    ctx.replyWithMediaGroup(array.slice((i * size), (i * size) + size))
+                }
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
