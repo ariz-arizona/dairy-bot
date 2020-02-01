@@ -236,7 +236,7 @@ wtfScene.action(/^command_texts/gi, ctx => {
             ctx.session.commands.curPage = 1;
             ctx.session.commands.pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
             const { textItems: items, curPage = 1, pages } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 'p_text_', pageSize);
+            const result = renderList(items, curPage, pages, 't', pageSize);
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
@@ -249,17 +249,17 @@ wtfScene.action(/^command_visual/gi, ctx => {
             ctx.session.commands.curPage = 1;
             ctx.session.commands.pages = Math.ceil(ctx.session.posts.visualItems.length / pageSize);
             const { visualItems: items, curPage = 1, pages } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 'p_visual_', pageSize);
+            const result = renderList(items, curPage, pages, 'v', pageSize);
             ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
 });
 
-wtfScene.hears(/^(p|P)_(visual|text)_\d{1,}/gi, ctx => {
+wtfScene.hears(/^(t|T|v|V)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
-            const value = ctx.match[0].replace(/(p|P)_(visual|text)_/, '');
-            const type = ctx.match[0].indexOf('visual') !== -1 ? 'visualItems' : 'textItems';
+            const value = ctx.match[0].replace(/(t|T|v|V)/, '');
+            const type = ctx.match[0].toLowerCase().indexOf('v') !== -1 ? 'visualItems' : 'textItems';
             const { command } = ctx.session.posts;
             const items = ctx.session.posts[type];
             if (!items[value]) {
