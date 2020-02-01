@@ -291,6 +291,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                     return res;
                 });
+                ctx.reply(JSON.stringify(imageLinks).splice(0, 300))
                 const replies = imageLinks.map(media => {
                     return {
                         type: 'photo',
