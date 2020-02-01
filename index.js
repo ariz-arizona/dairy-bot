@@ -155,10 +155,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                await Promise.all(links.map( async (link, i) => {
-
-                // links.forEach(async (link, i) => {
-                    // let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
+                await Promise.all(links.map(async (link, i) => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
@@ -210,11 +207,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             link = tempLink;
                         }
                     } while (link)
-                // })
-            }))
-
-                const [ textItems = [], visualItems = [] ] = data;
-                // const newItems = data;
+                }))
+                const [textItems = [], visualItems = []] = data;
+                ctx.reply(JSON.stringify(data).slice(0, 300))
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
                 ctx.session.posts.textItems = textItems;
