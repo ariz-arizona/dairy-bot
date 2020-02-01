@@ -35,7 +35,7 @@ bot.catch((err, ctx) => {
 let browser;
 const wtfScene = new Scene('wtfScene');
 
-function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
+function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     const start = (curPage - 1) * pageSize;
     const end = curPage * pageSize;
     const btns = [];
@@ -53,7 +53,7 @@ function renderList(commands, curPage, pages, addSymbol = '', pageSize = 20) {
     }
     return [
         `Введите идентификатор элемента:\n
-        ${commands.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
+        ${items.slice(start, end).map((el, i) => `<b>${addSymbol}${start + i}</b> -- ${el.name}`.slice(0, 600)).join(`\n`)}`,
         reply
     ]
 }
@@ -155,7 +155,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                links.forEach(async (link, i) => {
+                await Promise.all(link.map( async filePath => {
+
+                // links.forEach(async (link, i) => {
                     // let link = `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`;
                     do {
                         data[i] = [];
@@ -208,7 +210,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             link = tempLink;
                         }
                     } while (link)
-                })
+                // })
+            }))
+
                 const [ textItems = [], visualItems = [] ] = data;
                 // const newItems = data;
                 ctx.session.posts = {};
