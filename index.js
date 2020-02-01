@@ -272,7 +272,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
-                    const frames = document.querySelector('.singlePost iframe');
+                    const frames = document.querySelectorAll('.singlePost iframe');
                     if (frames) {
                         return [].forEach.call(frames, function (frame) {
                             return frame.src;
@@ -280,7 +280,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 });
                 const imageLinks = await page.evaluate(() => {
-                    const images = document.querySelector('.singlePost a > img');
+                    const images = document.querySelectorAll('.singlePost a > img');
                     if (images) {
                         return [].forEach.call(images, function (image) {
                             return images.src;
