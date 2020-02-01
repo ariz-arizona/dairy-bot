@@ -301,7 +301,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         try {
                             await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
-                            ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => { el.media })}`)
+                            ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => el.media )}`)
                         }
                     } else {
                         ctx.replyWithPhoto({ url: arr[0].media })
