@@ -10,7 +10,7 @@ const login = process.env.LOGIN;
 const password = process.env.PASSWORD;
 const urls = {
     wtf2019: 'https://wtf-2019.diary.ru/',
-    wtf2020: 'https://m.diary.ru/~wtfk2020/'
+    wtf2020: 'https://wtfk2020.diary.ru/'
 }
 const browserArgs = {
     headless: true, args: [
