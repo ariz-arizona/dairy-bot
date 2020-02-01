@@ -270,7 +270,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' });
-                // await page.waitForNavigation();
+                await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
                     const res = [];
@@ -329,7 +329,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' })
-                // await page.waitForNavigation();
+                await page.waitForNavigation();
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
                     if (frame) {
