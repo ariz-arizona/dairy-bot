@@ -294,7 +294,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const replies = [];
                 imageLinks.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
                 // frameLinks.map(media => { replies.push({ type: 'video', media }) });
-                const size = 1;
+                const size = 2;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
                     if (arr.length > 1) {
