@@ -117,7 +117,7 @@ wtfScene.enter((ctx, initialState) => {
                 return { items, textTag, visualTag };
             });
             ctx.session.textTag = result.textTag;
-            ctx.session.textTag = result.visualTag;
+            ctx.session.visualTag = result.visualTag;
             ctx.session.commands = {};
             ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
