@@ -285,9 +285,9 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     const images = document.querySelectorAll('.singlePost a > img');
                     const res = [];
                     if (images) {
-                        [].forEach.call(images, function (image) {
-                            res.push(images.src);
-                        })
+                        for (const image of images) {
+                            res.push(image.src);
+                        }
                     }
                     return res;
                 });
