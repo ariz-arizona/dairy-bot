@@ -273,19 +273,23 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
+                    const res = [];
                     if (frames) {
-                        return [].forEach.call(frames, function (frame) {
-                            return frame.src;
+                        [].forEach.call(frames, function (frame) {
+                            res.push(frame.src);
                         })
                     }
+                    return res;
                 });
                 const imageLinks = await page.evaluate(() => {
                     const images = document.querySelectorAll('.singlePost a > img');
+                    const res = [];
                     if (images) {
-                        return [].forEach.call(images, function (image) {
-                            return images.src;
+                        [].forEach.call(images, function (image) {
+                            res.push(images.src);
                         })
                     }
+                    return res;
                 });
                 const replies = imageLinks.map(media => {
                     return {
