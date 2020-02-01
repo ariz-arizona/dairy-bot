@@ -187,7 +187,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
                                         const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
                                         const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                        const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})\n\n`;
+                                        const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
                                         temp.push(string);
                                     }
                                     res.push({ id, name: temp.join('') ? temp.join('\n') : name });
@@ -226,38 +226,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
-});
-
-wtfScene.action(/^command_texts/gi, ctx => {
-    (async (ctx) => {
-        try {
-            const curPage = 1;
-            const pageSize = 3;
-            const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
-            ctx.session.commands.curPage = curPage;
-            ctx.session.commands.pages = pages;
-            const { textItems: items } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 't', pageSize);
-            ctx.reply(result[0], result[1]);
-        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
-    })(ctx);
-    return true;
-});
-
-wtfScene.action(/^command_visual/gi, ctx => {
-    (async (ctx) => {
-        try {
-            const curPage = 1;
-            const pageSize = 3;
-            const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
-            ctx.session.commands.curPage = curPage;
-            ctx.session.commands.pages = pages;
-            const { visualItems: items } = ctx.session.posts;
-            const result = renderList(items, curPage, pages, 'v', pageSize);
-            ctx.reply(result[0], result[1]);
-        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
-    })(ctx);
-    return true;
 });
 
 wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
@@ -384,6 +352,38 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
+wtfScene.action(/^command_texts/gi, ctx => {
+    (async (ctx) => {
+        try {
+            const curPage = 1;
+            const pageSize = 3;
+            const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
+            ctx.session.commands.curPage = curPage;
+            ctx.session.commands.pages = pages;
+            const { textItems: items } = ctx.session.posts;
+            const result = renderList(items, curPage, pages, 't', pageSize);
+            ctx.reply(result[0], result[1]);
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
+    })(ctx);
+    return true;
+});
+
+wtfScene.action(/^command_visual/gi, ctx => {
+    (async (ctx) => {
+        try {
+            const curPage = 1;
+            const pageSize = 3;
+            const pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
+            ctx.session.commands.curPage = curPage;
+            ctx.session.commands.pages = pages;
+            const { visualItems: items } = ctx.session.posts;
+            const result = renderList(items, curPage, pages, 'v', pageSize);
+            ctx.reply(result[0], result[1]);
+        } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
+    })(ctx);
+    return true;
+});
+
 wtfScene.action(/c_back_\d{1,}/gi, ctx => {
     const pageSize = parseInt(ctx.match[0].replace('c_back_', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
@@ -428,6 +428,7 @@ wtfScene.action(/t_next_\d{1,}/gi, ctx => {
     }
     ctx.session.posts.curPage = oldCurPage + 1;
     const { curPage } = ctx.session.posts;
+    ctx.reply(`${pageSize} on ${curPage} of ${pages}`)
     const response = renderList(items, curPage, pages, 't', pageSize);
     ctx.editMessageText(response[0], response[1]);
 })
