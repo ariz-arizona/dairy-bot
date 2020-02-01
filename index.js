@@ -65,11 +65,10 @@ wtfScene.enter((ctx, initialState) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
-                    req.abort();
-                }
-                else {
-                    req.continue();
+                if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
+                    request.abort();
+                } else {
+                    request.continue();
                 }
             });
             page.on("error", function (err) {
