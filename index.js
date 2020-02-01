@@ -10,7 +10,7 @@ const login = process.env.LOGIN;
 const password = process.env.PASSWORD;
 const urls = {
     wtf2019: 'https://wtf-2019.diary.ru/',
-    wtf2020: 'https://wtfk2020.diary.ru/'
+    wtf2020: 'https://m.diary.ru/~wtfk2020/'
 }
 const browserArgs = {
     headless: true, args: [
@@ -79,8 +79,7 @@ wtfScene.enter((ctx, initialState) => {
             });
 
             ctx.reply("OPEN BROWSER");
-            await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`), { waitUntil: 'networkidle2', timeout: 0 }
-            await page.waitForNavigation();
+            await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
             page.click('#inform_box button');
@@ -161,7 +160,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
-                        page.goto(link, { waitUntil: 'networkidle2', timeout: 0 });
+                        page.goto(link);
                         await page.waitForNavigation();
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
@@ -269,7 +268,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const item = ctx.session.posts.visualItems[value];
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                page.goto(link, { waitUntil: 'networkidle2', timeout: 0 });
+                page.goto(link);
                 ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
@@ -328,7 +327,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 const item = ctx.session.posts.textItems[value];
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                page.goto(link, { waitUntil: 'networkidle2', timeout: 0 });
+                page.goto(link);
                 ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
                 const frameLink = await page.evaluate(() => {
@@ -339,7 +338,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 });
                 let content;
                 if (frameLink) {
-                    page.goto(frameLink, { waitUntil: 'networkidle2', timeout: 0 });
+                    page.goto(frameLink);
                     ctx.reply(`GO TO ${frameLink}`)
                     await page.waitForNavigation();
                     content = await page.evaluate(() => {
