@@ -296,8 +296,13 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 // frameLinks.map(media => { replies.push({ type: 'video', media }) });
                 const size = 10;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
-                    ctx.reply(JSON.stringify(replies.slice((i * size), (i * size) + size)))
-                    ctx.replyWithMediaGroup(replies.slice((i * size), (i * size) + size))
+                    const arr = replies.slice((i * size), (i * size) + size);
+                    if (arr.length > 1) {
+                        ctx.reply(JSON.stringify(arr))
+                        ctx.replyWithMediaGroup(arr)
+                    } else {
+                        ctx.replyWithPhoto(arr)
+                    }
                 }
             }
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
