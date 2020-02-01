@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for await (let link of links) {
                     do {
                         data[i] = [];
-                        ctx.reply(`GO TO ${link}`);
+                        ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' });
                         page.goto(link);
                         await page.waitForNavigation();
                         await page.evaluate(() => {
@@ -269,7 +269,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
-                ctx.reply(`GO TO ${link}`)
+                ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' });
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
@@ -328,7 +328,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
-                ctx.reply(`GO TO ${link}`)
+                ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' })
                 await page.waitForNavigation();
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
@@ -339,7 +339,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 let content;
                 if (frameLink) {
                     page.goto(frameLink);
-                    ctx.reply(`GO TO ${frameLink}`)
+                    ctx.reply(`GO TO ${frameLink}`, { waitUntil: 'domcontentloaded' })
                     await page.waitForNavigation();
                     content = await page.evaluate(() => {
                         return `${document.body.innerText}`;
