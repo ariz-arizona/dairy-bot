@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for await (let link of links) {
                     do {
                         data[i] = [];
-                        ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' });
+                        ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded', timeout: 0 });
                         page.goto(link);
                         await page.waitForNavigation();
                         await page.evaluate(() => {
@@ -269,7 +269,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 page.goto(link);
-                ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded' });
+                ctx.reply(`GO TO ${link}`, { waitUntil: 'domcontentloaded', timeout: 0 });
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
