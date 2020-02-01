@@ -82,7 +82,7 @@ wtfScene.enter((ctx, initialState) => {
             ctx.reply(`GO TO ${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.goto(
                 `${urls[ctx.scene.state.id || 'wtf2019']}?tags=`,
-                { waitUntil: 'networkidle0', timeout: 60000 }
+                { waitUntil: 'networkidle2', timeout: 60000 }
             )
             await page.waitForNavigation();
             await page.type('#user_login', login)
