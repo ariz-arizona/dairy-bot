@@ -13,8 +13,7 @@ const urls = {
     wtf2020: 'https://wtfk2020.diary.ru/'
 }
 const browserArgs = {
-    headless: true,
-    ignoreHTTPSErrors: true, args: [
+    headless: true, args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -65,14 +64,14 @@ wtfScene.enter((ctx, initialState) => {
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
-            // page.on('request', (req) => {
-            //     if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
-            //         req.abort();
-            //     }
-            //     else {
-            //         req.continue();
-            //     }
-            // });
+            page.on('request', (req) => {
+                if (req.resourceType() === 'image') {
+                    req.abort();
+                }
+                else {
+                    req.continue();
+                }
+            });
             page.on("error", function (err) {
                 theTempValue = err.toString();
                 console.log("Error: " + theTempValue);
@@ -80,12 +79,7 @@ wtfScene.enter((ctx, initialState) => {
             });
 
             ctx.reply("OPEN BROWSER");
-            ctx.reply(`GO TO ${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
-            await page.goto(
-                `${urls[ctx.scene.state.id || 'wtf2019']}?tags=`,
-                { waitUntil: 'domcontentloaded', timeout: 60000 }
-            )
-            await page.waitForNavigation();
+            await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
             page.click('#inform_box button');
