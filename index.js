@@ -219,8 +219,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `Тексты: ${textItems.length}\nВизуал: ${visualItems.length}`,
                     {
                         reply_markup: Markup.inlineKeyboard([
-                            Markup.callbackButton('Тексты', `command_texts_${value}`),
-                            Markup.callbackButton('Визуал', `command_visual_${value}`)
+                            Markup.callbackButton('Тексты', `command_texts`),
+                            Markup.callbackButton('Визуал', `command_visual`)
                         ])
                     }
                 )
@@ -229,34 +229,24 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.action(/^command_texts_\d{1,}/gi, ctx => {
+wtfScene.action(/^command_texts/gi, ctx => {
     (async (ctx) => {
         try {
-            const value = ctx.match[0].replace(/command_texts_/, '');
-            if (!ctx.session.commands.items[value]) {
-                ctx.reply('Нет такой команды')
-            } else {
-                const pageSize = 5;
-                const { textItems: items, curPage, pages } = ctx.session.posts;
-                const result = renderList(items, curPage, pages, 'p_text_', pageSize);
-                ctx.reply(result[0], result[1]);
-            }
+            const pageSize = 5;
+            const { textItems: items, curPage, pages } = ctx.session.posts;
+            const result = renderList(items, curPage, pages, 'p_text_', pageSize);
+            ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
 });
 
-wtfScene.action(/^command_visual_\d{1,}/gi, ctx => {
+wtfScene.action(/^command_visual/gi, ctx => {
     (async (ctx) => {
         try {
-            const value = ctx.match[0].replace(/command_texts_/, '');
-            if (!ctx.session.commands.items[value]) {
-                ctx.reply('Нет такой команды')
-            } else {
-                const pageSize = 5;
-                const { visualItems: items, curPage, pages } = ctx.session.posts;
-                const result = renderList(items, curPage, pages, 'p_visual_', pageSize);
-                ctx.reply(result[0], result[1]);
-            }
+            const pageSize = 5;
+            const { visualItems: items, curPage, pages } = ctx.session.posts;
+            const result = renderList(items, curPage, pages, 'p_visual_', pageSize);
+            ctx.reply(result[0], result[1]);
         } catch (err) { ctx.reply(err.toString().slice(0, 300)) };
     })(ctx);
 });
