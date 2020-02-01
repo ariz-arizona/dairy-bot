@@ -13,7 +13,8 @@ const urls = {
     wtf2020: 'https://wtfk2020.diary.ru/'
 }
 const browserArgs = {
-    headless: true, args: [
+    headless: true,
+    ignoreHTTPSErrors: true, args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
