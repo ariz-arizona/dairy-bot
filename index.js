@@ -121,7 +121,7 @@ wtfScene.enter((ctx, initialState) => {
             ctx.session.commands = {};
             ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
-            const pageSize = 20;
+            const pageSize = 10;
             ctx.session.commands.pages = Math.ceil(result.items.length / pageSize);
             const { curPage, pages, items } = ctx.session.commands;
             const response = renderList(items, curPage, pages, 'c', pageSize);
@@ -175,11 +175,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 const id = post.id.replace('post', '');
                                 const name = post.querySelector('.postTitle h2').innerText;
                                 const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                                const titles = inner.match(/Название:(.*?)__/g) || [];
-                                const pairings = inner.match(/Пейринг\/Персонажи:(.*?)__/g) || [];
-                                const categories = inner.match(/Категория:(.*?)__/g) || [];
-                                const ratings = inner.match(/Рейтинг:(.*?)__/g) || [];
-                                const genres = inner.match(/Жанр:(.*?)__/g) || [];
+                                const titles = inner.match(/Название:?(.*?)__/g) || [];
+                                const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
+                                const categories = inner.match(/Категория:?(.*?)__/g) || [];
+                                const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
+                                const genres = inner.match(/Жанр:?(.*?)__/g) || [];
                                 try {
                                     const temp = [];
                                     for (let i = 0; i < titles.length; i++) {
@@ -188,7 +188,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
                                         const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
                                         const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                        const string = `${title}, ${pairing} (${rating}, ${genre}, ${category})`;
+                                        const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})\n\n`;
                                         temp.push(string);
                                     }
                                     res.push({ id, name: temp.join('') ? temp.join('\n') : name });
@@ -232,7 +232,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 wtfScene.action(/^command_texts/gi, ctx => {
     (async (ctx) => {
         try {
-            const pageSize = 5;
+            const pageSize = 3;
             ctx.session.commands.curPage = 1;
             ctx.session.commands.pages = Math.ceil(ctx.session.posts.textItems.length / pageSize);
             const { textItems: items, curPage = 1, pages } = ctx.session.posts;
@@ -246,7 +246,7 @@ wtfScene.action(/^command_texts/gi, ctx => {
 wtfScene.action(/^command_visual/gi, ctx => {
     (async (ctx) => {
         try {
-            const pageSize = 5;
+            const pageSize = 3;
             ctx.session.commands.curPage = 1;
             ctx.session.commands.pages = Math.ceil(ctx.session.posts.visualItems.length / pageSize);
             const { visualItems: items, curPage = 1, pages } = ctx.session.posts;
