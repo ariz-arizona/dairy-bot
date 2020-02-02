@@ -159,7 +159,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
-                        page.goto(link, {       waitUntil: 'networkidle2'    });
+                        await page.goto(link, {       waitUntil: 'networkidle2'    });
                         await page.waitForNavigation();
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
