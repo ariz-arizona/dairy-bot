@@ -156,7 +156,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
                 for ( let j = 0; j < links.length; j++){
-                    let link = links[ij;
+                    let link = links[j];
                 // for await (let link of links) {
                     do {
                         data[i] = [];
