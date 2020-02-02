@@ -64,7 +64,7 @@ wtfScene.enter((ctx) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
+                if (['image', 'stylesheet', 'font'].indexOf(request.resourceType()) !== -1) {
                     req.abort();
                 }
                 else {
