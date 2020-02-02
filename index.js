@@ -161,7 +161,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
-                        await page.goto(link);
+                        page.goto(link);
                         await page.waitForNavigation();
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
