@@ -57,14 +57,14 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     ]
 }
 
-wtfScene.enter((ctx, initialState) => {
-    (async (ctx, initialState) => {
+wtfScene.enter((ctx) => {
+    (async (ctx) => {
         try {
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                if (req.resourceType() === 'image') {
+                if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
                     req.abort();
                 }
                 else {
