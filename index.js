@@ -67,7 +67,6 @@ wtfScene.enter((ctx, initialState) => {
                 const type = req.resourceType();
                 const url = req.url();
                 headers = req.headers();
-                ctx.reply(type);
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document'
@@ -155,6 +154,26 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 const page = (await browser.pages())[0];
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    const url = req.url();
+                    headers = req.headers();
+                    ctx.reply(type);
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) {
+                        req.abort();
+                    }
+                    else {
+                        req.continue();
+                    }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 let data = [];
                 let tempLink;
                 let i = 0;
@@ -246,9 +265,29 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
             } else {
                 const item = ctx.session.posts.visualItems[value];
                 const page = (await browser.pages())[0];
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    const url = req.url();
+                    headers = req.headers();
+                    ctx.reply(type);
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) {
+                        req.abort();
+                    }
+                    else {
+                        req.continue();
+                    }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
-                await page.goto(link, {waitUntil: 'domcontentloaded'});
+                await page.goto(link, { waitUntil: 'domcontentloaded' });
                 // await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
@@ -309,6 +348,26 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    const url = req.url();
+                    headers = req.headers();
+                    ctx.reply(type);
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) {
+                        req.abort();
+                    }
+                    else {
+                        req.continue();
+                    }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
                     if (frame) {
