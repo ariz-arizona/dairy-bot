@@ -64,6 +64,7 @@ wtfScene.enter((ctx, initialState) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
+                ctx.reply(req.resourceType)
                 if (req.resourceType() === 'image') {
                     req.abort();
                 }
@@ -157,7 +158,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ];
                 for ( let j = 0; j < links.length; j++){
                     let link = links[j];
-                // for await (let link of links) {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
