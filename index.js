@@ -64,11 +64,12 @@ wtfScene.enter((ctx, initialState) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                ctx.reply(req.resourceType())
-                if (req.resourceType() === 'image') {
+                const type = req.resourceType();
+                if (['image'].includes(type)) {
                     req.abort();
                 }
                 else {
+                ctx.reply(type);
                     req.continue();
                 }
             });
