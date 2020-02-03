@@ -174,7 +174,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             ctx.reply("Browser error: " + theTempValue)
                         });
                         ctx.reply(`GO TO ${link}`);
-                        await page.goto(link);
+                        await page.goto(link, {waitUntil: 'domcontentloaded'});
                         await page.waitForNavigation()
                         await page.waitFor('.singlePost', { timeout: 3 * 1000 });
                         await page.evaluate(() => {
