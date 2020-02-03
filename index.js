@@ -167,7 +167,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
-                        page.goto(link, { waitUntil: 'networkidle2' });
+                        await page.goto(link, { waitUntil: 'networkidle2' });
                         await page.waitForNavigation();
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
@@ -247,8 +247,8 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const item = ctx.session.posts.visualItems[value];
                 const page = (await browser.pages())[0];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                page.goto(link);
                 ctx.reply(`GO TO ${link}`)
+                await page.goto(link, {waitUntil: 'networkidle2'});
                 await page.waitForNavigation();
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
