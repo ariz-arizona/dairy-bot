@@ -67,11 +67,15 @@ wtfScene.enter((ctx, initialState) => {
                 const type = req.resourceType();
                  const url = req.url();
     headers = req.headers();
-                if (['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type)) {
+                if (
+                    ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type)||
+                header['sec-fetch-dest'] !== 'document' ||
+                headers['content-type'] !== 'application/x-www-form-urlencoded'
+                ) {
                     req.abort();
                 }
                 else {
-                ctx.reply(JSON.stringify(headers));
+                ctx.reply(type);
                     req.continue();
                 }
             });
