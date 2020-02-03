@@ -69,9 +69,9 @@ wtfScene.enter((ctx) => {
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); }
-                });
-                page.on("error", function (err) {
+                ) { req.abort(); } else { req.continue(); }
+            });
+            page.on("error", function (err) {
                 theTempValue = err.toString();
                 console.log("Error: " + theTempValue);
                 ctx.reply("Browser error: " + theTempValue)
@@ -85,7 +85,7 @@ wtfScene.enter((ctx) => {
             ctx.reply("WAIT LOGIN");
             await page.waitForNavigation();
             ctx.reply("WAIT DATA");
-            
+
             const result = await page.evaluate(() => {
                 const items = [];
                 let textTag = '';
@@ -154,12 +154,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                const promises = [];
                 for (let j = 0; j < links.length; j++) {
                     let link = links[j];
                     do {
                         data[i] = [];
-                        ctx.reply(`GO TO ${link}`);
                         const page = await browser.newPage();
                         await page.setRequestInterception(true);
                         page.on('request', (req) => {
@@ -175,9 +173,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             console.log("Error: " + theTempValue);
                             ctx.reply("Browser error: " + theTempValue)
                         });
-                        await page.waitForNavigation()
+                        // await page.waitForNavigation()
+                        ctx.reply(`GO TO ${link}`);
                         await page.goto(link);
-                        await page.waitFor( '.singlePost', { timeout: 3 * 1000 });
+                        await page.waitFor('.singlePost', { timeout: 3 * 1000 });
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -273,7 +272,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
                 await page.goto(link);
-                await page.waitForNavigation( { waitUntil: 'domcontentloaded' });
+                await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
                     const res = [];
