@@ -67,6 +67,7 @@ wtfScene.enter((ctx, initialState) => {
                 const type = req.resourceType();
                 const url = req.url();
                 headers = req.headers();
+                ctx.reply(type);
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document'
@@ -74,7 +75,6 @@ wtfScene.enter((ctx, initialState) => {
                     req.abort();
                 }
                 else {
-                    ctx.reply(type);
                     req.continue();
                 }
             });
