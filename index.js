@@ -65,11 +65,13 @@ wtfScene.enter((ctx, initialState) => {
             await page.setRequestInterception(true);
             page.on('request', (req) => {
                 const type = req.resourceType();
+                 const url = req.url();
+    headers = req.headers();
                 if (['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type)) {
                     req.abort();
                 }
                 else {
-                ctx.reply(type);
+                ctx.reply(JSON.stringify(headers));
                     req.continue();
                 }
             });
