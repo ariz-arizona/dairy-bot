@@ -64,7 +64,7 @@ wtfScene.enter((ctx, initialState) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                ctx.reply(req.resourceType)
+                ctx.reply(req.resourceType())
                 if (req.resourceType() === 'image') {
                     req.abort();
                 }
