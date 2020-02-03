@@ -69,15 +69,16 @@ wtfScene.enter((ctx) => {
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document'
-                ) { req.abort(); } else { req.continue(); }
-            });
-            page.on("error", function (err) {
+                    ) { req.abort(); } else { req.continue(); }
+                });
+                page.on("error", function (err) {
                 theTempValue = err.toString();
                 console.log("Error: " + theTempValue);
                 ctx.reply("Browser error: " + theTempValue)
             });
 
             ctx.reply("OPEN BROWSER");
+            await page.waitForNavigation()
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
@@ -85,7 +86,7 @@ wtfScene.enter((ctx) => {
             ctx.reply("WAIT LOGIN");
             await page.waitForNavigation();
             ctx.reply("WAIT DATA");
-
+            
             const result = await page.evaluate(() => {
                 const items = [];
                 let textTag = '';
@@ -174,6 +175,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
+                        await page.waitForNavigation()
                         await page.goto(link);
                         await page.waitFor( '.singlePost', { timeout: 3 * 1000 });
                         await page.evaluate(() => {
