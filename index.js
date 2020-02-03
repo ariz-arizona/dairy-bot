@@ -182,8 +182,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             page.goto(link, { waitUntil: "load", timeout: 60000 }),
                             page.waitForSelector('.singlePost'),
                         ]);
-                        await page.content()
-                        ctx.reply(page.title())
+                        const response = await page.text();
+                        console.log(response);
+                        ctx.reply(response)
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
