@@ -149,14 +149,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
-                                page.on('request', (req) => {
+                page.on('request', (req) => {
                     const type = req.resourceType();
                     headers = req.headers();
-                    ctx.reply(type);
                     if (
                         ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); }
+                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
                 });
                 page.on("error", function (err) {
                     theTempValue = err.toString();
@@ -175,8 +174,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     do {
                         data[i] = [];
                         ctx.reply(`GO TO ${link}`);
-                        await page.goto(link, { waitUntil: 'domcontentloaded' });
-                        // await page.waitForNavigation();
+                        await page.goto(link);
+                        await page.waitForNavigation( { waitUntil: 'domcontentloaded' });
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -255,19 +254,13 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const item = ctx.session.posts.visualItems[value];
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
-                                page.on('request', (req) => {
+                page.on('request', (req) => {
                     const type = req.resourceType();
                     headers = req.headers();
-                    ctx.reply(type);
                     if (
                         ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
-                    ) {
-                        req.abort();
-                    }
-                    else {
-                        req.continue();
-                    }
+                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
                 });
                 page.on("error", function (err) {
                     theTempValue = err.toString();
@@ -276,8 +269,8 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 });
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
-                await page.goto(link, { waitUntil: 'domcontentloaded' });
-                // await page.waitForNavigation();
+                await page.goto(link);
+                await page.waitForNavigation( { waitUntil: 'domcontentloaded' });
                 const frameLinks = await page.evaluate(() => {
                     const frames = document.querySelectorAll('.singlePost iframe');
                     const res = [];
