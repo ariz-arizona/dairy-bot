@@ -156,7 +156,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ];
                 for (let j = 0; j < links.length; j++) {
                     let link = links[j];
-                    
+
                     const page = await browser.newPage();
                     await page.setRequestInterception(true);
                     page.on('request', (req) => {
@@ -179,10 +179,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         // await page.waitForNavigation()
                         await Promise.all([
                             page.waitForNavigation({ timeout: 60000 }),
-                            page.goto(link, {
-                                waitUntil: "networkidle0",
-                                timeout: 60000
-                            })
+                            page.goto(link, { waitUntil: "networkidle0", timeout: 60000 }),
+                            page.waitForSelector('.singlePost')
                         ])
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
