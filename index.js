@@ -175,8 +175,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         });
                         ctx.reply(`GO TO ${link}`);
                         await page.goto(link, {waitUntil: 'domcontentloaded'});
-                        await page.waitForNavigation()
-                        await page.waitFor('.singlePost', { timeout: 3 * 1000 });
+                        // await page.waitForNavigation()
+                        // await page.waitFor('.singlePost', { timeout: 3 * 1000 });
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
