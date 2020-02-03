@@ -70,7 +70,7 @@ wtfScene.enter((ctx, initialState) => {
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document' ||
-                    headers['content-type'] !== 'application/x-www-form-urlencoded'
+                    headers['content-type'] === 'application/x-www-form-urlencoded'
                 ) {
                     req.abort();
                 }
