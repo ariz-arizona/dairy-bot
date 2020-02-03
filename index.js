@@ -180,7 +180,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         await Promise.all([
                             page.waitForNavigation({ timeout: 60000 }),
                             page.goto(link, { waitUntil: "load", timeout: 60000 }),
-                            page.waitForSelector('.singlePost')
+                            page.waitForSelector('.singlePost'),
+                            page.content()
                         ]);
                         ctx.reply(page.title())
                         await page.evaluate(() => {
