@@ -78,7 +78,6 @@ wtfScene.enter((ctx) => {
             });
 
             ctx.reply("OPEN BROWSER");
-            await page.waitForNavigation()
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
