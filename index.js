@@ -173,9 +173,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             console.log("Error: " + theTempValue);
                             ctx.reply("Browser error: " + theTempValue)
                         });
-                        // await page.waitForNavigation()
                         ctx.reply(`GO TO ${link}`);
                         await page.goto(link);
+                        await page.waitForNavigation()
                         await page.waitFor('.singlePost', { timeout: 3 * 1000 });
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
