@@ -65,7 +65,7 @@ wtfScene.enter((ctx, initialState) => {
             await page.setRequestInterception(true);
             page.on('request', (req) => {
                 const type = req.resourceType();
-                if (['image'].includes(type)) {
+                if (['image', 'font'].includes(type)) {
                     req.abort();
                 }
                 else {
