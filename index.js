@@ -57,25 +57,19 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     ]
 }
 
-wtfScene.enter((ctx, initialState) => {
-    (async (ctx, initialState) => {
+wtfScene.enter((ctx) => {
+    (async (ctx) => {
         try {
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
                 const type = req.resourceType();
-                const url = req.url();
                 headers = req.headers();
                 if (
                     ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                     headers['sec-fetch-dest'] !== 'document'
-                ) {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
+                ) { req.abort(); } else { req.continue(); }
             });
             page.on("error", function (err) {
                 theTempValue = err.toString();
@@ -153,21 +147,16 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             } else {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
-                const page = (await browser.pages())[0];
-                page.on('request', (req) => {
+                const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                                page.on('request', (req) => {
                     const type = req.resourceType();
-                    const url = req.url();
                     headers = req.headers();
                     ctx.reply(type);
                     if (
                         ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
-                    ) {
-                        req.abort();
-                    }
-                    else {
-                        req.continue();
-                    }
+                    ) { req.abort(); } else { req.continue(); }
                 });
                 page.on("error", function (err) {
                     theTempValue = err.toString();
@@ -264,10 +253,10 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 ctx.reply('Нет такого поста')
             } else {
                 const item = ctx.session.posts.visualItems[value];
-                const page = (await browser.pages())[0];
-                page.on('request', (req) => {
+                const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                                page.on('request', (req) => {
                     const type = req.resourceType();
-                    const url = req.url();
                     headers = req.headers();
                     ctx.reply(type);
                     if (
