@@ -183,44 +183,44 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         await page.waitForSelector(".singlePost");
                         const response = await page.content();
                         ctx.reply(JSON.stringify(response.slice(0, 300)))
-                            // if (false) {
+                        if (false) {
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
-                            data[j] = data[j].concat(await page.evaluate(() => {
-                                const res = [];
-                                const items = document.querySelectorAll('.singlePost');
-                                for (const post of items) {
-                                    const id = post.id.replace('post', '');
-                                    const name = post.querySelector('.postTitle h2').innerText;
-                                    const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                                    const titles = inner.match(/Название:?(.*?)__/g) || [];
-                                    const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
-                                    const categories = inner.match(/Категория:?(.*?)__/g) || [];
-                                    const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
-                                    const genres = inner.match(/Жанр:?(.*?)__/g) || [];
-                                    try {
-                                        const temp = [];
-                                        for (let i = 0; i < titles.length; i++) {
-                                            const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
-                                            const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
-                                            const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
-                                            const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
-                                            const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                            const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
-                                            temp.push(string);
-                                        }
-                                        res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
-                                    } catch {
-                                        res.push({ id, name: name });
+                        data[j] = data[j].concat(await page.evaluate(() => {
+                            const res = [];
+                            const items = document.querySelectorAll('.singlePost');
+                            for (const post of items) {
+                                const id = post.id.replace('post', '');
+                                const name = post.querySelector('.postTitle h2').innerText;
+                                const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
+                                const titles = inner.match(/Название:?(.*?)__/g) || [];
+                                const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
+                                const categories = inner.match(/Категория:?(.*?)__/g) || [];
+                                const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
+                                const genres = inner.match(/Жанр:?(.*?)__/g) || [];
+                                try {
+                                    const temp = [];
+                                    for (let i = 0; i < titles.length; i++) {
+                                        const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
+                                        const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
+                                        const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
+                                        const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
+                                        const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
+                                        const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
+                                        temp.push(string);
                                     }
+                                    res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
+                                } catch {
+                                    res.push({ id, name: name });
                                 }
-                                return res;
-                            }));
-                        // }
+                            }
+                            return res;
+                        }));
+                        }
                         tempLink = await page.evaluate(() => {
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link) {
