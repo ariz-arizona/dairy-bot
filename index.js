@@ -153,7 +153,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
-                
+
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
                 page.on('request', (req) => {
@@ -176,11 +176,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         ctx.reply(`GO TO ${link}`);
                         // await page.goto(link, {waitUntil: 'domcontentloaded'});
                         // await page.waitForNavigation()
-                        await Promise.all([
-                            page.waitForNavigation({ timeout: 60000 }),
-                            page.goto(link, { waitUntil: "load", timeout: 60000 }),
-                            page.waitForSelector('.singlePost'),
-                        ]);
+                        await page.goto(link, { waitUntil: "load", timeout: 60000 })
+
                         const response = await page.content();
                         ctx.reply(JSON.stringify(response.slice(0, 300)))
                         await page.evaluate(() => {
