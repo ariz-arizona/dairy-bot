@@ -154,10 +154,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
+                const page = await browser.newPage();
                 for (let j = 0; j < links.length; j++) {
                     let link = links[j];
 
-                    const page = await browser.newPage();
                     await page.setRequestInterception(true);
                     page.on('request', (req) => {
                         const type = req.resourceType();
