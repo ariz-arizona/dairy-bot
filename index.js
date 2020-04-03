@@ -178,7 +178,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         linkList[j].push(link);
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        await page.waitForSelector(".singlePost");
+                        // await page.waitForSelector(".singlePost");
                         tempLink = await page.evaluate(() => {
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link) {
@@ -192,7 +192,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 }
                 await page.close();
                 ctx.reply(JSON.stringify(linkList));
-                for (let t = 0; type < linksList.length; t++) {
+                for (let t = 0; t < linksList.length; t++) {
                     data[t] = [];
                     for (let key = 0; key < linksList[t].length; key++) {
                         const link = linkList[t][key];
