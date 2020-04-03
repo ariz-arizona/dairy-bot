@@ -180,10 +180,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page.waitForSelector(".singlePost");
-                        const result = await page.evaluate(() => {
+                        const result = await page.evaluate((linklist) => {
                             const items = document.querySelectorAll('.singlePost');
                             const res = {};
                             res.data = [];
+                            res.link = false;
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
@@ -213,16 +214,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 }
                             }
                             const link = document.querySelector('.pagination a:not(.active):last-child');
-                            if (link) {
+                            if (link && !linkList.includes(link)) {
                                 return res.link.href;
                             }
                             return res;
                         });
                         data[j] = data[j].concat(result.data);
-
-                        if (result.link && result.link !== link) {
-                            link = result.link;
-                        }
+                        link = result.link;
                         ctx.reply(result.link);
                         ctx.reply(link)
                     } while (link);
