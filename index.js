@@ -212,9 +212,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     for (let key = 0; key < linkList[t].length; key++) {
                         const link = linkList[t][key];
                         ctx.reply(`GOTO ${link}`);
-                        if(false) {
                         await page2.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page2.waitForSelector(".singlePost");
+                        if(false) {
                         await page2.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
