@@ -192,9 +192,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 }
                 await page.close();
                 ctx.reply(JSON.stringify(linkList));
-                for (let t = 0; t < linksList.length; t++) {
+                for (let t = 0; t < linkList.length; t++) {
                     data[t] = [];
-                    for (let key = 0; key < linksList[t].length; key++) {
+                    for (let key = 0; key < linkList[t].length; key++) {
                         const link = linkList[t][key];
                         ctx.reply(`GOTO ${link}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
