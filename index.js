@@ -228,10 +228,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         if (tempLink !== link) {
                             link = tempLink;
                         }
-                        i++;
                     } while (link);
-                    await page.close();
                 }
+                await page.close();
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
