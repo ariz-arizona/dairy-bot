@@ -179,7 +179,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         // await page.goto(link, {waitUntil: 'domcontentloaded'});
                         // await page.waitForNavigation()
                         await page.goto(link, { waitUntil: "load", timeout: 60000 })
-
+                        await page.waitForSelector(".singlePost");
                         const response = await page.content();
                         ctx.reply(JSON.stringify(response.slice(0, 300)))
                             if (false) {
