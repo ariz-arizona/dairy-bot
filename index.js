@@ -258,9 +258,9 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     const type = req.resourceType();
                     headers = req.headers();
                     if (
-                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        ['font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
+                    ) { req.abort(); } else { req.continue(); }
                 });
                 page.on("error", function (err) {
                     theTempValue = err.toString();
