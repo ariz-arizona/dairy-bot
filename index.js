@@ -304,7 +304,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.replyWithPhoto({ url: arr[0].media })
                     }
                 }
-                frameLinks.map(media => {
+                frames.map(media => {
                     ctx.reply(`НаЙдены фреймы ${media}`);
                 });
 
