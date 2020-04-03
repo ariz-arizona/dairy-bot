@@ -184,7 +184,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         ]);
                         const response = await page.content();
                         //console.log(response);
-                        ctx.reply(response)
+                        ctx.reply(JSON.stringify(response.slice(0, 300)))
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
