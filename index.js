@@ -176,7 +176,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     data[j] = [];
                     do {
                         linkList[j].push(link);
-                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
+                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page.waitForSelector(".singlePost");
                         const result = await page.evaluate((linklist) => {
