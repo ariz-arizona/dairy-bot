@@ -179,7 +179,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         data[j] = [];
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        await page.waitForSelector(".single-post");
+                        await page.waitForSelector(".singlePost");
                         if (false) {
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
