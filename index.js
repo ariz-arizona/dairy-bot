@@ -223,6 +223,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         if (result.link && result.link !== link) {
                             link = result.link;
                         }
+                        ctx.reply(result.link);
+                        ctx.reply(link)
                     } while (link);
                 }
                 await page.close();
