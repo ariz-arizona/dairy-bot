@@ -214,13 +214,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         ctx.reply(`GOTO ${link}`);
                         await page2.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page2.waitForSelector(".singlePost");
-                        if(false) {
                         await page2.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
+                        if(false) {
                         data[t] = data[t].concat(await page2.evaluate(() => {
                             const res = [];
                             const items = document.querySelectorAll('.singlePost');
