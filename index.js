@@ -153,24 +153,24 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 ];
+                
                 const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    headers = req.headers();
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 for (let j = 0; j < links.length; j++) {
                     let link = links[j];
-
-                    await page.setRequestInterception(true);
-                    page.on('request', (req) => {
-                        const type = req.resourceType();
-                        headers = req.headers();
-                        if (
-                            ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                            headers['sec-fetch-dest'] !== 'document'
-                        ) { req.abort(); } else { req.continue(); ctx.reply(type); }
-                    });
-                    page.on("error", function (err) {
-                        theTempValue = err.toString();
-                        console.log("Error: " + theTempValue);
-                        ctx.reply("Browser error: " + theTempValue)
-                    });
                     do {
                         data[j] = [];
                         ctx.reply(`GO TO ${link}`);
