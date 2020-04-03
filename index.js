@@ -216,6 +216,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             if (link) {
                                 return res.link.href;
                             }
+                            return res;
                         });
                         data[j] = data[j].concat(result.data);
 
