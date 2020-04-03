@@ -174,47 +174,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 for (let j = 0; j < Object.keys(links).length; j++) {
                     let link = Object.values(links)[j];
                     linkList[j] = [];
+                    data[j] = [];
                     do {
-                        linkList[j].push(link);
+                                                linkList[j].push(link);
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        // await page.waitForSelector(".singlePost");
-                        tempLink = await page.evaluate(() => {
-                            const link = document.querySelector('.pagination a:not(.active):last-child');
-                            if (link) {
-                                return link.href;
-                            }
-                        });
-                        if (tempLink !== link) {
-                            link = tempLink;
-                        }
-                    } while (link);
-                }
-                await page.close();
-                const page2 = await browser.newPage();
-                await page2.setRequestInterception(true);
-                page2.on('request', (req) => {
-                    const type = req.resourceType();
-                    headers = req.headers();
-                    if (
-                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                        headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
-                });
-                page2.on("error", function (err) {
-                    theTempValue = err.toString();
-                    console.log("Error: " + theTempValue);
-                    ctx.reply("Browser error: " + theTempValue)
-                });
-                ctx.reply(JSON.stringify(linkList));
-                for (let t = 0; t < linkList.length; t++) {
-                    data[t] = [];
-                    for (let key = 0; key < linkList[t].length; key++) {
-                        const link = linkList[t][key];
-                        ctx.reply(`GOTO ${link}`);
-                        await page2.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        await page2.waitForSelector(".singlePost");
-                        const dataRaw = await page2.evaluate(() => {
+                        await page.waitForSelector(".singlePost");
+                        const dataRaw = await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                                                         const res = [];
                             for (const post of items) {
@@ -248,41 +214,20 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             }
                             return res;
                         });
-                        // const dataRaw =  await page2.evaluate(() => {
-                        //     const res = [];
-                        //     const items = document.querySelectorAll('.singlePost');
-                        //     for (const post of items) {
-                        //         const id = post.id.replace('post', '');
-                        //         const name = post.querySelector('.postTitle h2').innerText;
-                        //         const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                        //         const titles = inner.match(/Название:?(.*?)__/g) || [];
-                        //         const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
-                        //         const categories = inner.match(/Категория:?(.*?)__/g) || [];
-                        //         const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
-                        //         const genres = inner.match(/Жанр:?(.*?)__/g) || [];
-                        //         try {
-                        //             const temp = [];
-                        //             for (let i = 0; i < titles.length; i++) {
-                        //                 const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
-                        //                 const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
-                        //                 const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
-                        //                 const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
-                        //                 const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                        //                 const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
-                        //                 temp.push(string);
-                        //             }
-                        //             res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
-                        //         } catch {
-                        //             res.push({ id, name: name });
-                        //         }
-                        //     }
-                        //     return res;
-                        // });
-                        data[t] = data[t].concat(dataRaw);
-                    }
+                        data[j] = data[j].concat(dataRaw);
+                    
+                        tempLink = await page.evaluate(() => {
+                            const link = document.querySelector('.pagination a:not(.active):last-child');
+                            if (link) {
+                                return link.href;
+                            }
+                        });
+                        if (tempLink !== link) {
+                            link = tempLink;
+                        }
+                    } while (link);
                 }
-                await page2.close();
-
+                await page.close();
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
