@@ -298,7 +298,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         try {
                             await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
-                            ctx.reply(err)
+                            // ctx.reply(err)
                             ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => el.media).join('\n')}`)
                         }
                     } else {
@@ -306,7 +306,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 }
                 frames.map(media => {
-                    ctx.reply(`НаЙдены фреймы ${media}`);
+                    ctx.reply(`Найдены фреймы ${media}`);
                 });
 
             }
