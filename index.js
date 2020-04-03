@@ -148,7 +148,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 let data = [];
-                let tempLink;
                 const links = {
                     text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
@@ -270,30 +269,28 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
                 await page.goto(link);
-                await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
-                const frameLinks = await page.evaluate(() => {
-                    const frames = document.querySelectorAll('.singlePost iframe');
-                    const res = [];
-                    if (frames) {
-                        for (const frame of frames) {
-                            res.push(frame.src);
-                        }
-                    }
-                    return res;
-                });
-                const imageLinks = await page.evaluate(() => {
+                await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                await page.waitForSelector(".singlePost");
+                const data = await page.evaluate(() => {
+                    const res = { images: [], frames: [] };
                     const images = document.querySelectorAll('.singlePost a > img');
-                    const res = [];
                     if (images) {
                         for (const image of images) {
-                            res.push(image.src);
+                            res.images.push(image.src);
+                        }
+                    }
+                    const frames = document.querySelectorAll('.singlePost iframe');
+                    if (frames) {
+                        for (const frame of frames) {
+                            res.frames.push(frame.src);
                         }
                     }
                     return res;
                 });
+                const { images, frames } = data;
                 const replies = [];
-                imageLinks.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
-                // frameLinks.map(media => { replies.push({ type: 'video', media }) });
+                images.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
+                frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
