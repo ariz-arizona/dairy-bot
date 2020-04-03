@@ -182,7 +182,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         await page.waitForSelector(".singlePost");
                         const response = await page.content();
                         ctx.reply(JSON.stringify(response.slice(0, 300)))
-                            if (false) {
+                            // if (false) {
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -219,7 +219,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 }
                                 return res;
                             }));
-                        }
+                        // }
                         tempLink = await page.evaluate(() => {
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link) {
