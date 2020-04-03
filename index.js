@@ -176,18 +176,36 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     linkList[j] = [];
                     do {
                         linkList[j].push(link);
-                        data[j] = [];
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page.waitForSelector(".singlePost");
-                        if (false) {
+                        tempLink = await page.evaluate(() => {
+                            const link = document.querySelector('.pagination a:not(.active):last-child');
+                            if (link) {
+                                return link.href;
+                            }
+                        });
+                        if (tempLink !== link) {
+                            link = tempLink;
+                        }
+                    } while (link);
+                }
+                await page.close();
+                ctx.reply(JSON.stringify(linkList));
+                for (let t = 0; type < linksList.length; t++) {
+                    data[t] = [];
+                    for (let key = 0; key < linksList[t].length; key++) {
+                        const link = linkList[t][key];
+                        ctx.reply(`GOTO ${link}`);
+                        await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                        await page.waitForSelector(".singlePost");
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
-                        data[j] = data[j].concat(await page.evaluate(() => {
+                        data[t] = data[t].concat(await page.evaluate(() => {
                             const res = [];
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -217,20 +235,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             }
                             return res;
                         }));
-                        }
-                        tempLink = await page.evaluate(() => {
-                            const link = document.querySelector('.pagination a:not(.active):last-child');
-                            if (link) {
-                                return link.href;
-                            }
-                        });
-                        if (tempLink !== link) {
-                            link = tempLink;
-                        }
-                    } while (link);
+                    }
                 }
-                await page.close();
-                ctx.reply(JSON.stringify(linkList))
+
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
