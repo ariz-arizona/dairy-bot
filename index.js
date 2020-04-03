@@ -190,7 +190,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     } while (link);
                 }
-                await page.close();
                 ctx.reply(JSON.stringify(linkList));
                 for (let t = 0; t < linkList.length; t++) {
                     data[t] = [];
@@ -237,6 +236,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }));
                     }
                 }
+                await page.close();
 
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
