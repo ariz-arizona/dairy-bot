@@ -183,7 +183,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             page.waitForSelector('.singlePost'),
                         ]);
                         const response = await page.content();
-                        console.log(response);
+                        //console.log(response);
                         ctx.reply(response)
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
