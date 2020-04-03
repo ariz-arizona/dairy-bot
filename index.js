@@ -163,14 +163,14 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     if (
                         ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
+                    ) { req.abort(); } else { req.continue(); }
                 });
                 page.on("error", function (err) {
                     theTempValue = err.toString();
                     console.log("Error: " + theTempValue);
                     ctx.reply("Browser error: " + theTempValue)
                 });
-                ctx.reply(`COLLECT LINKS`);
+                ctx.reply(`COLLECT DATA`);
                 for (let j = 0; j < Object.keys(links).length; j++) {
                     let link = Object.values(links)[j];
                     linkList[j] = [];
@@ -221,8 +221,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         });
                         data[j] = data[j].concat(result.data);
                         link = result.link;
-                        ctx.reply(result.link);
-                        ctx.reply(link)
                     } while (link);
                 }
                 await page.close();
@@ -336,7 +334,6 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                     const type = req.resourceType();
                     const url = req.url();
                     headers = req.headers();
-                    ctx.reply(type);
                     if (
                         ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
                         headers['sec-fetch-dest'] !== 'document'
