@@ -149,10 +149,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 let data = [];
                 let tempLink;
-                const links = [
-                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
-                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
-                ];
+                const links = {
+                    text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
+                    visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
+                };
                 const linkList = [];
 
                 const page = await browser.newPage();
@@ -170,19 +170,16 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     console.log("Error: " + theTempValue);
                     ctx.reply("Browser error: " + theTempValue)
                 });
-                for (let j = 0; j < links.length; j++) {
-                    let link = links[j];
+                ctx.reply(`COLLECT LINKS`);
+                for (let j = 0; j < Object.keys(links).length; j++) {
+                    let link = Object.values(links)[j];
                     linkList[j] = [];
                     do {
                         linkList[j].push(link);
                         data[j] = [];
-                        ctx.reply(`GO TO ${link}`);
-                        // await page.goto(link, {waitUntil: 'domcontentloaded'});
-                        // await page.waitForNavigation()
+                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "load", timeout: 60000 })
-                        await page.waitForSelector(".singlePost");
-                        const response = await page.content();
-                        ctx.reply(JSON.stringify(response.slice(0, 300)))
+                        await page.waitForSelector(".pagination");
                         if (false) {
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
