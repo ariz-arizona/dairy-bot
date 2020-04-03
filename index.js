@@ -174,6 +174,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     let link = links[j];
                     linkList[j] = [];
                     do {
+                        linkList[j].push(link);
                         data[j] = [];
                         ctx.reply(`GO TO ${link}`);
                         // await page.goto(link, {waitUntil: 'domcontentloaded'});
@@ -229,7 +230,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         if (tempLink !== link) {
                             link = tempLink;
                         }
-                        linkList[j].push(link);
                     } while (link);
                 }
                 await page.close();
