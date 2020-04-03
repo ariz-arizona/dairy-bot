@@ -190,21 +190,37 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }
                     } while (link);
                 }
+                await page.close();
+                const page2 = await browser.newPage();
+                await page2.setRequestInterception(true);
+                page2.on('request', (req) => {
+                    const type = req.resourceType();
+                    headers = req.headers();
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) { req.abort(); } else { req.continue(); ctx.reply(type); }
+                });
+                page2.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 ctx.reply(JSON.stringify(linkList));
                 for (let t = 0; t < linkList.length; t++) {
                     data[t] = [];
                     for (let key = 0; key < linkList[t].length; key++) {
                         const link = linkList[t][key];
                         ctx.reply(`GOTO ${link}`);
-                        await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        await page.waitForSelector(".singlePost");
-                        await page.evaluate(() => {
+                        await page2.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                        await page2.waitForSelector(".singlePost");
+                        await page2.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
-                        data[t] = data[t].concat(await page.evaluate(() => {
+                        data[t] = data[t].concat(await page2.evaluate(() => {
                             const res = [];
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -236,7 +252,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         }));
                     }
                 }
-                await page.close();
+                await page2.close();
 
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
