@@ -176,17 +176,17 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     linkList[j] = [];
                     data[j] = [];
                     do {
-                                                linkList[j].push(link);
+                        linkList[j].push(link);
                         ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length}`);
                         await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                         await page.waitForSelector(".singlePost");
-                        const dataRaw = await page.evaluate(() => {
+                        const result = await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
-                                                        const res = [];
+                            const res = {};
+                            res.data = [];
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
-                            // const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 const id = post.id.replace('post', '');
                                 const name = post.querySelector('.postTitle h2').innerText;
@@ -207,23 +207,20 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
                                         temp.push(string);
                                     }
-                                    res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
+                                    res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
                                 } catch {
-                                    res.push({ id, name: name });
+                                    res.data.push({ id, name: name });
                                 }
                             }
-                            return res;
-                        });
-                        data[j] = data[j].concat(dataRaw);
-                    
-                        tempLink = await page.evaluate(() => {
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link) {
-                                return link.href;
+                                return res.link.href;
                             }
                         });
-                        if (tempLink !== link) {
-                            link = tempLink;
+                        data[j] = data[j].concat(result.data);
+
+                        if (result.link && result.link !== link) {
+                            link = result.link;
                         }
                     } while (link);
                 }
