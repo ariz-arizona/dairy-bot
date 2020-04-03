@@ -220,8 +220,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
-                        if(false) {
-                        data[t] = data[t].concat(await page2.evaluate(() => {
+                        const dataRaw =  await page2.evaluate(() => {
                             const res = [];
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
@@ -250,8 +249,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 }
                             }
                             return res;
-                        }));
-                        }
+                        });
+                        data[t] = data[t].concat(dataRaw);
                     }
                 }
                 await page2.close();
