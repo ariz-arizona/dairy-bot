@@ -149,7 +149,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 let data = [];
                 let tempLink;
-                let i = 0;
                 const links = [
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
@@ -173,7 +172,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         ctx.reply("Browser error: " + theTempValue)
                     });
                     do {
-                        data[i] = [];
+                        data[j] = [];
                         ctx.reply(`GO TO ${link}`);
                         // await page.goto(link, {waitUntil: 'domcontentloaded'});
                         // await page.waitForNavigation()
@@ -183,7 +182,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             page.waitForSelector('.singlePost'),
                         ]);
                         const response = await page.content();
-                        //console.log(response);
                         ctx.reply(JSON.stringify(response.slice(0, 300)))
                         await page.evaluate(() => {
                             const items = document.querySelectorAll('.singlePost');
@@ -191,7 +189,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 post.querySelector('.LinkMore').click();
                             }
                         });
-                        data[i] = data[i].concat(await page.evaluate(() => {
+                        data[j] = data[j].concat(await page.evaluate(() => {
                             const res = [];
                             const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
