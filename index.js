@@ -64,12 +64,12 @@ wtfScene.enter((ctx) => {
             const page = await browser.newPage();
             await page.setRequestInterception(true);
             page.on('request', (req) => {
-                if (['image', 'stylesheet', 'font', 'script'].indexOf(request.resourceType()) !== -1) {
-                    req.abort();
-                }
-                else {
-                    req.continue();
-                }
+                const type = req.resourceType();
+                headers = req.headers();
+                if (
+                    ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                    headers['sec-fetch-dest'] !== 'document'
+                ) { req.abort(); } else { req.continue(); }
             });
             page.on("error", function (err) {
                 theTempValue = err.toString();
@@ -147,29 +147,46 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             } else {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
-                const page = (await browser.pages())[0];
                 let data = [];
-                let tempLink;
-                let i = 0;
-                const links = [
-                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
-                    `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
-                ];
-                for await (let link of links) {
+                const links = {
+                    text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
+                    visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
+                };
+                const linkList = [];
+
+                const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    headers = req.headers();
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) { req.abort(); } else { req.continue(); }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
+                ctx.reply(`COLLECT DATA`);
+                for (let j = 0; j < Object.keys(links).length; j++) {
+                    let link = Object.values(links)[j];
+                    linkList[j] = [];
+                    data[j] = [];
                     do {
-                        data[i] = [];
-                        ctx.reply(`GO TO ${link}`);
-                        page.goto(link);
-                        await page.waitForNavigation();
-                        await page.evaluate(() => {
+                        linkList[j].push(link);
+                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
+                        await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                        await page.waitForSelector(".singlePost");
+                        const result = await page.evaluate((linklist) => {
                             const items = document.querySelectorAll('.singlePost');
+                            const res = {};
+                            res.data = [];
+                            res.link = false;
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
                             }
-                        });
-                        data[i] = data[i].concat(await page.evaluate(() => {
-                            const res = [];
-                            const items = document.querySelectorAll('.singlePost');
                             for (const post of items) {
                                 const id = post.id.replace('post', '');
                                 const name = post.querySelector('.postTitle h2').innerText;
@@ -190,25 +207,22 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
                                         temp.push(string);
                                     }
-                                    res.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
+                                    res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
                                 } catch {
-                                    res.push({ id, name: name });
+                                    res.data.push({ id, name: name });
                                 }
                             }
-                            return res;
-                        }));
-                        tempLink = await page.evaluate(() => {
                             const link = document.querySelector('.pagination a:not(.active):last-child');
-                            if (link) {
-                                return link.href;
+                            if (link && !linkList.includes(link)) {
+                                return res.link.href;
                             }
+                            return res;
                         });
-                        if (tempLink !== link) {
-                            link = tempLink;
-                        }
-                        i++;
-                    } while (link)
+                        data[j] = data[j].concat(result.data);
+                        link = result.link;
+                    } while (link);
                 }
+                await page.close();
                 const [textItems = [], visualItems = []] = data;
                 ctx.session.posts = {};
                 ctx.session.posts.command = item;
@@ -237,34 +251,46 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 ctx.reply('Нет такого поста')
             } else {
                 const item = ctx.session.posts.visualItems[value];
-                const page = (await browser.pages())[0];
-                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                page.goto(link);
-                ctx.reply(`GO TO ${link}`)
-                await page.waitForNavigation();
-                const frameLinks = await page.evaluate(() => {
-                    const frames = document.querySelectorAll('.singlePost iframe');
-                    const res = [];
-                    if (frames) {
-                        for (const frame of frames) {
-                            res.push(frame.src);
-                        }
-                    }
-                    return res;
+                const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    headers = req.headers();
+                    if (
+                        ['font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) { req.abort(); } else { req.continue(); }
                 });
-                const imageLinks = await page.evaluate(() => {
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
+                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
+                ctx.reply(`GO TO ${link}`)
+                await page.goto(link);
+                await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                await page.waitForSelector(".singlePost");
+                const data = await page.evaluate(() => {
+                    const res = { images: [], frames: [] };
                     const images = document.querySelectorAll('.singlePost a > img');
-                    const res = [];
                     if (images) {
                         for (const image of images) {
-                            res.push(image.src);
+                            res.images.push(image.src);
+                        }
+                    }
+                    const frames = document.querySelectorAll('.singlePost iframe');
+                    if (frames) {
+                        for (const frame of frames) {
+                            res.frames.push(frame.src);
                         }
                     }
                     return res;
                 });
+                const { images, frames } = data;
                 const replies = [];
-                imageLinks.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
-                // frameLinks.map(media => { replies.push({ type: 'video', media }) });
+                images.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
+                frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
@@ -272,14 +298,15 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         try {
                             await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
+                            // ctx.reply(err)
                             ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => el.media).join('\n')}`)
                         }
                     } else {
                         ctx.replyWithPhoto({ url: arr[0].media })
                     }
                 }
-                frameLinks.map(media => {
-                    ctx.reply(`НаЙдены фреймы ${media}`);
+                frames.map(media => {
+                    ctx.reply(`Найдены фреймы ${media}`);
                 });
 
             }
@@ -301,6 +328,25 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 page.goto(link);
                 ctx.reply(`GO TO ${link}`)
                 await page.waitForNavigation();
+                page.on('request', (req) => {
+                    const type = req.resourceType();
+                    const url = req.url();
+                    headers = req.headers();
+                    if (
+                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+                        headers['sec-fetch-dest'] !== 'document'
+                    ) {
+                        req.abort();
+                    }
+                    else {
+                        req.continue();
+                    }
+                });
+                page.on("error", function (err) {
+                    theTempValue = err.toString();
+                    console.log("Error: " + theTempValue);
+                    ctx.reply("Browser error: " + theTempValue)
+                });
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
                     if (frame) {
