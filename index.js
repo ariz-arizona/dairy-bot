@@ -212,7 +212,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 return res.link.href;
                             }
                             return res;
-                        }, linksList);
+                        }, linkList);
                         ctx.reply(JSON.stringify(result))
                         data[j] = data[j].concat(result.data);
                         link = result.link;
