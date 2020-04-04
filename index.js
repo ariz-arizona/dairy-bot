@@ -185,6 +185,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     for (let l = 0; l < Object.keys(links)[j].length; l++) {
                         let link = Object.values(links)[j][l];
                         do {
+                            if(!link) {return;}
                             linkList[j].push(link);
                             ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
                             await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
@@ -231,7 +232,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             }, linkList);
                             data[j] = data[j].concat(result.data);
                             link = result.link || false;
-                            ctx.reply(JSON.stringify(result))
                         } while (link);
                     }
                 }
