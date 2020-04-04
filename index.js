@@ -152,12 +152,12 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             } else {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
-                let data = [];
                 const links = {
                     text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
                     visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
                 };
                 const linkList = [];
+                const data = [];
 
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
@@ -213,6 +213,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             }
                             return res;
                         }, linksList);
+                        ctx.reply(JSON.stringify(result))
                         data[j] = data[j].concat(result.data);
                         link = result.link;
                     } while (link);
