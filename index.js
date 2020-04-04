@@ -59,7 +59,7 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     if (curPage > 1) {
         btns.push(Markup.callbackButton(`Назад ${addSymbol}-back-${pageSize}`, `${addSymbol}-back-${pageSize}`))
     }
-    if (curPage <= pages - 1) {
+    if (curPage < pages) {
         btns.push(Markup.callbackButton(`Вперед ${addSymbol}-next-${pageSize}`, `${addSymbol}-next-${pageSize}`))
     }
     const reply = {
@@ -199,7 +199,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
                                         const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
                                         const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                        const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
+                                        // const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
+                                        string = `<i>${title}</i>, \n${pairing}`;
                                         temp.push(string);
                                     }
                                     res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
