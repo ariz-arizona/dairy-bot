@@ -106,7 +106,7 @@ wtfScene.enter((ctx) => {
             await page.waitForNavigation();
             ctx.reply("WAIT DATA");
 
-            const result = await page.evaluate(() => {
+            const result = await page.evaluate((type) => {
                 const items = [];
                 let textTag = '';
                 let visualTag = '';
@@ -134,7 +134,7 @@ wtfScene.enter((ctx) => {
                     return 0
                 });
                 return { items, textTag, visualTag };
-            });
+            },type);
             ctx.session.textTag = result.textTag;
             ctx.session.visualTag = result.visualTag;
             ctx.session.commands = {};
