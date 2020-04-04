@@ -34,6 +34,12 @@ bot.catch((err, ctx) => {
     ctx.reply("ERROR! LOOK LOGS PLS")
 });
 
+const errorHelper = (err) => {
+    theTempValue = err.toString();
+    console.log("Error: " + theTempValue);
+    ctx.reply("Browser error: " + theTempValue)
+}
+
 let browser;
 const wtfScene = new Scene('wtfScene');
 
@@ -73,11 +79,7 @@ wtfScene.enter((ctx) => {
                     headers['sec-fetch-dest'] !== 'document'
                 ) { req.abort(); } else { req.continue(); }
             });
-            page.on("error", function (err) {
-                theTempValue = err.toString();
-                console.log("Error: " + theTempValue);
-                ctx.reply("Browser error: " + theTempValue)
-            });
+            page.on("error", errorHelper);
 
             ctx.reply("OPEN BROWSER");
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
@@ -166,11 +168,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         headers['sec-fetch-dest'] !== 'document'
                     ) { req.abort(); } else { req.continue(); }
                 });
-                page.on("error", function (err) {
-                    theTempValue = err.toString();
-                    console.log("Error: " + theTempValue);
-                    ctx.reply("Browser error: " + theTempValue)
-                });
+                page.on("error", errorHelper);
                 ctx.reply(`COLLECT DATA`);
                 for (let j = 0; j < Object.keys(links).length; j++) {
                     let link = Object.values(links)[j];
@@ -263,11 +261,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         headers['sec-fetch-dest'] !== 'document'
                     ) { req.abort(); } else { req.continue(); }
                 });
-                page.on("error", function (err) {
-                    theTempValue = err.toString();
-                    console.log("Error: " + theTempValue);
-                    ctx.reply("Browser error: " + theTempValue)
-                });
+                page.on("error", errorHelper);
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
                 await page.goto(link);
@@ -344,11 +338,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                         req.continue();
                     }
                 });
-                page.on("error", function (err) {
-                    theTempValue = err.toString();
-                    console.log("Error: " + theTempValue);
-                    ctx.reply("Browser error: " + theTempValue)
-                });
+                page.on("error", errorHelper);
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
                     if (frame) {
@@ -520,7 +510,7 @@ bot.start((ctx) => ctx.reply(
     }
 ));
 
-Object.keys(urls).map((key)=>{
+Object.keys(urls).map((key) => {
     bot.action(key, ctx => { ctx.scene.enter("wtfScene", { id: key }); return true });
     bot.command(key, ctx => ctx.scene.enter("wtfScene", { id: key }));
 });
