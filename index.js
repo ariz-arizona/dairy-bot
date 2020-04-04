@@ -512,7 +512,10 @@ bot.start((ctx) => ctx.reply(
     {
         reply_markup: Markup.inlineKeyboard([
             Markup.callbackButton('wtf 2019', `wtf2019`),
-            Markup.callbackButton('wtf 2020', `wtf2020`)
+            Markup.callbackButton('wtf 2020', `wtf2020`),
+        ], [
+            Markup.callbackButton('fb 2019', `fb2019`),
+            Markup.callbackButton('fb 2018', `fb2018`),
         ])
     }
 ));
