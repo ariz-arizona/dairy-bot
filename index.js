@@ -476,13 +476,13 @@ stage.command("cancel", leave());
 bot.start((ctx) => ctx.reply(
     'Привет! \n\nЯ — бот-помощник для чтения текстов с Зимней фандомной битвы (проходит в асоциальной сети http://diary.ru) в формате FB2.\n\nЕсли я не работаю — напишите, пожалуйста, @aarizona',
     {
-        reply_markup: Markup.inlineKeyboard([
+        reply_markup: Markup.inlineKeyboard([[
             Markup.callbackButton('wtf 2019', `wtf2019`),
             Markup.callbackButton('wtf 2020', `wtf2020`),
         ], [
             Markup.callbackButton('fb 2019', `fb2019`),
             Markup.callbackButton('fb 2018', `fb2018`),
-        ])
+        ]])
     }
 ));
 
