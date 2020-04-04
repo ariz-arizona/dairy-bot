@@ -9,10 +9,14 @@ const puppeteer = require('puppeteer');
 const login = process.env.LOGIN;
 const password = process.env.PASSWORD;
 const urls = {
+    wtf2017: 'https://www.diary.ru/~wtf-kombat2017/',
+    wtf2018: 'https://www.diary.ru/~wtf-kombat2017/',
     wtf2019: 'https://wtf-2019.diary.ru/',
     wtf2020: 'https://wtfk2020.diary.ru/',
+    fb2016: 'https://www.diary.ru/~fk-2016/',
+    fb2017: 'https://www.diary.ru/~fk-2017/',
+    fb2018: 'https://www.diary.ru/~fk-2018/',
     fb2019: 'https://www.diary.ru/~fk-2019/',
-    fb2018: 'https://www.diary.ru/~fk-2018/'
 };
 const types = {
     wtf: {
@@ -493,13 +497,28 @@ stage.command("cancel", leave());
 bot.start((ctx) => ctx.reply(
     'Привет! \n\nЯ — бот-помощник для чтения текстов с Зимней фандомной битвы (проходит в асоциальной сети http://diary.ru) в формате FB2.\n\nЕсли я не работаю — напишите, пожалуйста, @aarizona',
     {
-        reply_markup: Markup.inlineKeyboard([[
-            Markup.callbackButton('wtf 2019', `wtf2019`),
-            Markup.callbackButton('wtf 2020', `wtf2020`),
-        ], [
-            Markup.callbackButton('fb 2019', `fb2019`),
-            Markup.callbackButton('fb 2018', `fb2018`),
-        ]])
+        reply_markup: Markup.inlineKeyboard([
+            [
+                Markup.callbackButton('wtf 2017', `wtf2017`),
+                Markup.callbackButton('wtf 2018', `wtf2018`),
+            ],
+            [
+                Markup.callbackButton('wtf 2019', `wtf2019`),
+                Markup.callbackButton('wtf 2020', `wtf2020`),
+            ],
+            [
+                Markup.callbackButton('wtf 2019', `wtf2019`),
+                Markup.callbackButton('wtf 2020', `wtf2020`),
+            ],
+            [
+                Markup.callbackButton('fb 2016', `fb2016`),
+                Markup.callbackButton('fb 2017', `fb2017`),
+            ],
+            [
+                Markup.callbackButton('fb 2018', `fb2018`),
+                Markup.callbackButton('fb 2019', `fb2019`),
+            ]
+        ])
     }
 ));
 
