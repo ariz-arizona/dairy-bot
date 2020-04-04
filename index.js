@@ -181,6 +181,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             res.link = false;
                             for (const post of items) {
                                 post.querySelector('.LinkMore').click();
+                                post.querySelector('a+span').style.display = 'block';
                             }
                             for (const post of items) {
                                 const id = post.id.replace('post', '');
