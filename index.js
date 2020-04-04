@@ -22,8 +22,8 @@ const types = {
     },
     fb: {
         commandNamePart: 'fandom',
-        textTags: ['Арт/клип/коллаж'],
-        visualTags: ['Макси', 'Миди', 'Мини', 'Драбблы']
+        textTags: ['Макси', 'Миди', 'Мини', 'Драбблы'],
+        visualTags: ['Арт/клип/коллаж']
     }
 }
 const browserArgs = {
@@ -132,7 +132,7 @@ wtfScene.enter((ctx) => {
                     return 0
                 });
                 return { items, textTags, visualTags };
-            },type);
+            }, type);
             ctx.session.textTags = result.textTags;
             ctx.session.visualTags = result.visualTags;
             ctx.session.commands = {};
@@ -165,9 +165,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
             } else {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
+                const generateLink = el => `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${el}&tag[]=${item.id}`;
                 const links = {
-                    text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTags[0]}&tag[]=${item.id}`,
-                    visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTags[0]}&tag[]=${item.id}`
+                    text: textTags.map(el => generateLink(el)),
+                    visual: visualTags.map(el => generateLink(el)),
                 };
                 const linkList = [];
                 const data = [];
@@ -179,57 +180,60 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 
                 ctx.reply(`COLLECT DATA`);
                 for (let j = 0; j < Object.keys(links).length; j++) {
-                    let link = Object.values(links)[j];
                     linkList[j] = [];
                     data[j] = [];
-                    do {
-                        linkList[j].push(link);
-                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
-                        await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
-                        await page.waitForSelector(".singlePost");
-                        const result = await page.evaluate((links) => {
-                            const items = document.querySelectorAll('.singlePost');
-                            const res = {};
-                            res.data = [];
-                            res.link = false;
-                            for (const post of items) {
-                                post.querySelector('a+span').style.display = 'block';
-                            }
-                            for (const post of items) {
-                                const id = post.id.replace('post', '');
-                                const name = post.querySelector('.postTitle h2').innerText;
-                                const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
-                                const titles = inner.match(/Название:?(.*?)__/g) || [];
-                                const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
-                                const categories = inner.match(/Категория:?(.*?)__/g) || [];
-                                const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
-                                const genres = inner.match(/Жанр:?(.*?)__/g) || [];
-                                try {
-                                    const temp = [];
-                                    for (let i = 0; i < titles.length; i++) {
-                                        const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
-                                        const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
-                                        const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
-                                        const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
-                                        const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
-                                        // const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
-                                        string = `<i>${title}</i>, \n${pairing}`;
-                                        temp.push(string);
-                                    }
-                                    res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
-                                } catch {
-                                    res.data.push({ id, name: name });
+                    for (let l = 0; l < Object.keys(links)[j].length; l++) {
+                        let link = Object.values(links)[j][l];
+
+                        do {
+                            linkList[j].push(link);
+                            ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
+                            await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
+                            await page.waitForSelector(".singlePost");
+                            const result = await page.evaluate((links) => {
+                                const items = document.querySelectorAll('.singlePost');
+                                const res = {};
+                                res.data = [];
+                                res.link = false;
+                                for (const post of items) {
+                                    post.querySelector('a+span').style.display = 'block';
                                 }
-                            }
-                            const link = document.querySelector('.pagination a:not(.active):last-child');
-                            if (link && !links.includes(link)) {
-                                res.link = link.href;
-                            }
-                            return res;
-                        }, linkList);
-                        data[j] = data[j].concat(result.data);
-                        link = result.link;
-                    } while (link);
+                                for (const post of items) {
+                                    const id = post.id.replace('post', '');
+                                    const name = post.querySelector('.postTitle h2').innerText;
+                                    const inner = post.querySelector('a+span').innerText.replace(/(?:\r\n|\r|\n)/g, ' __ ');
+                                    const titles = inner.match(/Название:?(.*?)__/g) || [];
+                                    const pairings = inner.match(/Пейринг\/Персонажи:?(.*?)__/g) || [];
+                                    const categories = inner.match(/Категория:?(.*?)__/g) || [];
+                                    const ratings = inner.match(/Рейтинг:?(.*?)__/g) || [];
+                                    const genres = inner.match(/Жанр:?(.*?)__/g) || [];
+                                    try {
+                                        const temp = [];
+                                        for (let i = 0; i < titles.length; i++) {
+                                            const title = titles[i].replace('__', '').replace(/Название:? ?/, '').trim();
+                                            const pairing = pairings[i].replace('__', '').replace(/Пейринг\/Персонажи:? ?/, '').trim();
+                                            const category = categories[i].replace('__', '').replace(/Категория:? ?/, '').trim();
+                                            const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
+                                            const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
+                                            // const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
+                                            string = `<i>${title}</i>, \n${pairing}`;
+                                            temp.push(string);
+                                        }
+                                        res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
+                                    } catch {
+                                        res.data.push({ id, name: name });
+                                    }
+                                }
+                                const link = document.querySelector('.pagination a:not(.active):last-child');
+                                if (link && !links.includes(link)) {
+                                    res.link = link.href;
+                                }
+                                return res;
+                            }, linkList);
+                            data[j] = data[j].concat(result.data);
+                            link = result.link;
+                        } while (link);
+                    }
                 }
                 await page.close();
                 const [textItems = [], visualItems = []] = data;
