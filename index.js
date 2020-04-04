@@ -57,10 +57,10 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     const end = curPage * pageSize;
     const btns = [];
     if (curPage > 1) {
-        btns.push(Markup.callbackButton('Назад', `${addSymbol}_back_${pageSize}`))
+        btns.push(Markup.callbackButton('Назад', `${addSymbol}-back-${pageSize}`))
     }
     if (curPage <= pages - 1) {
-        btns.push(Markup.callbackButton('Вперед', `${addSymbol}_next_${pageSize}`))
+        btns.push(Markup.callbackButton('Вперед', `${addSymbol}-next-${pageSize}`))
     }
     const reply = {
         parse_mode: 'HTML',
@@ -205,16 +205,13 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                     res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
                                 } catch {
                                     res.data.push({ id, name: name });
-                                }
-                                console.log(JSON.stringify(res))
-                            }
+                                }                            }
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link && !links.includes(link)) {
                                 res.link = link.href;
                             }
                             return res;
                         }, linkList);
-                        ctx.reply(JSON.stringify(result))
                         data[j] = data[j].concat(result.data);
                         link = result.link;
                     } while (link);
@@ -229,8 +226,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     `Тексты: ${textItems.length}\nВизуал: ${visualItems.length}`,
                     {
                         reply_markup: Markup.inlineKeyboard([
-                            Markup.callbackButton('Тексты', `command_texts`),
-                            Markup.callbackButton('Визуал', `command_visual`)
+                            Markup.callbackButton('Тексты', `command-texts`),
+                            Markup.callbackButton('Визуал', `command-visual`)
                         ])
                     }
                 )
@@ -368,7 +365,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
     })(ctx);
 });
 
-wtfScene.action(/^command_texts/gi, ctx => {
+wtfScene.action(/^command-texts/gi, ctx => {
     (async (ctx) => {
         try {
             const curPage = 1;
@@ -384,7 +381,7 @@ wtfScene.action(/^command_texts/gi, ctx => {
     return true;
 });
 
-wtfScene.action(/^command_visual/gi, ctx => {
+wtfScene.action(/^command-visual/gi, ctx => {
     (async (ctx) => {
         try {
             const curPage = 1;
@@ -400,8 +397,8 @@ wtfScene.action(/^command_visual/gi, ctx => {
     return true;
 });
 
-wtfScene.action(/c_back_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('c_back_', ''));
+wtfScene.action(/c-back-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('c-back-', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
@@ -412,8 +409,8 @@ wtfScene.action(/c_back_\d{1,}/gi, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/c_next_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('c_next_', ''));
+wtfScene.action(/c-next-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('c-next-', ''));
     const { curPage: oldCurPage, items, pages } = ctx.session.commands || {};
     if (!items.length) {
         ctx.reply('No commands');
@@ -424,8 +421,8 @@ wtfScene.action(/c_next_\d{1,}/gi, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/t_back_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('t_back_', ''));
+wtfScene.action(/t-back-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('t-back-', ''));
     const { curPage: oldCurPage, textItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
@@ -436,8 +433,8 @@ wtfScene.action(/t_back_\d{1,}/gi, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/t_next_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('t_next_', ''));
+wtfScene.action(/t-next-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('t-next-', ''));
     const { curPage: oldCurPage, textItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
@@ -448,8 +445,8 @@ wtfScene.action(/t_next_\d{1,}/gi, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/v_back_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('v_back_', ''));
+wtfScene.action(/v-back-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('v-back-', ''));
     const { curPage: oldCurPage, visualItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
@@ -460,8 +457,8 @@ wtfScene.action(/v_back_\d{1,}/gi, ctx => {
     ctx.editMessageText(response[0], response[1]);
 })
 
-wtfScene.action(/v_next_\d{1,}/gi, ctx => {
-    const pageSize = parseInt(ctx.match[0].replace('v_next_', ''));
+wtfScene.action(/v-next-\d{1,}/gi, ctx => {
+    const pageSize = parseInt(ctx.match[0].replace('v-next-', ''));
     const { curPage: oldCurPage, visualItems: items, pages } = ctx.session.posts || {};
     if (!items.length) {
         ctx.reply('No posts');
