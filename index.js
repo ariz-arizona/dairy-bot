@@ -200,7 +200,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
                                         const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
                                         // const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
-                                        string = `<i>${title}</i>, \n${pairing}`;
+                                        string = `<i>${title}</i>`;
                                         temp.push(string);
                                     }
                                     res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
