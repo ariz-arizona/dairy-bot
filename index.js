@@ -13,6 +13,18 @@ const urls = {
     wtf2020: 'https://wtfk2020.diary.ru/',
     fb2019: 'https://www.diary.ru/~fk-2019/',
     fb2018: 'https://www.diary.ru/~fk-2018/'
+};
+const types = {
+    wtf: {
+        commandNamePart: 'WTF',
+        textTags: ['тексты'],
+        visualTags: ['визуал']
+    },
+    fb: {
+        commandNamePart: 'fandom',
+        textTags: ['Арт/клип/коллаж'],
+        visualTags: ['Макси', 'Миди', 'Мини', 'Драбблы']
+    }
 }
 const browserArgs = {
     headless: true, args: [
@@ -83,6 +95,7 @@ wtfScene.enter((ctx) => {
             page.on('request', requestHelper);
             page.on("error", errorHelper);
             ctx.reply("OPEN BROWSER");
+            const type = types[ctx.scene.state.id.replace(/\d/g, '')];
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
@@ -100,13 +113,13 @@ wtfScene.enter((ctx) => {
                     const name = link.innerText;
                     const id = link.id.replace('tag', '');
                     const count = link.closest('li').querySelector('span[style]').textContent;
-                    if (name.indexOf('WTF') !== -1) {
+                    if (name.indexOf(type.commandNamePart) !== -1) {
                         items.push({ id, name: `${name} (${count})` })
                     }
-                    if (name === 'тексты') {
+                    if (name === type.textTags[0]) {
                         textTag = id;
                     }
-                    if (name === 'визуал') {
+                    if (name === type.visualTags[0]) {
                         visualTag = id;
                     }
                 }
@@ -206,7 +219,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                     res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
                                 } catch {
                                     res.data.push({ id, name: name });
-                                }                            }
+                                }
+                            }
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link && !links.includes(link)) {
                                 res.link = link.href;
@@ -249,7 +263,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 await page.setRequestInterception(true);
                 page.on('request', requestHelper);
                 page.on("error", errorHelper);
-                
+
                 const item = ctx.session.posts.visualItems[value];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
@@ -310,7 +324,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
                 await page.setRequestInterception(true);
                 page.on('request', requestHelper);
                 page.on("error", errorHelper);
-                
+
                 const item = ctx.session.posts.textItems[value];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
