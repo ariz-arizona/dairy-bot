@@ -231,7 +231,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 return res;
                             }, linkList);
                             data[j] = data[j].concat(result.data);
-                            link = result.link;
+                            link = result.link || false;
                         } while (link);
                     }
                 }
