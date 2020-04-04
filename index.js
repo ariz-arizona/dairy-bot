@@ -185,12 +185,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     for (let l = 0; l < Object.keys(links)[j].length; l++) {
                         let link = Object.values(links)[j][l];
                         do {
-                            if(!link) {return;}
                             linkList[j].push(link);
                             ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
                             await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                             await page.waitForSelector(".singlePost");
-                            const result = await page.evaluate((links) => {
+                            const result = await page.evaluate((linkListTemp) => {
                                 const items = document.querySelectorAll('.singlePost');
                                 const res = {};
                                 res.data = [];
@@ -225,7 +224,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                     }
                                 }
                                 const link = document.querySelector('.pagination a:not(.active):last-child');
-                                if (link && !links.includes(link)) {
+                                if (link && !linkListTemp.includes(link)) {
                                     res.link = link.href;
                                 }
                                 return res;
