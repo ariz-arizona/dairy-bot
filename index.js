@@ -520,8 +520,9 @@ bot.start((ctx) => ctx.reply(
     }
 ));
 
-bot.action("wtf2019", ctx => { ctx.scene.enter("wtfScene", { id: 'wtf2019' }); return true });
-bot.command("wtf2019", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2019' }));
-bot.action("wtf2020", ctx => { ctx.scene.enter("wtfScene", { id: 'wtf2020' }); return true });
-bot.command("wtf2020", ctx => ctx.scene.enter("wtfScene", { id: 'wtf2020' }));
+Object.keys(urls).map((key)=>{
+    bot.action(key, ctx => { ctx.scene.enter("wtfScene", { id: key }); return true });
+    bot.command(key, ctx => ctx.scene.enter("wtfScene", { id: key }));
+});
+
 bot.launch();
