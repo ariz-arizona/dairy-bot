@@ -184,6 +184,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                     data[j] = [];
                     for (let l = 0; l < Object.keys(links)[j].length; l++) {
                         let link = Object.values(links)[j][l];
+                        ctx.reply(`${Object.keys(links)[j].toUpperCase()} ${link}`)
                         do {
                             linkList[j].push(link);
                             ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
