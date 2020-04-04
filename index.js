@@ -57,10 +57,10 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
     const end = curPage * pageSize;
     const btns = [];
     if (curPage > 1) {
-        btns.push(Markup.callbackButton(`Назад ${addSymbol}-back-${pageSize}`, `${addSymbol}-back-${pageSize}`))
+        btns.push(Markup.callbackButton(`Назад`, `${addSymbol}-back-${pageSize}`))
     }
     if (curPage < pages) {
-        btns.push(Markup.callbackButton(`Вперед ${addSymbol}-next-${pageSize}`, `${addSymbol}-next-${pageSize}`))
+        btns.push(Markup.callbackButton(`Вперед`, `${addSymbol}-next-${pageSize}`))
     }
     const reply = {
         parse_mode: 'HTML',
