@@ -96,6 +96,8 @@ wtfScene.enter((ctx) => {
             page.on("error", errorHelper);
             ctx.reply("OPEN BROWSER");
             const type = types[ctx.scene.state.id.replace(/\d/g, '')];
+            ctx.reply(ctx.scene.state.id.replace(/\d/g, ''))
+            ctx.reply(JSON.stringify(type))
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
