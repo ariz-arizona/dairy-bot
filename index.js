@@ -206,11 +206,11 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                 } catch {
                                     res.data.push({ id, name: name });
                                 }
-                                ctx.reply(JSON.stringify(res))
+                                console.log(JSON.stringify(res))
                             }
                             const link = document.querySelector('.pagination a:not(.active):last-child');
                             if (link && !links.includes(link)) {
-                                return res.link.href;
+                                res.link = link.href;
                             }
                             return res;
                         }, linkList);
