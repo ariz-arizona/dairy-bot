@@ -180,7 +180,6 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                             res.data = [];
                             res.link = false;
                             for (const post of items) {
-                                post.querySelector('.LinkMore').click();
                                 post.querySelector('a+span').style.display = 'block';
                             }
                             for (const post of items) {
@@ -201,7 +200,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                                         const rating = ratings[i].replace('__', '').replace(/Рейтинг:? ?/, '').trim();
                                         const genre = genres[i].replace('__', '').replace(/Жанр:? ?/, '').trim();
                                         // const string = `<i>${title}</i>, \n${pairing} (${rating}, ${genre}, ${category})`;
-                                        string = `${title}`;
+                                        string = `<i>${title}</i>, \n${pairing}`;
                                         temp.push(string);
                                     }
                                     res.data.push({ id, name: temp.join('') ? temp.join('\n\n') : name });
