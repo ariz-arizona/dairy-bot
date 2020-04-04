@@ -40,6 +40,15 @@ const errorHelper = (err) => {
     ctx.reply("Browser error: " + theTempValue)
 }
 
+const requestHelper = (req) => {
+    const type = req.resourceType();
+    headers = req.headers();
+    if (
+        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
+        headers['sec-fetch-dest'] !== 'document'
+    ) { req.abort(); } else { req.continue(); }
+}
+
 let browser;
 const wtfScene = new Scene('wtfScene');
 
@@ -71,16 +80,8 @@ wtfScene.enter((ctx) => {
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
-            page.on('request', (req) => {
-                const type = req.resourceType();
-                headers = req.headers();
-                if (
-                    ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                    headers['sec-fetch-dest'] !== 'document'
-                ) { req.abort(); } else { req.continue(); }
-            });
+            page.on('request', requestHelper);
             page.on("error", errorHelper);
-
             ctx.reply("OPEN BROWSER");
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
@@ -160,15 +161,9 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
 
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
-                page.on('request', (req) => {
-                    const type = req.resourceType();
-                    headers = req.headers();
-                    if (
-                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                        headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); }
-                });
+                page.on('request', requestHelper);
                 page.on("error", errorHelper);
+
                 ctx.reply(`COLLECT DATA`);
                 for (let j = 0; j < Object.keys(links).length; j++) {
                     let link = Object.values(links)[j];
@@ -250,21 +245,14 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
-                const item = ctx.session.posts.visualItems[value];
                 const page = await browser.newPage();
                 await page.setRequestInterception(true);
-                page.on('request', (req) => {
-                    const type = req.resourceType();
-                    headers = req.headers();
-                    if (
-                        ['font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                        headers['sec-fetch-dest'] !== 'document'
-                    ) { req.abort(); } else { req.continue(); }
-                });
+                page.on('request', requestHelper);
                 page.on("error", errorHelper);
+                
+                const item = ctx.session.posts.visualItems[value];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
                 ctx.reply(`GO TO ${link}`)
-                await page.goto(link);
                 await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                 await page.waitForSelector(".singlePost");
                 const data = await page.evaluate(() => {
@@ -318,27 +306,15 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
             if (!items[value]) {
                 ctx.reply('Нет такого поста')
             } else {
-                const item = ctx.session.posts.textItems[value];
-                const page = (await browser.pages())[0];
-                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                page.goto(link);
-                ctx.reply(`GO TO ${link}`)
-                await page.waitForNavigation();
-                page.on('request', (req) => {
-                    const type = req.resourceType();
-                    const url = req.url();
-                    headers = req.headers();
-                    if (
-                        ['image', 'font', 'stylesheet', 'xhr', 'other', 'script'].includes(type) ||
-                        headers['sec-fetch-dest'] !== 'document'
-                    ) {
-                        req.abort();
-                    }
-                    else {
-                        req.continue();
-                    }
-                });
+                const page = await browser.newPage();
+                await page.setRequestInterception(true);
+                page.on('request', requestHelper);
                 page.on("error", errorHelper);
+                
+                const item = ctx.session.posts.textItems[value];
+                const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
+                ctx.reply(`GO TO ${link}`)
+                await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
                     if (frame) {
