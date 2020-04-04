@@ -96,8 +96,6 @@ wtfScene.enter((ctx) => {
             page.on("error", errorHelper);
             ctx.reply("OPEN BROWSER");
             const type = types[ctx.scene.state.id.replace(/\d/g, '')];
-            ctx.reply(ctx.scene.state.id.replace(/\d/g, ''))
-            ctx.reply(JSON.stringify(type))
             await page.goto(`${urls[ctx.scene.state.id || 'wtf2019']}?tags=`)
             await page.type('#user_login', login)
             await page.type('#user_pass', password)
@@ -108,8 +106,8 @@ wtfScene.enter((ctx) => {
 
             const result = await page.evaluate((type) => {
                 const items = [];
-                let textTag = '';
-                let visualTag = '';
+                let textTags = [];
+                let visualTags = [];
                 const links = document.querySelectorAll('a[id*=tag]');
                 for (const link of links) {
                     const name = link.innerText;
@@ -118,11 +116,11 @@ wtfScene.enter((ctx) => {
                     if (name.indexOf(type.commandNamePart) !== -1) {
                         items.push({ id, name: `${name} (${count})` })
                     }
-                    if (name === type.textTags[0]) {
-                        textTag = id;
+                    if (type.textTags.includes(name)) {
+                        textTags.push(id);
                     }
-                    if (name === type.visualTags[0]) {
-                        visualTag = id;
+                    if (type.visualTags.includes(name)) {
+                        visualTags.push(id);
                     }
                 }
                 items.sort((a, b) => {
@@ -133,10 +131,10 @@ wtfScene.enter((ctx) => {
                         return 1
                     return 0
                 });
-                return { items, textTag, visualTag };
+                return { items, textTags, visualTags };
             },type);
-            ctx.session.textTag = result.textTag;
-            ctx.session.visualTag = result.visualTag;
+            ctx.session.textTags = result.textTags;
+            ctx.session.visualTags = result.visualTags;
             ctx.session.commands = {};
             ctx.session.commands.items = result.items;
             ctx.session.commands.curPage = 1;
@@ -160,7 +158,7 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
     (async (ctx) => {
         try {
             const value = ctx.match[0].replace(/(c|C)/, '');
-            const { textTag, visualTag } = ctx.session;
+            const { textTags, visualTags } = ctx.session;
             const { items } = ctx.session.commands;
             if (!items[value]) {
                 ctx.reply('Нет такой команды')
@@ -168,8 +166,8 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                 const item = ctx.session.commands.items[value];
                 ctx.reply(`Вы выбрали команду ${item.name}`);
                 const links = {
-                    text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTag}&tag[]=${item.id}`,
-                    visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTag}&tag[]=${item.id}`
+                    text: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${textTags[0]}&tag[]=${item.id}`,
+                    visual: `${urls[ctx.scene.state.id || 'wtf2019']}?tag[]=${visualTags[0]}&tag[]=${item.id}`
                 };
                 const linkList = [];
                 const data = [];
