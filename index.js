@@ -309,7 +309,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ]);
                         const buffer = await response.buffer();
                         imagesBuffer.push(buffer);
-                        ctx.replyWithPhoto(buffer)
+                        ctx.replyWithPhoto({source: buffer})
                     } catch (err) {
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
