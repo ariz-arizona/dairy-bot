@@ -302,7 +302,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const imagesBuffer = [];
                 for (let imageId = 0; imageId < images.length; imageId++) {
                     try {
-                        ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`)
+                        ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`, { disable_web_page_preview: true })
                         const [response] = await Promise.all([
                             page.waitForResponse(response => response.url()),
                             page.goto(images[imageId])
@@ -317,7 +317,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 imagesBuffer.map((buffer, i) => { replies.push({ type: 'photo', source: buffer, caption: i }) });
                 // ctx.reply(JSON.stringify(replies).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
-                const size = 1;
+                const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
                     if (arr.length > 1) {
