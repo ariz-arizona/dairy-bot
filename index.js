@@ -311,6 +311,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 }
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
+                ctx.reply(JSON.stringify(imagesBuffer).splice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
@@ -319,7 +320,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         try {
                             await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
-                            // ctx.reply(err)
+                            ctx.reply(err)
                             ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => el.media).join('\n')}`)
                         }
                     } else {
