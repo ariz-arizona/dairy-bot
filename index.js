@@ -311,7 +311,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         const buffer = await response.buffer();
                         const test = await ctx.telegram.sendPhoto('@techdairybot', { source: buffer });
                         await new Promise(resolve => setTimeout(resolve, 150));
-                        console.log(test.photo[0])
+                        // console.log(test.photo[0])
                         imagesIds.push(test.photo[0].file_unique_id);
                     } catch (err) {
                         console.log(err)
@@ -320,7 +320,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 }
                 await imagePage.close()
                 const replies = [];
-                imagesIds.map((id, i) => { replies.push({ type: 'photo', id, caption: i }) });
+                imagesIds.map((id, i) => { replies.push({ type: 'photo', media: id, caption: i }) });
                 // frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 10;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
