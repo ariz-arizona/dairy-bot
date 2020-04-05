@@ -305,7 +305,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                             page.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
-                        imagesBuffer.push('data:image/png;base64,' + buffer.toString('base64'));
+                        imagesBuffer.push(buffer.toString('base64'));
                     } catch (err) {
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
