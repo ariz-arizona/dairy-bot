@@ -277,7 +277,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
 
                 const item = ctx.session.posts.visualItems[value];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                ctx.reply(`GO TO ${link}`)
+                ctx.reply(`GO TO ${link}`, { disable_web_page_preview: true })
                 await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                 await page.waitForSelector(".singlePost");
                 const data = await page.evaluate(() => {
@@ -314,7 +314,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 }
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
-                ctx.reply(JSON.stringify(imagesBuffer).slice(0, 600))
+                ctx.reply(JSON.stringify(replies).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
@@ -323,7 +323,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         try {
                             await ctx.replyWithMediaGroup(arr)
                         } catch (err) {
-                            ctx.reply(err)
+                            ctx.reply(JSON.stringify(err).slice(0, 600));
                             ctx.reply(`Отправка изображений не удалась:\n${arr.map(el => el.media).join('\n')}`)
                         }
                     } else {
@@ -354,7 +354,7 @@ wtfScene.hears(/^(t|T)\d{1,}/gi, ctx => {
 
                 const item = ctx.session.posts.textItems[value];
                 const link = `${urls[ctx.scene.state.id || 'wtf2019']}p${item.id}.html?oam=1`;
-                ctx.reply(`GO TO ${link}`)
+                ctx.reply(`GO TO ${link}`, { disable_web_page_preview: true })
                 await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
                 const frameLink = await page.evaluate(() => {
                     const frame = document.querySelector('.singlePost iframe');
