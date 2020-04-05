@@ -303,7 +303,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const { images, frames } = data;
                 const replies = [];
                 // todo загрузка в чат
-                const imagesBuffer = [];
+                const imagesIds = [];
                 for (let imageId = 0; imageId < images.length; imageId++) {
                     try {
                         ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`, { disable_web_page_preview: true })
@@ -312,19 +312,16 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                             page.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
-                        imagesBuffer.push(buffer);
                         const test = await ctx.telegram.sendPhoto('@techdairybot', {source: buffer});
-                        ctx.reply(test)
-                        // ctx.replyWithPhoto({source: buffer})
+                        imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
                         ctx.reply(JSON.stringify(err).slice(0,600))
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
-                // imagesBuffer.map((buffer, i) => { replies.push({ type: 'photo', source: buffer, caption: i }) });
-                // ctx.reply(JSON.stringify(replies).slice(0, 600))
-                frames.map(media => { replies.push({ type: 'video', media }) });
-                const size = 4;
+                imagesIds.map((id, i) => { replies.push({ type: 'photo', file_id: id, caption: i }) });
+                // frames.map(media => { replies.push({ type: 'video', media }) });
+                const size = 10;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
                     if (arr.length > 1) {
