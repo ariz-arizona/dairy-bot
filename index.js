@@ -295,7 +295,23 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 });
                 const { images, frames } = data;
                 const replies = [];
-                images.map((media, i) => { replies.push({ type: 'photo', media, caption: i }) });
+                // todo загрузка в чат
+                const imagesBuffer = [];
+                for (let imageId = 0; imageId < images.length; imageId++) {
+                    try {
+                        ctx.reply(`TRY LOAD IMAGE ${images[imageId]}`)
+                        const [response] = await Promise.all([
+                            page.waitForResponse(response => response.url().includes('.png')),
+                            page.goto(images[imageId])
+                        ]);
+                        const buffer = await response.buffer();
+                        console.log('data:image/png;base64,' + buffer.toString('base64'));
+                        imagesBuffer.push('data:image/png;base64,' + buffer.toString('base64'));
+                    } catch (err) {
+                        ctx.reply('ERROR LOAD IMAGE')
+                    }
+                }
+                imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
