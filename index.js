@@ -314,7 +314,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
-                imagesBuffer.map((buffer, i) => { replies.push({ type: 'photo', value: buffer, caption: i }) });
+                // imagesBuffer.map((buffer, i) => { replies.push({ type: 'photo', value: buffer, caption: i }) });
                 // ctx.reply(JSON.stringify(replies).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 1;
