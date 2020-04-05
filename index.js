@@ -38,7 +38,7 @@ const browserArgs = {
         '--single-process'
     ],
 };
-
+let test = {};
 const bot = new Telegraf(process.env.TOKEN);
 const stage = new Stage();
 
@@ -48,6 +48,10 @@ bot.use(stage.middleware());
 bot.catch((err, ctx) => {
     console.log(`Ooops, ecountered an error for ${ctx.updateType}`, err);
     ctx.reply("ERROR! LOOK LOGS PLS")
+});
+
+bot.telegram.getMe().then((bot_informations) => {
+    test = bot_informations;
 });
 
 const errorHelper = (err) => {
@@ -93,6 +97,7 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
 wtfScene.enter((ctx) => {
     (async (ctx) => {
         try {
+            ctx.reply(test)
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
