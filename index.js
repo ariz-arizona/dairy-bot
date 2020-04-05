@@ -309,7 +309,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     try {
                         ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`, { disable_web_page_preview: true })
                         const [response] = await Promise.all([
-                            imagePage.waitForResponse(response => response.url()),
+                            // imagePage.waitForResponse(response => response.url()),
                             imagePage.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
@@ -318,7 +318,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
                         console.log(err)
-                        ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
+                        ctx.reply(`ERROR LOAD IMAGE ${imageId}\n${JSON.stringify(err).slice(0, 600)}`)
                     }
                 }
                 await imagePage.close()
