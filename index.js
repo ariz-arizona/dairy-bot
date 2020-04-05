@@ -299,16 +299,15 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const imagesBuffer = [];
                 for (let imageId = 0; imageId < images.length; imageId++) {
                     try {
-                        ctx.reply(`TRY LOAD IMAGE ${images[imageId]}`)
+                        ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`)
                         const [response] = await Promise.all([
-                            page.waitForResponse(response => response.url().includes('.png')),
+                            page.waitForResponse(response => response.url()),
                             page.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
-                        console.log('data:image/png;base64,' + buffer.toString('base64'));
                         imagesBuffer.push('data:image/png;base64,' + buffer.toString('base64'));
                     } catch (err) {
-                        ctx.reply('ERROR LOAD IMAGE')
+                        ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
