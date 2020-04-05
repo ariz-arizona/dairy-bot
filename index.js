@@ -311,6 +311,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         const buffer = await response.buffer();
                         const test = await ctx.telegram.sendPhoto('@techdairybot', { source: buffer });
                         await new Promise(resolve => setTimeout(resolve, 150));
+                        console.log(test.photo[0])
                         imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
                         console.log(err)
