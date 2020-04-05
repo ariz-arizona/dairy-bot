@@ -316,6 +316,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.reply(test);
                         imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
+                        console.log(err)
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
