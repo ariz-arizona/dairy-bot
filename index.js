@@ -304,12 +304,13 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 const replies = [];
                 // todo загрузка в чат
                 const imagesIds = [];
+                const imagePage = await browser.newPage();
                 for (let imageId = 0; imageId < images.length; imageId++) {
                     try {
                         ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`, { disable_web_page_preview: true })
                         const [response] = await Promise.all([
-                            page.waitForResponse(response => response.url()),
-                            page.goto(images[imageId])
+                            imagePage.waitForResponse(response => response.url()),
+                            imagePage.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
                         const test = await ctx.telegram.sendPhoto('@techdairybot', {source: buffer});
@@ -320,6 +321,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
+                await imagePage.close()
                 imagesIds.map((id, i) => { replies.push({ type: 'photo', file_id: id, caption: i }) });
                 // frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 10;
