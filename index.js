@@ -313,7 +313,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ctx.reply(test)
                         // ctx.replyWithPhoto({source: buffer})
                     } catch (err) {
-                        ctx.replay(JSON.stringify(err).slice(0,600))
+                        ctx.reply(JSON.stringify(err).slice(0,600))
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
