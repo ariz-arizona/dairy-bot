@@ -313,9 +313,9 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ]);
                         const buffer = await response.buffer();
                         const test = await ctx.telegram.sendPhoto('@techdairybot', {source: buffer});
+                        ctx.reply(test);
                         imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
-                        ctx.reply(JSON.stringify(err).slice(0,600))
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
