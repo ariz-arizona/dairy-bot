@@ -316,7 +316,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
                 ctx.reply(JSON.stringify(replies).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
-                const size = 4;
+                const size = 1;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
                     const arr = replies.slice((i * size), (i * size) + size);
                     if (arr.length > 1) {
