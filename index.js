@@ -308,13 +308,13 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                             page.goto(images[imageId])
                         ]);
                         const buffer = await response.buffer();
-                        imagesBuffer.push(buffer.toString('base64'));
+                        imagesBuffer.push(buffer);
                     } catch (err) {
                         ctx.reply(`ERROR LOAD IMAGE ${imageId} `)
                     }
                 }
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
-                ctx.reply(JSON.stringify(replies).slice(0, 600))
+                // ctx.reply(JSON.stringify(replies).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 1;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
