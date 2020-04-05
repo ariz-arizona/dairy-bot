@@ -309,7 +309,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ]);
                         const buffer = await response.buffer();
                         imagesBuffer.push(buffer);
-                        const test = await ctx.telegram.uploadMedia(ctx.chat.id, {source: buffer});
+                        const test = await ctx.uploadMedia({source: buffer});
                         ctx.reply(test)
                         // ctx.replyWithPhoto({source: buffer})
                     } catch (err) {
