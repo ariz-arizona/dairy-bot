@@ -190,7 +190,10 @@ wtfScene.hears(/^(c|C)\d{1,}/gi, ctx => {
                         let link = Object.values(links)[j][l];
                         do {
                             linkList[j].push(link);
-                            ctx.reply(`${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`);
+                            ctx.reply(
+                                `${Object.keys(links)[j].toUpperCase()} PAGE ${linkList[j].length} ${link}`,
+                                { disable_web_page_preview: true }
+                            );
                             await page.goto(link, { waitUntil: "networkidle2", timeout: 60000 })
 
                             // await page.waitForSelector(".singlePost");
@@ -311,7 +314,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 }
                 imagesBuffer.map((source, i) => { replies.push({ type: 'photo', source, caption: i }) });
-                ctx.reply(JSON.stringify(imagesBuffer).splice(0, 600))
+                ctx.reply(JSON.stringify(imagesBuffer).slice(0, 600))
                 frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 4;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
