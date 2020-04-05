@@ -313,7 +313,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ]);
                         const buffer = await response.buffer();
                         imagesBuffer.push(buffer);
-                        const test = await ctx.telegram.sendPhoto(botInfo.id, {source: buffer});
+                        const test = await ctx.telegram.sendPhoto(11111111, {source: buffer});
                         ctx.reply(test)
                         // ctx.replyWithPhoto({source: buffer})
                     } catch (err) {
