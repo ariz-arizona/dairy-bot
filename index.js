@@ -312,7 +312,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         const test = await ctx.telegram.sendPhoto('@techdairybot', { source: buffer });
                         await new Promise(resolve => setTimeout(resolve, 150));
                         console.log(test.photo[0])
-                        imagesIds.push(test.photo[0].file_id);
+                        imagesIds.push(test.photo[0].file_unique_id);
                     } catch (err) {
                         console.log(err)
                         ctx.reply(`ERROR LOAD IMAGE ${imageId}\n${JSON.stringify(err).slice(0, 600)}`)
