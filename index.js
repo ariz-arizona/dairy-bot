@@ -38,7 +38,7 @@ const browserArgs = {
         '--single-process'
     ],
 };
-let test = {};
+let botInfo = {};
 const bot = new Telegraf(process.env.TOKEN);
 const stage = new Stage();
 
@@ -51,7 +51,7 @@ bot.catch((err, ctx) => {
 });
 
 bot.telegram.getMe().then((bot_informations) => {
-    test = bot_informations;
+    botInfo = bot_informations;
 });
 
 const errorHelper = (err) => {
@@ -97,7 +97,6 @@ function renderList(items, curPage, pages, addSymbol = '', pageSize = 20) {
 wtfScene.enter((ctx) => {
     (async (ctx) => {
         try {
-            ctx.reply(test)
             browser = await puppeteer.launch(browserArgs);
             const page = await browser.newPage();
             await page.setRequestInterception(true);
@@ -314,7 +313,7 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                         ]);
                         const buffer = await response.buffer();
                         imagesBuffer.push(buffer);
-                        const test = await ctx.uploadMedia({source: buffer});
+                        const test = await ctx.telegram.sendPhoto(botInfo.id, {source: buffer});
                         ctx.reply(test)
                         // ctx.replyWithPhoto({source: buffer})
                     } catch (err) {
