@@ -301,21 +301,16 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     return res;
                 });
                 const { images, frames } = data;
-                const replies = [];
                 // todo загрузка в чат
                 const imagesIds = [];
                 const imagePage = await browser.newPage();
                 for (let imageId = 0; imageId < images.length; imageId++) {
                     try {
                         ctx.reply(`TRY LOAD IMAGE ${imageId} ${images[imageId]}`, { disable_web_page_preview: true })
-                        const [response] = await Promise.all([
-                            // imagePage.waitForResponse(response => response.url()),
-                            imagePage.goto(images[imageId])
-                        ]);
+                        const response = await imagePage.goto(images[imageId]);
                         const buffer = await response.buffer();
-                        const test = await ctx.telegram.sendPhoto('@techdairybot', {source: buffer});
-                        await new Promise(resolve => setTimeout(resolve, 250));
-                        ctx.reply(test);
+                        const test = await ctx.telegram.sendPhoto('@techdairybot', { source: buffer });
+                        await new Promise(resolve => setTimeout(resolve, 150));
                         imagesIds.push(test.photo[0].file_id);
                     } catch (err) {
                         console.log(err)
@@ -323,7 +318,8 @@ wtfScene.hears(/^(v|V)\d{1,}/gi, ctx => {
                     }
                 }
                 await imagePage.close()
-                imagesIds.map((id, i) => { replies.push({ type: 'photo', file_id: id, caption: i }) });
+                const replies = [];
+                imagesIds.map((id, i) => { replies.push({ type: 'photo', id, caption: i }) });
                 // frames.map(media => { replies.push({ type: 'video', media }) });
                 const size = 10;
                 for (let i = 0; i < Math.ceil(replies.length / size); i++) {
